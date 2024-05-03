@@ -98,8 +98,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     .anchor(-0.01f, 1.0f)
                     .title("Test titolo")
                     .snippet("Test descrizione")
-                val k = googleMap.addMarker(aaa)
-                //k?.showInfoWindow()
+                googleMap.addMarker(aaa)
             }
 
             googleMap.setInfoWindowAdapter(object :GoogleMap.InfoWindowAdapter{
@@ -120,23 +119,15 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     snippetTextView.text = marker.snippet
 
                     button1.setOnClickListener {
-                        Toast.makeText(this@MainActivity, "Button 1 clicked", Toast.LENGTH_SHORT).show()
+                        // TODO: Evento Bottone Apri
                     }
 
                     button2.setOnClickListener {
-                        Toast.makeText(this@MainActivity, "Button 2 clicked", Toast.LENGTH_SHORT).show()
+                        // TODO: Evento Bottone Naviga
                     }
-
-
                     return view
-
                 }
-
-
-
-
             })
-            //googleMap.setOnInfoWindowClickListener(this@MainActivity)
 
         }
     }
