@@ -23,7 +23,7 @@
 
     class MainActivity : Activity(), OnMapReadyCallback {
 
-        private val italia = LatLng(43.0, 11.53)
+        private val italia = LatLng(42.0, 11.53)
 
         private val zoomlvl = 6f
 
@@ -48,22 +48,22 @@
             val mapFragment : MapFragment? =
                 fragmentManager.findFragmentById(R.id.map) as? MapFragment
             mapFragment?.getMapAsync(this)
-
         }
 
         //Appertura mappa
         @SuppressLint("PotentialBehaviorOverride")
         override fun onMapReady(googleMap: GoogleMap) {
             with(googleMap) {
-
-
                 // Disabilita i pulsanti di navigazione
                 uiSettings.isMapToolbarEnabled = false
 
-                //Creazione delle icone
+                //Sposta Camera in centro italia
                 moveCamera(CameraUpdateFactory.newLatLngZoom(italia,zoomlvl))
-                val bitmap1 = BitmapFactory.decodeResource(resources, R.drawable.logomontagna) // Carica l'immagine dalla risorsa
-                val resizedBitmap1 = Bitmap.createScaledBitmap(bitmap1, 100, 100, false) // Ridimensiona l'immagine alle dimensioni desiderate
+
+                // Carica l'immagine dalla risorsa
+                val bitmap1 = BitmapFactory.decodeResource(resources, R.drawable.logomontagna)
+                // Ridimensiona l'immagine alle dimensioni desiderate
+                val resizedBitmap1 = Bitmap.createScaledBitmap(bitmap1, 100, 100, false)
 
                 val bitmap2 = BitmapFactory.decodeResource(resources, R.drawable.logomusica)
                 val resizedBitmap2 = Bitmap.createScaledBitmap(bitmap2, 100 ,100, false)
@@ -88,6 +88,9 @@
                         .snippet("Test descrizione")
                     googleMap.addMarker(markerOptions)
                 }
+
+
+
 
                 //Aggiungi un marker da indirizzo
                 val geocoder = Geocoder(this@MainActivity)
