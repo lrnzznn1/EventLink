@@ -95,9 +95,8 @@
                     val aaa = MarkerOptions()
                         .position(LatLng(firstLocation.latitude, firstLocation.longitude))
                         .icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap1))
-                        .anchor(-0.01f, 1.0f)
-                        .title("Test titolo")
-                        .snippet("Test descrizione")
+                        .title("Visita guidata Colosseo")
+                        .snippet("Indirizzo: Piazza del Colosseo,1,00184 Roma RM \nData: 05 Maggio \nOra: 14:00 \nPrezzo 20€")
                     googleMap.addMarker(aaa)
                 }
 

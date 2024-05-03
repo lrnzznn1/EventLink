@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">EventLink</string>
+    <string name="naviga">Naviga</string>
+    <string name="apri">Apri</string>
 </resources>

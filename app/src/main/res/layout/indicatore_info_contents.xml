@@ -1,46 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:gravity="center"
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:layout_marginBottom="8dp"
+        android:gravity=""
+        android:text="prova"
         android:textColor="@android:color/black"
-        android:layout_marginBottom="8dp"/>
+        android:textSize="16sp"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/description"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:layout_marginBottom="8dp"
         android:textColor="@android:color/black"
-        android:layout_marginBottom="8dp"/>
+        android:text="Pprova 2"
+        android:gravity=""
+        android:textSize="13sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
+        android:orientation="horizontal"
+        android:gravity="center">
         <Button
             android:id="@+id/button1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Button 1"/>
+            android:text="@string/apri" />
 
         <Button
             android:id="@+id/button2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Button 2"/>
+            android:text="@string/naviga" />
 
     </LinearLayout>
+
+
 
 </LinearLayout>
