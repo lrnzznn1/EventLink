@@ -5,12 +5,17 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Geocoder
 import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
 class MainActivity : Activity(), OnMapReadyCallback {
@@ -47,6 +52,10 @@ class MainActivity : Activity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         with(googleMap) {
 
+
+            // Disabilita i pulsanti di navigazione
+            uiSettings.isMapToolbarEnabled = false
+
             //Creazione delle icone
             moveCamera(CameraUpdateFactory.newLatLngZoom(italia,zoomlvl))
             val bitmap1 = BitmapFactory.decodeResource(resources, R.drawable.logomontagna) // Carica l'immagine dalla risorsa
@@ -71,6 +80,8 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     .position(pos)
                     .icon(BitmapDescriptorFactory.fromBitmap(ico))
                     .anchor(-0.1f, 1.0f)
+                    .title("Test titolo")
+                    .snippet("Test descrizione")
                 googleMap.addMarker(markerOptions)
             }
 
@@ -85,18 +96,47 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     .position(LatLng(firstLocation.latitude, firstLocation.longitude))
                     .icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap1))
                     .anchor(-0.01f, 1.0f)
-                    .snippet("PROVAAA")
-                googleMap.addMarker(aaa)
-            }
-            googleMap.setOnMarkerClickListener { marker ->
-                // Handle marker click event here
-                // For example, you can show an info window for the clicked marker
-                marker.showInfoWindow()
-
-                // Return 'true' to indicate that the click event has been consumed
-                true
+                    .title("Test titolo")
+                    .snippet("Test descrizione")
+                val k = googleMap.addMarker(aaa)
+                //k?.showInfoWindow()
             }
 
+            googleMap.setInfoWindowAdapter(object :GoogleMap.InfoWindowAdapter{
+                override fun getInfoWindow(marker: Marker): View? {
+                    // Ritorna null per utilizzare l'implementazione predefinita
+                    return null
+                }
+                override fun getInfoContents(marker: Marker): View? {
+                    val view = layoutInflater.inflate(R.layout.indicatore_info_contents, null)
+
+                    val titleTextView = view.findViewById<TextView>(R.id.title)
+                    val snippetTextView = view.findViewById<TextView>(R.id.description)
+                    val button1 = view.findViewById<Button>(R.id.button1)
+                    val button2 = view.findViewById<Button>(R.id.button2)
+
+
+                    titleTextView.text = marker.title
+                    snippetTextView.text = marker.snippet
+
+                    button1.setOnClickListener {
+                        Toast.makeText(this@MainActivity, "Button 1 clicked", Toast.LENGTH_SHORT).show()
+                    }
+
+                    button2.setOnClickListener {
+                        Toast.makeText(this@MainActivity, "Button 2 clicked", Toast.LENGTH_SHORT).show()
+                    }
+
+
+                    return view
+
+                }
+
+
+
+
+            })
+            //googleMap.setOnInfoWindowClickListener(this@MainActivity)
 
         }
     }
