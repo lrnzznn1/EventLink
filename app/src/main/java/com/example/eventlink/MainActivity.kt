@@ -3,12 +3,14 @@
     import android.annotation.SuppressLint
     import android.app.Activity
     import android.app.AlertDialog
+    import android.content.ContentValues.TAG
     import android.content.Intent
     import android.graphics.Bitmap
     import android.graphics.BitmapFactory
     import android.location.Geocoder
     import android.net.Uri
     import android.os.Bundle
+    import android.util.Log
     import android.view.Gravity
     import android.widget.Button
     import android.widget.TextView
@@ -19,6 +21,8 @@
     import com.google.android.gms.maps.model.BitmapDescriptorFactory
     import com.google.android.gms.maps.model.LatLng
     import com.google.android.gms.maps.model.MarkerOptions
+    import com.google.firebase.firestore.ktx.firestore
+    import com.google.firebase.ktx.Firebase
 
 
     class MainActivity : Activity(), OnMapReadyCallback {
@@ -54,6 +58,7 @@
         @SuppressLint("PotentialBehaviorOverride")
         override fun onMapReady(googleMap: GoogleMap) {
             with(googleMap) {
+
                 // Disabilita i pulsanti di navigazione
                 uiSettings.isMapToolbarEnabled = false
 
@@ -97,14 +102,30 @@
                 val address = "Piazza dei donatori di sangue 1 Isola Vicentina VI"
                 val locations = geocoder.getFromLocationName(address, 1)
                 if (!locations.isNullOrEmpty()) {
-                    val firstLocation = locations[0]
-                    val aaa = MarkerOptions()
-                        .position(LatLng(firstLocation.latitude, firstLocation.longitude))
-                        .icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap1))
-                        .anchor(-0.1f, 1.0f)
-                        .title("Visita guidata Colosseo")
-                        .snippet("Indirizzo: Piazza del Colosseo,1,00184 Roma RM \nData: 05 Maggio \nOra: 14:00 \nPrezzo 20€")
-                    googleMap.addMarker(aaa)
+                    //Database initialization
+                    val db = Firebase.firestore
+                    db.collection("Utenti")
+                        .get()
+                        .addOnSuccessListener { result ->
+                            val firstLocation = locations[0]
+
+                            for (document in result) {
+                                val aaa = MarkerOptions()
+                                    .position(LatLng(firstLocation.latitude, firstLocation.longitude))
+                                    .icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap1))
+                                    .anchor(-0.1f, 1.0f)
+                                    .title(document.id)
+                                    .snippet("${document.data.getValue("Nome")}")
+                                Log.d(TAG, "${document.id} => ${document.data}")
+                                googleMap.addMarker(aaa)
+                            }
+
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.w(TAG, "Error getting documents.", exception)
+                        }
+
+
                 }
 
 

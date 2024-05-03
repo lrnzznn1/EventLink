@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "400861890766",
+    "project_id": "eventlinkv2",
+    "storage_bucket": "eventlinkv2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:400861890766:android:e1b62408c49f12c5a3a89f",
+        "android_client_info": {
+          "package_name": "com.example.eventlink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAntZ0CdTb9DlzhGCjERPsgJky9h924QcM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

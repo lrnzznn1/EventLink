@@ -19,4 +19,4 @@ EventLink è un progetto sviluppato per l'esame di Mobile Programming. L'applica
 
 ## Autori
 
-Questo progetto è stato creato da Lorenzo Zanini e Lorenzo Mase come parte del loro esame di Mobile Programming.
+Questo progetto è stato creato da Lorenzo Zanini e Lorenzo Mase come parte del loro esame di Mobile Programming grazie per la visione.

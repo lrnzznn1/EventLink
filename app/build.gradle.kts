@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
-
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.appcompat)
+    //implementation(libs.firebase.common.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,7 +70,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.maps.android:android-maps-utils:2.2.0")
+    implementation("com.google.firebase:firebase-firestore-ktx")
 
 }
