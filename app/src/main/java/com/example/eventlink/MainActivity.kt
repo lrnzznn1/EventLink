@@ -7,13 +7,13 @@
     import android.graphics.Bitmap
     import android.graphics.BitmapFactory
     import android.location.Geocoder
+    import android.net.Uri
     import android.os.Bundle
+    import android.view.Gravity
     import android.widget.Button
     import android.widget.TextView
-    import android.widget.Toast
     import com.google.android.gms.maps.CameraUpdateFactory
     import com.google.android.gms.maps.GoogleMap
-    import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
     import com.google.android.gms.maps.MapFragment
     import com.google.android.gms.maps.OnMapReadyCallback
     import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -98,6 +98,7 @@
                     val aaa = MarkerOptions()
                         .position(LatLng(firstLocation.latitude, firstLocation.longitude))
                         .icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap1))
+                        .anchor(-0.1f, 1.0f)
                         .title("Visita guidata Colosseo")
                         .snippet("Indirizzo: Piazza del Colosseo,1,00184 Roma RM \nData: 05 Maggio \nOra: 14:00 \nPrezzo 20€")
                     googleMap.addMarker(aaa)
@@ -123,12 +124,47 @@
                     }
 
                     button2.setOnClickListener {
-                    // TODO: Evento Bottone Naviga
+                        val latitude = marker.position.latitude
+                        val longitude = marker.position.longitude
+                        val uri = "http://maps.google.com/maps?q=loc:$latitude,$longitude"
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+                        startActivity(intent)
                     }
 
-                    AlertDialog.Builder(this@MainActivity)
+                    // Imposta la camera leggermente al di sotto del marker
+                    val target = LatLng(marker.position.latitude - 0.001, marker.position.longitude)
+                    val zoomLevel = 11f // Imposta lo zoom desiderato
+                    val currentZoom = googleMap.cameraPosition.zoom
+                    if (currentZoom < zoomLevel) {
+                        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(target, zoomLevel)
+                        googleMap.animateCamera(cameraUpdate, 1000, null)
+                    } else {
+                        val cameraUpdate = CameraUpdateFactory.newLatLng(target)
+                        googleMap.animateCamera(cameraUpdate, 1000, null)
+                    }
+
+
+                    val dialog = AlertDialog.Builder(this@MainActivity, R.style.AlertDialogCustom)
                         .setView(view)
-                        .show()
+                        .create()
+
+                    dialog.setOnShowListener {
+                        val window = dialog.window
+                        val params = window?.attributes
+
+                        val gravity = Gravity.TOP
+                        val xOffset = 0
+                        val yOffset = 370 // Modifica il valore a seconda di quanto vuoi spostare l'AlertDialog
+
+                        params?.gravity = gravity
+                        params?.x = xOffset
+                        params?.y = yOffset
+
+                        window?.attributes = params
+                    }
+
+                    dialog.show()
+
 
                     true
                 }
