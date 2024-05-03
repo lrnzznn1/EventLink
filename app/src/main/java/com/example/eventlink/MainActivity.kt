@@ -1,22 +1,25 @@
     package com.example.eventlink
 
+    import android.annotation.SuppressLint
     import android.app.Activity
+    import android.app.AlertDialog
+    import android.content.Intent
     import android.graphics.Bitmap
     import android.graphics.BitmapFactory
     import android.location.Geocoder
     import android.os.Bundle
-    import android.view.View
     import android.widget.Button
     import android.widget.TextView
     import android.widget.Toast
     import com.google.android.gms.maps.CameraUpdateFactory
     import com.google.android.gms.maps.GoogleMap
+    import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
     import com.google.android.gms.maps.MapFragment
     import com.google.android.gms.maps.OnMapReadyCallback
     import com.google.android.gms.maps.model.BitmapDescriptorFactory
     import com.google.android.gms.maps.model.LatLng
-    import com.google.android.gms.maps.model.Marker
     import com.google.android.gms.maps.model.MarkerOptions
+
 
     class MainActivity : Activity(), OnMapReadyCallback {
 
@@ -49,6 +52,7 @@
         }
 
         //Appertura mappa
+        @SuppressLint("PotentialBehaviorOverride")
         override fun onMapReady(googleMap: GoogleMap) {
             with(googleMap) {
 
@@ -91,7 +95,6 @@
                 val locations = geocoder.getFromLocationName(address, 1)
                 if (!locations.isNullOrEmpty()) {
                     val firstLocation = locations[0]
-                    println("Latitude: ${firstLocation.latitude}, Longitude: ${firstLocation.longitude}")
                     val aaa = MarkerOptions()
                         .position(LatLng(firstLocation.latitude, firstLocation.longitude))
                         .icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap1))
@@ -100,35 +103,45 @@
                     googleMap.addMarker(aaa)
                 }
 
-                googleMap.setInfoWindowAdapter(object :GoogleMap.InfoWindowAdapter{
-                    override fun getInfoWindow(marker: Marker): View? {
-                        // Ritorna null per utilizzare l'implementazione predefinita
-                        return null
+
+
+                googleMap.setOnMarkerClickListener { marker ->
+                    val view = layoutInflater.inflate(R.layout.indicatore_info_contents, null)
+
+                    val titleTextView = view.findViewById<TextView>(R.id.title)
+                    val snippetTextView = view.findViewById<TextView>(R.id.description)
+                    val button1 = view.findViewById<Button>(R.id.button1)
+                    val button2 = view.findViewById<Button>(R.id.button2)
+
+
+                    titleTextView.text = marker.title
+                    snippetTextView.text = marker.snippet
+
+                    button1.setOnClickListener {
+                        val intent = Intent(this@MainActivity, PaginaEvento::class.java)
+                        startActivity(intent)
                     }
-                    override fun getInfoContents(marker: Marker): View? {
-                        val view = layoutInflater.inflate(R.layout.indicatore_info_contents, null)
 
-                        val titleTextView = view.findViewById<TextView>(R.id.title)
-                        val snippetTextView = view.findViewById<TextView>(R.id.description)
-                        val button1 = view.findViewById<Button>(R.id.button1)
-                        val button2 = view.findViewById<Button>(R.id.button2)
-
-
-                        titleTextView.text = marker.title
-                        snippetTextView.text = marker.snippet
-
-                        button1.setOnClickListener {
-                            // TODO: Evento Bottone Apri
-                        }
-
-                        button2.setOnClickListener {
-                            // TODO: Evento Bottone Naviga
-                        }
-                        return view
+                    button2.setOnClickListener {
+                    // TODO: Evento Bottone Naviga
                     }
-                })
+
+                    AlertDialog.Builder(this@MainActivity)
+                        .setView(view)
+                        .show()
+
+                    true
+                }
 
             }
+
         }
 
+    }
+
+    class PaginaEvento : Activity(){
+        public override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setContentView(R.layout.activity_evento)
+        }
     }
