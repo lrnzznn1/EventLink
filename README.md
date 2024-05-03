@@ -1,6 +1,6 @@
 # EventLink
 
-![EventLink Logo](logo.png)
+![EventLink Logo](Logo.png)
 
 EventLink è un progetto sviluppato per l'esame di Mobile Programming. L'applicazione consente agli utenti di visualizzare eventi in varie città italiane su una mappa interattiva e di ottenere informazioni dettagliate sugli eventi.
 
