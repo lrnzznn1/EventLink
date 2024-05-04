@@ -3,12 +3,14 @@
     import android.annotation.SuppressLint
     import android.app.Activity
     import android.app.AlertDialog
+    import android.content.ContentValues.TAG
     import android.content.Intent
     import android.graphics.Bitmap
     import android.graphics.BitmapFactory
     import android.location.Geocoder
     import android.net.Uri
     import android.os.Bundle
+    import android.util.Log
     import android.view.Gravity
     import android.widget.Button
     import android.widget.ImageView
@@ -23,9 +25,12 @@
     import com.google.android.gms.maps.model.MarkerOptions
     import com.google.firebase.firestore.ktx.firestore
     import com.google.firebase.ktx.Firebase
+    // Importa le necessarie classi Firebase Authentication
+    import com.google.firebase.auth.FirebaseAuth
+    import com.google.firebase.auth.FirebaseUser
 
     val db = Firebase.firestore
-
+    val mAuth = FirebaseAuth.getInstance()
     class MainActivity : Activity(), OnMapReadyCallback {
 
         private val italia = LatLng(42.0, 11.53)
@@ -78,7 +83,7 @@
                 val resizedBitmap3 = Bitmap.createScaledBitmap(bitmap3, 100 ,100, false)
 
 
-                /*
+
                 // Aggiunge i marker sulla mappa
                 for (i in coordinates.indices) {
                     val pos = coordinates[i]
@@ -95,14 +100,14 @@
                         .snippet("Test descrizione")
                     googleMap.addMarker(markerOptions)
                 }
-                */
 
-                /*
 
+
+/*
                 //Aggiungi un marker da indirizzo
-                val geocoder = Geocoder(this@MainActivity)
+                val geocoder1 = Geocoder(this@MainActivity)
                 val address = "Piazza dei donatori di sangue 1 Isola Vicentina VI"
-                val locations = geocoder.getFromLocationName(address, 1)
+                val locations = geocoder1.getFromLocationName(address, 1)
                 if (!locations.isNullOrEmpty()) {
                     //Database initialization
                     val db = Firebase.firestore
@@ -129,12 +134,10 @@
 
 
                 }
+*/
 
-                */
 
                 val geocoder = Geocoder(this@MainActivity)
-
-
                 db.collection("Eventi")
                     .get()
                     .addOnSuccessListener { result->
@@ -282,7 +285,24 @@
                     // Gestisci eventuali errori nel recupero dei dati dalla collezione "Eventi"
                 }
 
-
-
         }
     }
+
+
+/*
+    // Inizializza l'istanza di FirebaseAuth
+
+
+// Registra un nuovo utente con email e password
+    mAuth.createUserWithEmailAndPassword(email, password)
+    .addOnCompleteListener(this) { task ->
+        if (task.isSuccessful) {
+            // Registrazione riuscita, l'utente è stato creato correttamente
+            val user: FirebaseUser? = mAuth.currentUser
+            // Puoi aggiungere qui la logica per reindirizzare l'utente alla schermata successiva
+        } else {
+            // Registrazione fallita
+            // Puoi gestire gli errori qui
+        }
+    }
+*/
