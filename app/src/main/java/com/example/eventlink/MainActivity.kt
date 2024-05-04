@@ -3,14 +3,12 @@
     import android.annotation.SuppressLint
     import android.app.Activity
     import android.app.AlertDialog
-    import android.content.ContentValues.TAG
     import android.content.Intent
     import android.graphics.Bitmap
     import android.graphics.BitmapFactory
     import android.location.Geocoder
     import android.net.Uri
     import android.os.Bundle
-    import android.util.Log
     import android.view.Gravity
     import android.widget.Button
     import android.widget.TextView
@@ -20,10 +18,10 @@
     import com.google.android.gms.maps.OnMapReadyCallback
     import com.google.android.gms.maps.model.BitmapDescriptorFactory
     import com.google.android.gms.maps.model.LatLng
+    import com.google.android.gms.maps.model.Marker
     import com.google.android.gms.maps.model.MarkerOptions
     import com.google.firebase.firestore.ktx.firestore
     import com.google.firebase.ktx.Firebase
-
 
     class MainActivity : Activity(), OnMapReadyCallback {
 
@@ -48,8 +46,8 @@
         //Funzione Per creare la mappa da layout
         public override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            setContentView(R.layout.activity_main)
-            val mapFragment : MapFragment? =
+            var view = setContentView(R.layout.activity_main)
+            val mapFragment: MapFragment? =
                 fragmentManager.findFragmentById(R.id.map) as? MapFragment
             mapFragment?.getMapAsync(this)
         }
@@ -95,7 +93,7 @@
                 }
 
 
-
+                /*
 
                 //Aggiungi un marker da indirizzo
                 val geocoder = Geocoder(this@MainActivity)
@@ -128,9 +126,51 @@
 
                 }
 
+                */
+
+                val geocoder = Geocoder(this@MainActivity)
+                val db = Firebase.firestore
+
+                db.collection("Eventi")
+                    .get()
+                    .addOnSuccessListener { result->
+                        for(document in result){
+                            val ico = document.data.getValue("Icona").toString()
+                            val locations = geocoder.getFromLocationName(document.data.getValue("Indirizzo").toString(), 1)
+                            val firstLocation = locations!![0]
+
+                            val punto = MarkerOptions()
+                                .position(LatLng(firstLocation.latitude, firstLocation.longitude))
+                                .anchor(-0.1f, 1.0f)
+                                .title(document.data.getValue("Titolo").toString())
+                                .snippet(
+                                    "Indirizzo: " + document.data.getValue("Indirizzo").toString() + "\n" +
+                                            "Data: " + document.data.getValue("Data").toString() + "\n" +
+                                            "Ora: " + document.data.getValue("Ora").toString() + "\n" +
+                                            "Prezzo: " + document.data.getValue("Prezzo").toString()
+                                )
+
+
+                            when (ico) {
+                                "1" -> punto.icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap1))
+                                "2" -> punto.icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap2))
+                                else -> punto.icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap3))
+                            }
+
+                            var marker: Marker? =googleMap.addMarker(punto)
+                            marker?.tag=document.id
+                        }
+                    }
+
+
+
 
 
                 googleMap.setOnMarkerClickListener { marker ->
+
+
+                    val TAG = marker.tag as? Int
+
                     val view = layoutInflater.inflate(R.layout.indicatore_info_contents, null)
 
                     val titleTextView = view.findViewById<TextView>(R.id.title)
@@ -144,6 +184,7 @@
 
                     button1.setOnClickListener {
                         val intent = Intent(this@MainActivity, PaginaEvento::class.java)
+                        intent.putExtra("markerId", TAG)
                         startActivity(intent)
                     }
 
@@ -203,5 +244,7 @@
         public override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.activity_evento)
+
+            val markerId = intent.getStringExtra("markerId")
         }
     }
