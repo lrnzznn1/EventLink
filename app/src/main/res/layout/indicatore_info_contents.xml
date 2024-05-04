@@ -23,8 +23,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:textColor="@android:color/black"
-        android:text="Pprova 2"
+        android:text="Pprova 2dsaaaaaaaaaaaaaaaaaaaaaaaadsaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         android:gravity=""
+        android:lineSpacingExtra="2dp"
         android:textSize="13sp" />
 
     <LinearLayout

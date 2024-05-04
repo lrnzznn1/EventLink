@@ -4,12 +4,101 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Questo è un testo di esempio!"
-        android:textSize="24sp"
-        android:textColor="@android:color/black"
-        android:layout_gravity="center"/>
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:padding="5dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:orientation="horizontal">
 
+        <!-- Primo bottone -->
+        <ImageButton
+            android:id="@+id/button_menu"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:padding="1dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/icons8_menu_192___" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <!-- Secondo bottone -->
+        <ImageButton
+            android:id="@+id/button_profile"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:padding="1dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/icons8_account_96__1_" />
+
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <ImageView
+                android:id="@+id/ImmagineEvento"
+                android:layout_width="fill_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"/>
+            <TextView
+                android:id="@+id/TitoloEvento"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Questo è un testo di esempio!"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:paddingBottom="4dp"
+                android:padding="10dp"/>
+            <TextView
+                android:id="@+id/InfoEvento"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Questo è un testo di esempio!"
+                android:textSize="16sp"
+                android:textColor="@android:color/black"
+                android:lineSpacingExtra="8dp"
+                android:paddingBottom="10dp"
+                android:padding="10dp"/>
+            <TextView
+                android:id="@+id/TTTT"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Descrizione: "
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:paddingBottom="4dp"
+                android:padding="10dp"/>
+            <TextView
+                android:id="@+id/DescrizioneEvento"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Questo è un testo di esempio!"
+                android:textSize="16sp"
+                android:textColor="@android:color/black"
+                android:padding="10dp"/>
+        </LinearLayout>
+    </ScrollView>
+    <Button
+        android:id="@+id/PrenotaEvento"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Prenota Ora">
+        <!-- Per togliere il bottone -->
+        <!-- android:visibility="gone"> -->
+    </Button>
 </LinearLayout>

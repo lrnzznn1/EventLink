@@ -11,6 +11,7 @@
     import android.os.Bundle
     import android.view.Gravity
     import android.widget.Button
+    import android.widget.ImageView
     import android.widget.TextView
     import com.google.android.gms.maps.CameraUpdateFactory
     import com.google.android.gms.maps.GoogleMap
@@ -22,6 +23,8 @@
     import com.google.android.gms.maps.model.MarkerOptions
     import com.google.firebase.firestore.ktx.firestore
     import com.google.firebase.ktx.Firebase
+
+    val db = Firebase.firestore
 
     class MainActivity : Activity(), OnMapReadyCallback {
 
@@ -75,6 +78,7 @@
                 val resizedBitmap3 = Bitmap.createScaledBitmap(bitmap3, 100 ,100, false)
 
 
+                /*
                 // Aggiunge i marker sulla mappa
                 for (i in coordinates.indices) {
                     val pos = coordinates[i]
@@ -91,7 +95,7 @@
                         .snippet("Test descrizione")
                     googleMap.addMarker(markerOptions)
                 }
-
+                */
 
                 /*
 
@@ -129,7 +133,7 @@
                 */
 
                 val geocoder = Geocoder(this@MainActivity)
-                val db = Firebase.firestore
+
 
                 db.collection("Eventi")
                     .get()
@@ -169,7 +173,7 @@
                 googleMap.setOnMarkerClickListener { marker ->
 
 
-                    val TAG = marker.tag as? Int
+                    val TAG = marker.tag as? String
 
                     val view = layoutInflater.inflate(R.layout.indicatore_info_contents, null)
 
@@ -241,10 +245,44 @@
     }
 
     class PaginaEvento : Activity(){
+        @SuppressLint("SetTextI18n")
         public override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.activity_evento)
 
             val markerId = intent.getStringExtra("markerId")
+            db.collection("Eventi")
+                .get()
+                .addOnSuccessListener { result ->
+                    val document = result.documents.find { it.id == markerId }
+                    if (document != null) {
+                        // Il documento esiste, esegui le azioni desiderate
+
+                        val srcImage = findViewById<ImageView>(R.id.ImmagineEvento)
+                        val titleView = findViewById<TextView>(R.id.TitoloEvento)
+                        val infoView = findViewById<TextView>(R.id.InfoEvento)
+                        val descView = findViewById<TextView>(R.id.DescrizioneEvento)
+
+                        val nomeImmagine = document.data?.getValue("Immagine").toString()
+                        val idRisorsa = resources.getIdentifier(nomeImmagine, "drawable", packageName)
+                        srcImage.setImageResource(idRisorsa)
+                        titleView.text= document.data?.getValue("Titolo").toString()
+                        infoView.text= "Indirizzo: ${ document.data?.getValue("Indirizzo").toString() }\n" +
+                                       "Quando: ${document.data?.getValue("Data").toString()}" +
+                                       " ore ${document.data?.getValue("Ora").toString()}\n" +
+                                       "Prezzo: ${document.data?.getValue("Prezzo").toString()}"
+                        descView.text= document.data?.getValue("Descrizione").toString()
+
+
+                    } else {
+                        // Il documento non esiste, esegui un'altra azione o gestisci la mancanza del documento
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    // Gestisci eventuali errori nel recupero dei dati dalla collezione "Eventi"
+                }
+
+
+
         }
     }
