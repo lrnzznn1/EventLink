@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -21,7 +22,9 @@
             android:layout_height="70dp"
             android:padding="1dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/icons8_menu_192___" />
+            android:src="@drawable/icons8_menu_192___"
+            android:contentDescription="contentDescription"
+            tools:ignore="HardcodedText" />
 
         <View
             android:layout_width="0dp"
@@ -34,7 +37,9 @@
             android:layout_height="70dp"
             android:padding="1dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/icons8_account_96__1_" />
+            android:src="@drawable/icons8_account_96__1_"
+            android:contentDescription="contentDescription"
+            tools:ignore="HardcodedText" />
 
     </LinearLayout>
     <ScrollView
@@ -51,12 +56,15 @@
                 android:layout_width="fill_parent"
                 android:layout_height="200dp"
                 android:scaleType="centerCrop"
-                android:adjustViewBounds="true"/>
+                android:adjustViewBounds="true"
+                android:contentDescription="contentDescription"
+                tools:ignore="HardcodedText" />
             <TextView
                 android:id="@+id/TitoloEvento"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Questo è un testo di esempio!"
+                tools:ignore="HardcodedText"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"
@@ -67,6 +75,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Questo è un testo di esempio!"
+                tools:ignore="HardcodedText"
                 android:textSize="16sp"
                 android:textColor="@android:color/black"
                 android:lineSpacingExtra="8dp"
@@ -77,6 +86,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Descrizione: "
+                tools:ignore="HardcodedText"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"
@@ -87,6 +97,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Questo è un testo di esempio!"
+                tools:ignore="HardcodedText"
                 android:textSize="16sp"
                 android:textColor="@android:color/black"
                 android:padding="10dp"/>
@@ -97,7 +108,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Prenota Ora">
+        android:text="Prenota Ora"
+        tools:ignore="HardcodedText">
         <!-- Per togliere il bottone -->
         <!-- android:visibility="gone"> -->
     </Button>
