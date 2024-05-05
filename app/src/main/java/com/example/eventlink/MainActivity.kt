@@ -15,9 +15,9 @@
 
     TODO:
         - Finire prima pagina con
-            - zoom
-            - menu
-            - filtri
+            - menu da fare le sue cose con i bottoni
+            - filtri implementare filtri e quando
+            - rendere o più leggerla l'app o allungare schermata caricamento
         - Gestione Account + schermate
 
             // Registra un nuovo utente con email e password
@@ -106,15 +106,12 @@ package com.example.eventlink
             val buttonMostraFiltri = findViewById<Button>(R.id.filtri)
             val buttonNascondiFiltri = findViewById<Button>(R.id.chiudifiltri)
 
-            val zommpiu = findViewById<Button>(R.id.btp)
-            val zommmeno = findViewById<Button>(R.id.btm)
-
             buttonMostraNascondiImpostazioni.setOnClickListener {
                 if (impostazioniView.visibility == View.VISIBLE) {
                     // Se le impostazioni sono già visibili, nasconderle
                     impostazioniView.visibility = View.GONE
                 } else {
-                    // Altrimenti, mostrxxxxxxxxxxxxxxxxxxxxxale
+                    // Altrimenti, mostrale
                     impostazioniView.visibility = View.VISIBLE
                 }
             }
@@ -136,7 +133,7 @@ package com.example.eventlink
             }
 
             // Array di stringhe con gli elementi da caricare sullo Spinner
-            val items = arrayOf("Elemento 1", "Elemento 2", "Elemento 3")
+            val items = arrayOf("Oggi", "Domani", "Weekend", "Questa settimana", "Prossima settimana", "Questo mese")
 
             // Creazione di un adapter per lo Spinner utilizzando l'array di stringhe
             val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
@@ -287,7 +284,25 @@ package com.example.eventlink
 
                     true// Restituisce true per indicare che l'evento di click sul marker è stato gestito
                 }
+                val zommpiu = findViewById<Button>(R.id.btp)
+                val zommmeno = findViewById<Button>(R.id.btm)
 
+                zommpiu.setOnClickListener {
+                    // Incrementa il livello di zoom attuale di un valore desiderato
+                    val currentZoomLevel = googleMap.cameraPosition.zoom
+                    val newZoomLevel = currentZoomLevel + 1 // Modifica il valore di incremento del livello di zoom
+                    val cameraUpdate = CameraUpdateFactory.zoomTo(newZoomLevel)
+                    googleMap.animateCamera(cameraUpdate)
+                }
+
+                // Imposta un listener per il bottone di zoom out (-)
+                zommmeno.setOnClickListener {
+                    // Decrementa il livello di zoom attuale di un valore desiderato
+                    val currentZoomLevel = googleMap.cameraPosition.zoom
+                    val newZoomLevel = currentZoomLevel - 1 // Modifica il valore di decremento del livello di zoom
+                    val cameraUpdate = CameraUpdateFactory.zoomTo(newZoomLevel)
+                    googleMap.animateCamera(cameraUpdate)
+                }
             }
 
         }
