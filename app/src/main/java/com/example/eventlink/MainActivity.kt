@@ -252,7 +252,6 @@ package com.example.eventlink
 
                         val urlImmagine = document.data?.getValue("Immagine").toString()
 
-
                         try {
                             Glide.with(this@PaginaEvento).load(urlImmagine).into(srcImage)
                         } catch (e: Exception) {
