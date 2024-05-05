@@ -44,11 +44,236 @@
             tools:ignore="HardcodedText" />
 
     </LinearLayout>
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.MapFragment"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.example.eventlink.MainActivity"
-        tools:ignore="FragmentTagUsage" />
+        android:orientation="horizontal">
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="com.example.eventlink.MainActivity"
+            tools:ignore="FragmentTagUsage" />
+        <!-- Primo LinearLayout sovrapposto -->
+
+        <LinearLayout
+            android:id="@+id/Impostazioni"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_gravity="top"
+            android:padding="7dp"
+            android:background="@color/white">
+
+            <!-- Contenuto del primo LinearLayout -->
+            <Button
+                android:id="@+id/bt1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/impostazioni"
+                tools:ignore="ButtonStyle"/>
+            <Button
+                android:id="@+id/bt2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/contatti"
+                tools:ignore="ButtonStyle"
+                android:layout_marginTop="11dp"/>
+            <Button
+                android:id="@+id/bt3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/aiuto"
+                tools:ignore="ButtonStyle"
+                android:layout_marginTop="11dp"/>
+        </LinearLayout>
+
+        <!-- Secondo LinearLayout sovrapposto -->
+        <LinearLayout
+            android:id="@+id/zoomview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="right"
+            android:layout_marginRight="2dp"
+            android:layout_marginTop="400dp"
+            android:background="@color/white"
+            tools:ignore="RtlHardcoded"
+            >
+
+            <!-- Contenuto del secondo LinearLayout -->
+            <Button
+                android:id="@+id/btp"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:textSize="30sp"
+                android:text="@string/Piu"
+                android:textStyle="bold"
+                tools:ignore="ButtonStyle"
+                android:background="@color/white"/>
+            <Button
+                android:id="@+id/btm"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:text="@string/Minus"
+                tools:ignore="ButtonStyle"
+                android:background="@color/white"/>
+        </LinearLayout>
+        <!-- Terzo LinearLayout sovrapposto -->
+
+        <!-- Contenuto del terzo LinearLayout -->
+        <Button
+            android:layout_gravity="right"
+            android:layout_marginRight="2dp"
+            android:layout_marginTop="530dp"
+            android:id="@+id/filtri"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:text="@string/filtri"
+            tools:ignore="ButtonStyle,RtlHardcoded"
+            android:background="@color/white"/>
+
+        
+        <LinearLayout
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:layout_gravity="right"
+            android:layout_marginRight="2dp"
+            android:layout_marginTop="240dp"
+            tools:ignore="RtlHardcoded"
+            android:padding="5dp"
+            android:id="@+id/filtrilayout">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black"
+                    android:text="Filtri"
+                    android:textStyle="bold"
+                    android:gravity="left"
+                    android:textSize="35sp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="5dp"
+                    tools:ignore="HardcodedText" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+                <Button
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="-5dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/chiudifiltri"
+                    android:textSize="16sp"
+                    android:text="@string/x"
+                    tools:ignore="ButtonStyle"
+                    android:background="@color/white"/>
+
+            </LinearLayout>
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/date"
+                android:layout_marginTop="15dp">
+            </Spinner>
+            <FrameLayout
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:background="@color/black">
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@color/white">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <CheckBox
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:text="@string/concerto">
+                        </CheckBox>
+                        <CheckBox
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/sport">
+                        </CheckBox>
+                        <CheckBox
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/gastronomia">
+                        </CheckBox>
+                        <CheckBox
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/convegno">
+                        </CheckBox>
+                        <CheckBox
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/mostra">
+                        </CheckBox>
+                        <CheckBox
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/spettacolo">
+                        </CheckBox>
+                        <CheckBox
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/outdoor">
+                        </CheckBox>
+                        <CheckBox
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/escursione">
+                        </CheckBox>
+                        <CheckBox
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/networking">
+                        </CheckBox>
+                        <CheckBox
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/educazione">
+                        </CheckBox>
+                    </LinearLayout>
+                </ScrollView>
+            </FrameLayout>
+        </LinearLayout>
+    </FrameLayout>
 </LinearLayout>

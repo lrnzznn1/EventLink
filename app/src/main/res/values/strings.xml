@@ -2,4 +2,21 @@
     <string name="app_name">EventLink</string>
     <string name="naviga">Naviga</string>
     <string name="apri">Apri</string>
+    <string name="impostazioni">Impostazioni</string>
+    <string name="contatti">Contatti</string>
+    <string name="aiuto">Aiuto!</string>
+    <string name="Minus">-</string>
+    <string name="Piu">+</string>
+    <string name="filtri">Filtri</string>
+    <string name="x">x</string>
+    <string name="concerto">concerto</string>
+    <string name="sport">sport</string>
+    <string name="gastronomia">gastronomia</string>
+    <string name="convegno">convegno</string>
+    <string name="mostra">mostra</string>
+    <string name="spettacolo">spettacolo</string>
+    <string name="outdoor">outdoor</string>
+    <string name="escursione">escursione</string>
+    <string name="networking">networking</string>
+    <string name="educazione">educazione</string>
 </resources>

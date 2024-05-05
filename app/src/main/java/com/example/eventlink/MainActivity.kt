@@ -49,8 +49,14 @@ package com.example.eventlink
     import android.net.Uri
     import android.os.Bundle
     import android.view.Gravity
+    import android.view.View
+    import android.view.ViewGroup
+    import android.widget.ArrayAdapter
     import android.widget.Button
+    import android.widget.ImageButton
     import android.widget.ImageView
+    import android.widget.LinearLayout
+    import android.widget.Spinner
     import android.widget.TextView
     import com.bumptech.glide.Glide
     import com.google.android.gms.maps.CameraUpdateFactory
@@ -81,12 +87,69 @@ package com.example.eventlink
             // Imposta il layout dell'attività
             setContentView(R.layout.activity_main)
 
+            val impostazioniView = findViewById<LinearLayout>(R.id.Impostazioni)
+            impostazioniView.visibility = View.GONE
+
+            val filtriView = findViewById<LinearLayout>(R.id.filtrilayout)
+            filtriView.visibility = View.GONE
+
+            val zoomView = findViewById<LinearLayout>(R.id.zoomview)
+
             // Trova il frammento della mappa nel layout dell'attività
             val mapFragment: MapFragment? =
                 fragmentManager.findFragmentById(R.id.map) as? MapFragment
 
             // Trova il frammento della mappa nel layout dell'attività
             mapFragment?.getMapAsync(this)
+
+            val buttonMostraNascondiImpostazioni = findViewById<ImageButton>(R.id.button_menu)
+            val buttonMostraFiltri = findViewById<Button>(R.id.filtri)
+            val buttonNascondiFiltri = findViewById<Button>(R.id.chiudifiltri)
+
+            val zommpiu = findViewById<Button>(R.id.btp)
+            val zommmeno = findViewById<Button>(R.id.btm)
+
+            buttonMostraNascondiImpostazioni.setOnClickListener {
+                if (impostazioniView.visibility == View.VISIBLE) {
+                    // Se le impostazioni sono già visibili, nasconderle
+                    impostazioniView.visibility = View.GONE
+                } else {
+                    // Altrimenti, mostrxxxxxxxxxxxxxxxxxxxxxale
+                    impostazioniView.visibility = View.VISIBLE
+                }
+            }
+            buttonMostraFiltri.setOnClickListener{
+                buttonMostraFiltri.visibility= View.GONE
+                filtriView.visibility = View.VISIBLE
+                val layoutParams = zoomView.layoutParams as ViewGroup.MarginLayoutParams
+                val newMarginTop = resources.getDimensionPixelSize(R.dimen.margin_top_120dp) // Sostituisci R.dimen.margin_top_show_filters con la tua dimensione desiderata
+                layoutParams.topMargin = newMarginTop
+                zoomView.layoutParams = layoutParams
+            }
+            buttonNascondiFiltri.setOnClickListener{
+                filtriView.visibility = View.GONE
+                buttonMostraFiltri.visibility= View.VISIBLE
+                val layoutParams = zoomView.layoutParams as ViewGroup.MarginLayoutParams
+                val newMarginTop = resources.getDimensionPixelSize(R.dimen.margin_top_400dp) // R.dimen.margin_top_400dp è una dimensione di 400dp definita nelle risorse
+                layoutParams.topMargin = newMarginTop
+                zoomView.layoutParams = layoutParams
+            }
+
+            // Array di stringhe con gli elementi da caricare sullo Spinner
+            val items = arrayOf("Elemento 1", "Elemento 2", "Elemento 3")
+
+            // Creazione di un adapter per lo Spinner utilizzando l'array di stringhe
+            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
+
+            // Imposta lo stile del dropdown
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+            // Ottieni il riferimento al tuo Spinner utilizzando l'ID
+            val spinnerDate = findViewById<Spinner>(R.id.date)
+
+            // Imposta l'adapter sullo Spinner
+            spinnerDate.adapter = adapter
+
         }
 
 
