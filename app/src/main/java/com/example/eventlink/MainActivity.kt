@@ -64,11 +64,11 @@
                 Mostra
                 Spettacolo
                 Outdoor
-                Festival
+                Escursione
                 Networking
                 Educazione
                 */
-
+                /*
                 // Carica l'immagine dalla risorsa
                 val bitmap1 = BitmapFactory.decodeResource(resources, R.drawable.logomontagna)
                 // Ridimensiona l'immagine alle dimensioni desiderate
@@ -79,14 +79,25 @@
 
                 val bitmap3 = BitmapFactory.decodeResource(resources, R.drawable.logosport)
                 val resizedBitmap3 = Bitmap.createScaledBitmap(bitmap3, 100 ,100, false)
-
+                */
 
                 val geocoder = Geocoder(this@MainActivity)
                 db.collection("Eventi")
                     .get()
                     .addOnSuccessListener { result->
                         for(document in result){
-                            val ico = document.data.getValue("Icona").toString()
+                            val ico = document.data.getValue("Tipo").toString()
+                            // Ottieni l'ID della risorsa drawable utilizzando il suo nome
+                            val resourceId = resources.getIdentifier(ico, "drawable", packageName)
+
+                            // Carica la risorsa drawable come bitmap
+                            val bitmap = BitmapFactory.decodeResource(resources, resourceId)
+
+                            // Ridimensiona il bitmap
+                            val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 100 ,100, false)
+
+
+
                             val locations = geocoder.getFromLocationName(document.data.getValue("Indirizzo").toString(), 1)
                             val firstLocation = locations!![0]
 
@@ -101,12 +112,8 @@
                                             "Prezzo: " + document.data.getValue("Prezzo").toString()
                                 )
 
+                            punto.icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap))
 
-                            when (ico) {
-                                "1" -> punto.icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap1))
-                                "2" -> punto.icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap2))
-                                else -> punto.icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap3))
-                            }
 
                             var marker: Marker? =googleMap.addMarker(punto)
                             marker?.tag=document.id
