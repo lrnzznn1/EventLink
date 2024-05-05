@@ -14,8 +14,11 @@
 
 
     TODO:
-        - Picchiare mase
-        - Login
+        - Finire prima pagina con
+            - zoom
+            - menu
+            - filtri
+        - Gestione Account + schermate
 
             // Registra un nuovo utente con email e password
             mAuth.createUserWithEmailAndPassword(email, password)
