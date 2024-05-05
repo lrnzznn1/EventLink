@@ -1,20 +1,21 @@
     package com.example.eventlink
 
+    // Importa le necessarie classi Firebase Authentication
     import android.annotation.SuppressLint
     import android.app.Activity
     import android.app.AlertDialog
-    import android.content.ContentValues.TAG
     import android.content.Intent
     import android.graphics.Bitmap
     import android.graphics.BitmapFactory
+    import android.graphics.drawable.Drawable
     import android.location.Geocoder
     import android.net.Uri
     import android.os.Bundle
-    import android.util.Log
     import android.view.Gravity
     import android.widget.Button
     import android.widget.ImageView
     import android.widget.TextView
+    import com.bumptech.glide.Glide
     import com.google.android.gms.maps.CameraUpdateFactory
     import com.google.android.gms.maps.GoogleMap
     import com.google.android.gms.maps.MapFragment
@@ -23,33 +24,17 @@
     import com.google.android.gms.maps.model.LatLng
     import com.google.android.gms.maps.model.Marker
     import com.google.android.gms.maps.model.MarkerOptions
+    import com.google.firebase.auth.FirebaseAuth
     import com.google.firebase.firestore.ktx.firestore
     import com.google.firebase.ktx.Firebase
-    // Importa le necessarie classi Firebase Authentication
-    import com.google.firebase.auth.FirebaseAuth
-    import com.google.firebase.auth.FirebaseUser
 
     val db = Firebase.firestore
-    val mAuth = FirebaseAuth.getInstance()
+    //val mAuth = FirebaseAuth.getInstance()
     class MainActivity : Activity(), OnMapReadyCallback {
 
         private val italia = LatLng(42.0, 11.53)
 
         private val zoomlvl = 6f
-
-
-        private val coordinates = arrayOf(
-            LatLng(41.9028, 12.4964), // Roma
-            LatLng(45.4642, 9.1900),  // Milano
-            LatLng(45.0703, 7.6869),  // Torino
-            LatLng(45.4384, 10.9916), // Verona
-            LatLng(43.7696, 11.2558), // Firenze
-            LatLng(40.8522, 14.2681), // Napoli
-            LatLng(45.4386, 12.3266), // Venezia
-            LatLng(41.1171, 16.8719), // Bari
-            LatLng(37.5079, 15.0830)  // Catania
-        )
-
 
         //Funzione Per creare la mappa da layout
         public override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +56,19 @@
                 //Sposta Camera in centro italia
                 moveCamera(CameraUpdateFactory.newLatLngZoom(italia,zoomlvl))
 
+                /*
+                Concerto
+                Sport
+                Gastronomia
+                Convegno
+                Mostra
+                Spettacolo
+                Outdoor
+                Festival
+                Networking
+                Educazione
+                */
+
                 // Carica l'immagine dalla risorsa
                 val bitmap1 = BitmapFactory.decodeResource(resources, R.drawable.logomontagna)
                 // Ridimensiona l'immagine alle dimensioni desiderate
@@ -81,60 +79,6 @@
 
                 val bitmap3 = BitmapFactory.decodeResource(resources, R.drawable.logosport)
                 val resizedBitmap3 = Bitmap.createScaledBitmap(bitmap3, 100 ,100, false)
-
-
-
-                // Aggiunge i marker sulla mappa
-                for (i in coordinates.indices) {
-                    val pos = coordinates[i]
-                    val ico = when {
-                        i < 3 -> resizedBitmap1
-                        i < 6 -> resizedBitmap2
-                        else -> resizedBitmap3
-                    }
-                    val markerOptions = MarkerOptions()
-                        .position(pos)
-                        .icon(BitmapDescriptorFactory.fromBitmap(ico))
-                        .anchor(-0.1f, 1.0f)
-                        .title("Test titolo")
-                        .snippet("Test descrizione")
-                    googleMap.addMarker(markerOptions)
-                }
-
-
-
-/*
-                //Aggiungi un marker da indirizzo
-                val geocoder1 = Geocoder(this@MainActivity)
-                val address = "Piazza dei donatori di sangue 1 Isola Vicentina VI"
-                val locations = geocoder1.getFromLocationName(address, 1)
-                if (!locations.isNullOrEmpty()) {
-                    //Database initialization
-                    val db = Firebase.firestore
-                    db.collection("Utenti")
-                        .get()
-                        .addOnSuccessListener { result ->
-                            val firstLocation = locations[0]
-
-                            for (document in result) {
-                                val aaa = MarkerOptions()
-                                    .position(LatLng(firstLocation.latitude, firstLocation.longitude))
-                                    .icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap1))
-                                    .anchor(-0.1f, 1.0f)
-                                    .title(document.id)
-                                    .snippet("${document.data.getValue("Nome")}")
-                                Log.d(TAG, "${document.id} => ${document.data}")
-                                googleMap.addMarker(aaa)
-                            }
-
-                        }
-                        .addOnFailureListener { exception ->
-                            Log.w(TAG, "Error getting documents.", exception)
-                        }
-
-
-                }
-*/
 
 
                 val geocoder = Geocoder(this@MainActivity)
@@ -266,16 +210,23 @@
                         val infoView = findViewById<TextView>(R.id.InfoEvento)
                         val descView = findViewById<TextView>(R.id.DescrizioneEvento)
 
-                        val nomeImmagine = document.data?.getValue("Immagine").toString()
-                        val idRisorsa = resources.getIdentifier(nomeImmagine, "drawable", packageName)
-                        srcImage.setImageResource(idRisorsa)
+                        val urlImmagine = document.data?.getValue("Immagine").toString()
+
+
+                        try {
+                            Glide.with(this@PaginaEvento).load(urlImmagine).into(srcImage)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+
+                        //titleView.text = urlImmagine
+
                         titleView.text= document.data?.getValue("Titolo").toString()
                         infoView.text= "Indirizzo: ${ document.data?.getValue("Indirizzo").toString() }\n" +
                                        "Quando: ${document.data?.getValue("Data").toString()}" +
                                        " ore ${document.data?.getValue("Ora").toString()}\n" +
                                        "Prezzo: ${document.data?.getValue("Prezzo").toString()}"
                         descView.text= document.data?.getValue("Descrizione").toString()
-
 
                     } else {
                         // Il documento non esiste, esegui un'altra azione o gestisci la mancanza del documento
