@@ -42,6 +42,7 @@ package com.example.eventlink
     import android.annotation.SuppressLint
     import android.app.Activity
     import android.app.AlertDialog
+    import android.app.DatePickerDialog
     import android.content.Intent
     import android.graphics.Bitmap
     import android.graphics.BitmapFactory
@@ -70,8 +71,9 @@ package com.example.eventlink
     //import com.google.firebase.auth.FirebaseAuth
     import com.google.firebase.firestore.ktx.firestore
     import com.google.firebase.ktx.Firebase
+    import java.util.Calendar
 
-    @SuppressLint("StaticFieldLeak")
+@SuppressLint("StaticFieldLeak")
     val db = Firebase.firestore
     //val mAuth = FirebaseAuth.getInstance()
     class MainActivity : Activity(), OnMapReadyCallback {
@@ -350,6 +352,38 @@ package com.example.eventlink
                 .addOnFailureListener {
                     // Gestisci eventuali errori nel recupero dei dati dalla collezione "Eventi"
                 }
+
+        }
+    }
+
+    class paginaLogin : Activity(){
+        public override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            val textViewDateOfBirth = findViewById<TextView>(R.id.textView4)
+            val buttonSelectDateOfBirth = findViewById<Button>(R.id.buttonDDNascita)
+
+            // Listener per il clic sul pulsante "Seleziona data di nascita"
+            buttonSelectDateOfBirth.setOnClickListener {
+                // Ottenere la data corrente
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+
+                // Creare e mostrare il DatePickerDialog
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    DatePickerDialog.OnDateSetListener { _, selectedYear, selectedMonth, selectedDay ->
+                        // Aggiornare il TextView con la data selezionata
+                        val selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                        textViewDateOfBirth.text = selectedDate
+                    },
+                    year,
+                    month,
+                    dayOfMonth
+                )
+                datePickerDialog.show()
+            }
 
         }
     }

@@ -13,8 +13,6 @@
         android:background="@color/white"
         android:gravity="center_vertical"
         android:padding="5dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
         android:orientation="horizontal">
 
         <!-- Primo bottone -->
