@@ -39,39 +39,37 @@
 
 package com.example.eventlink
 
-    import android.annotation.SuppressLint
-    import android.app.Activity
-    import android.app.AlertDialog
-    import android.app.DatePickerDialog
-    import android.content.Intent
-    import android.graphics.Bitmap
-    import android.graphics.BitmapFactory
-    import android.location.Geocoder
-    import android.net.Uri
-    import android.os.Bundle
-    import android.view.Gravity
-    import android.view.View
-    import android.view.ViewGroup
-    import android.widget.ArrayAdapter
-    import android.widget.Button
-    import android.widget.ImageButton
-    import android.widget.ImageView
-    import android.widget.LinearLayout
-    import android.widget.Spinner
-    import android.widget.TextView
-    import com.bumptech.glide.Glide
-    import com.google.android.gms.maps.CameraUpdateFactory
-    import com.google.android.gms.maps.GoogleMap
-    import com.google.android.gms.maps.MapFragment
-    import com.google.android.gms.maps.OnMapReadyCallback
-    import com.google.android.gms.maps.model.BitmapDescriptorFactory
-    import com.google.android.gms.maps.model.LatLng
-    import com.google.android.gms.maps.model.Marker
-    import com.google.android.gms.maps.model.MarkerOptions
     //import com.google.firebase.auth.FirebaseAuth
-    import com.google.firebase.firestore.ktx.firestore
-    import com.google.firebase.ktx.Firebase
-    import java.util.Calendar
+    import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.AlertDialog
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.location.Geocoder
+import android.net.Uri
+import android.os.Bundle
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.Spinner
+import android.widget.TextView
+import com.bumptech.glide.Glide
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapFragment
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 @SuppressLint("StaticFieldLeak")
     val db = Firebase.firestore
@@ -148,6 +146,15 @@ package com.example.eventlink
 
             // Imposta l'adapter sullo Spinner
             spinnerDate.adapter = adapter
+
+
+            //Pulsante pagina login
+            val accountPulsante = findViewById<ImageButton>(R.id.button_profile)
+
+            accountPulsante.setOnClickListener{
+                val intent = Intent(this@MainActivity, PaginaLogin::class.java)
+                startActivity(intent)
+            }
 
         }
 
@@ -356,9 +363,12 @@ package com.example.eventlink
         }
     }
 
-    class paginaLogin : Activity(){
+    class PaginaLogin : Activity(){
         public override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
+            setContentView(R.layout.signup)
+
+            /*
             val textViewDateOfBirth = findViewById<TextView>(R.id.textView4)
             val buttonSelectDateOfBirth = findViewById<Button>(R.id.buttonDDNascita)
 
@@ -370,6 +380,7 @@ package com.example.eventlink
                 val month = calendar.get(Calendar.MONTH)
                 val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
 
+                /*
                 // Creare e mostrare il DatePickerDialog
                 val datePickerDialog = DatePickerDialog(
                     this,
@@ -382,8 +393,13 @@ package com.example.eventlink
                     month,
                     dayOfMonth
                 )
+
                 datePickerDialog.show()
-            }
+                */
+
+             */
+
+
 
         }
     }

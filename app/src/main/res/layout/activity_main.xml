@@ -10,21 +10,25 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="#3399FF"
         android:gravity="center_vertical"
-        android:padding="5dp"
+        android:padding="10dp"
+        android:layout_marginTop="-5dp"
+        android:layout_marginBottom="-5dp"
         android:orientation="horizontal">
 
         <!-- Primo bottone -->
         <ImageButton
             android:id="@+id/button_menu"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:padding="1dp"
+            android:layout_width="58dp"
+            android:layout_height="55dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/icons8_menu_192___"
+            android:src="@drawable/icons8_menu_208"
+            android:scaleType="fitCenter"
             android:contentDescription="contentDescription"
-            tools:ignore="HardcodedText" />
+            tools:ignore="HardcodedText"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="5dp"/>
 
         <View
             android:layout_width="0dp"
@@ -33,13 +37,15 @@
         <!-- Secondo bottone -->
         <ImageButton
             android:id="@+id/button_profile"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:padding="1dp"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:scaleType="fitCenter"
             android:background="@android:color/transparent"
-            android:src="@drawable/icons8_account_96__1_"
+            android:src="@drawable/icons8_account_96"
             android:contentDescription="contentDescription"
-            tools:ignore="HardcodedText" />
+            tools:ignore="HardcodedText"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="5dp"/>
 
     </LinearLayout>
     <FrameLayout

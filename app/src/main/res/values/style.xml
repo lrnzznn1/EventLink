@@ -3,4 +3,12 @@
     <style name="AlertDialogCustom" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:backgroundDimEnabled">false</item>
     </style>
+    <style name="CustomButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:background">#FFA500</item>
+        <item name="android:textColor">#333333</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:typeface"></item> <!-- your_font è il nome del file del tipo di carattere senza l'estensione -->
+        <!-- Altri attributi del bottone -->
+    </style>
 </resources>

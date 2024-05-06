@@ -19,4 +19,17 @@
     <string name="escursione">escursione</string>
     <string name="networking">networking</string>
     <string name="educazione">educazione</string>
+    <string name="registrati">Registrati</string>
+    <string name="nome">Nome</string>
+    <string name="data_di_nascita">Data di nascita</string>
+    <string name="inserisci_cognome">Cognome</string>
+    <string name="cognome">Cognome</string>
+    <string name="inserisci_nome">Nome</string>
+    <string name="seleziona_data_di_nascita">Seleziona data di nascita</string>
+    <string name="email">Email</string>
+    <string name="inserisci_email">Email</string>
+    <string name="numero_di_telefono">Numero di telefono</string>
+    <string name="Numero_di_Telefono">Numero di Telefono</string>
+    <string name="registrati_btn">Registrati</string>
+    <string name="iscriviti">Iscriviti</string>
 </resources>
