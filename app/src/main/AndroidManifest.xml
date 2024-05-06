@@ -27,7 +27,7 @@
             android:name=".PaginaEvento">
         </activity>
         <activity
-            android:name=".PaginaLogin">
+            android:name=".PaginaSignIn">
         </activity>
         <meta-data
             android:name="com.google.android.geo.API_KEY"

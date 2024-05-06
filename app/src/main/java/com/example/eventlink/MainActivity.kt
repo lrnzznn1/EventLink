@@ -40,7 +40,7 @@
 package com.example.eventlink
 
     //import com.google.firebase.auth.FirebaseAuth
-    import android.annotation.SuppressLint
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -49,16 +49,19 @@ import android.graphics.BitmapFactory
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -68,12 +71,20 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.io.File
+import java.io.FileInputStream
+import java.util.Properties
+import javax.mail.*
+import javax.mail.internet.InternetAddress
+import javax.mail.internet.MimeMessage
 
 @SuppressLint("StaticFieldLeak")
-    val db = Firebase.firestore
-    //val mAuth = FirebaseAuth.getInstance()
+    private val db = Firebase.firestore
+    private lateinit var auth : FirebaseAuth
     class MainActivity : Activity(), OnMapReadyCallback {
 
         // Coordinate della posizione centrale dell'Italia
@@ -152,7 +163,7 @@ import com.google.firebase.ktx.Firebase
             val accountPulsante = findViewById<ImageButton>(R.id.button_profile)
 
             accountPulsante.setOnClickListener{
-                val intent = Intent(this@MainActivity, PaginaLogin::class.java)
+                val intent = Intent(this@MainActivity, PaginaSignIn::class.java)
                 startActivity(intent)
             }
 
@@ -363,13 +374,18 @@ import com.google.firebase.ktx.Firebase
         }
     }
 
-    class PaginaLogin : Activity(){
+    class PaginaSignIn : Activity() {
         public override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.signup)
             val itemsGiorno = ArrayList<String>()
             for (i in 1..31) {
-                itemsGiorno.add(String.format("%02d", i)) // Aggiunge giorni formattati con due cifre
+                itemsGiorno.add(
+                    String.format(
+                        "%02d",
+                        i
+                    )
+                ) // Aggiunge giorni formattati con due cifre
             }
 
             // Popola l'array dei mesi
@@ -384,7 +400,8 @@ import com.google.firebase.ktx.Firebase
                 itemsAnno.add(i.toString())
             }
             // Creazione di un adapter per lo Spinner utilizzando l'array di stringhe
-            val adapterGiorno = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsGiorno)
+            val adapterGiorno =
+                ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsGiorno)
             val adapterMese = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsMese)
             val adapterAnno = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsAnno)
 
@@ -402,38 +419,94 @@ import com.google.firebase.ktx.Firebase
             spinnerMese.adapter = adapterMese
             spinnerAnno.adapter = adapterAnno
 
-            /*
-            val textViewDateOfBirth = findViewById<TextView>(R.id.textView4)
-            val buttonSelectDateOfBirth = findViewById<Button>(R.id.buttonDDNascita)
 
-            // Listener per il clic sul pulsante "Seleziona data di nascita"
-            buttonSelectDateOfBirth.setOnClickListener {
-                // Ottenere la data corrente
-                val calendar = Calendar.getInstance()
-                val year = calendar.get(Calendar.YEAR)
-                val month = calendar.get(Calendar.MONTH)
-                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+            //Fase Auth
+            //auth= Firebase.auth mio cugino usa solo questo
+            auth = FirebaseAuth.getInstance()
+            val reg = findViewById<Button>(R.id.buttonSignup)
+            val emailfield = findViewById<EditText>(R.id.editTextEmail)
+            val nomefield = findViewById<EditText>(R.id.editTextNome)
+            val cognomefield = findViewById<EditText>(R.id.editTextCognome)
+            val telefonofield = findViewById<EditText>(R.id.editTextTelefono)
 
-                /*
-                // Creare e mostrare il DatePickerDialog
-                val datePickerDialog = DatePickerDialog(
-                    this,
-                    DatePickerDialog.OnDateSetListener { _, selectedYear, selectedMonth, selectedDay ->
-                        // Aggiornare il TextView con la data selezionata
-                        val selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
-                        textViewDateOfBirth.text = selectedDate
-                    },
-                    year,
-                    month,
-                    dayOfMonth
-                )
-
-                datePickerDialog.show()
-                */
-
-             */
-
-
-
+            reg.setOnClickListener {
+                val nome = nomefield.text.toString()
+                val cognome = cognomefield.text.toString()
+                val telefono = telefonofield.text.toString()
+                val email = emailfield.text.toString()
+                val password = generateRandomPassword(12)
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            // Registrazione avvenuta con successo
+                            val user = auth.currentUser
+                        } else {
+                            // Registrazione fallita
+                            val exception = task.exception
+                            exception?.let {
+                                Log.e("AuthError", "Registrazione fallita: ${it.message}")
+                            }
+                        }
+                    }
+                /*inviaEmail(
+                    email,
+                    "SignIn EventLink",
+                    "Gentile ${nome} ${cognome}, \n la ringraziamo per l'iscrizione alla nostra applicazione, \n la sua password preimpostata è: ${password}"
+                )*/
+            }
         }
     }
+
+
+//funzione finta per creare password randomiche, ovviamente da cambiare
+fun generateRandomPassword(length: Int): String {
+    val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?/{}[]"
+    return (1..length)
+        .map { allowedChars.random() }
+        .joinToString("")
+}
+
+
+//funzione che ci permette di inviare mail con connessione cryptata con STRATTLS
+fun inviaEmail(destinatario: String, oggetto: String, testo: String) {
+    // Configurazione delle proprietà per la connessione al server SMTP
+    val props = Properties()
+    props["mail.smtp.host"] = "smtp.gmail.com" // Indirizzo del server SMTP
+    props["mail.smtp.port"] = "587" // Porta del server SMTP
+    props["mail.smtp.auth"] = "true" // Abilita l'autenticazione SMTP
+    props["mail.smtp.starttls.enable"] = "true" // Abilita STARTTLS per la crittografia
+
+    // Autenticazione al server SMTP
+    val autenticazione = object : Authenticator() {
+        val pw = Properties().apply {
+            load(FileInputStream(File("local.properties")))
+        }.getProperty("PASSWORD")
+        override fun getPasswordAuthentication(): PasswordAuthentication {
+            return PasswordAuthentication("EventLinkAuth@gmail.com", pw)
+        }
+    }
+
+    // Creazione della sessione
+    val session = Session.getInstance(props, autenticazione)
+
+    try {
+        // Creazione del messaggio
+        val message = MimeMessage(session)
+        message.setFrom(InternetAddress("EventLinkAuth@gmail.com"))
+        message.addRecipient(Message.RecipientType.TO, InternetAddress(destinatario))
+        message.subject = oggetto
+        message.setText(testo)
+
+        // Invio dell'email
+        Transport.send(message)
+        println("Email inviata con successo!")
+    } catch (e: MessagingException) {
+        println("Si è verificato un errore durante l'invio dell'email: ${e.message}")
+    }
+}
+
+
+
+
+
+
