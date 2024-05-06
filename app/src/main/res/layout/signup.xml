@@ -36,7 +36,7 @@
             android:layout_weight="1" />
         <!-- Secondo bottone -->
         <ImageButton
-            android:id="@+id/button_profile"
+            android:id="@+id/button_2_profile"
             android:layout_width="65dp"
             android:layout_height="65dp"
             android:scaleType="fitCenter"
@@ -99,33 +99,36 @@
             android:paddingStart="20dp"
             android:importantForAutofill="no"
             tools:ignore="RtlSymmetry" />
-        <!-- TODO: settare il layout_marginEnd -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="30dp">
+            <!-- TODO: Mettere apposto dio c-->
             <Spinner
-                android:layout_width="wrap_content"
+                android:layout_width="65dp"
                 android:layout_height="48dp"
                 android:id="@+id/Giorno"
                 android:background="@drawable/rounded_edittext_background"
-                android:layout_marginEnd="15dp">
+                android:layout_marginEnd="15dp"
+                android:layout_gravity="center"
+                android:gravity="center">
             </Spinner>
 
             <Spinner
-                android:layout_width="wrap_content"
+                android:layout_width="65dp"
                 android:layout_height="48dp"
                 android:id="@+id/Mese"
                 android:background="@drawable/rounded_edittext_background"
-                android:layout_marginEnd="15dp">
+                android:layout_marginEnd="15dp"
+                android:gravity="center">
             </Spinner>
             <Spinner
-                android:layout_width="wrap_content"
+                android:layout_width="120dp"
                 android:layout_height="48dp"
                 android:id="@+id/Anno"
                 android:background="@drawable/rounded_edittext_background"
-                >
+                android:gravity="center">
             </Spinner>
         </LinearLayout>
 

@@ -34,7 +34,7 @@
             android:layout_weight="1" />
         <!-- Secondo bottone -->
         <ImageButton
-            android:id="@+id/button_profile"
+            android:id="@+id/button_3_profile"
             android:layout_width="65dp"
             android:layout_height="65dp"
             android:scaleType="fitCenter"

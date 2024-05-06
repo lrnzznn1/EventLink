@@ -367,6 +367,40 @@ import com.google.firebase.ktx.Firebase
         public override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.signup)
+            val itemsGiorno = ArrayList<String>()
+            for (i in 1..31) {
+                itemsGiorno.add(String.format("%02d", i)) // Aggiunge giorni formattati con due cifre
+            }
+
+            // Popola l'array dei mesi
+            val itemsMese = ArrayList<String>()
+            for (i in 1..12) {
+                itemsMese.add(String.format("%02d", i)) // Aggiunge mesi formattati con due cifre
+            }
+
+            // Popola l'array degli anni
+            val itemsAnno = ArrayList<String>()
+            for (i in 1900..2030) {
+                itemsAnno.add(i.toString())
+            }
+            // Creazione di un adapter per lo Spinner utilizzando l'array di stringhe
+            val adapterGiorno = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsGiorno)
+            val adapterMese = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsMese)
+            val adapterAnno = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsAnno)
+
+            // Imposta lo stile del dropdown
+            adapterGiorno.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            adapterMese.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            adapterAnno.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+            // Ottieni il riferimento al tuo Spinner utilizzando l'ID
+            val spinnerGiorno = findViewById<Spinner>(R.id.Giorno)
+            val spinnerMese = findViewById<Spinner>(R.id.Mese)
+            val spinnerAnno = findViewById<Spinner>(R.id.Anno)
+            // Imposta l'adapter sullo Spinner
+            spinnerGiorno.adapter = adapterGiorno
+            spinnerMese.adapter = adapterMese
+            spinnerAnno.adapter = adapterAnno
 
             /*
             val textViewDateOfBirth = findViewById<TextView>(R.id.textView4)
