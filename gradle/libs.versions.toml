@@ -14,6 +14,7 @@ firebaseAuthKtx = "23.0.0"
 firebaseFirestoreKtx = "25.0.0"
 material = "1.12.0"
 monitor = "1.6.1"
+transportApi = "3.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,6 +37,7 @@ firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx",
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-monitor = { group = "androidx.test", name = "monitor", version.ref = "monitor" }
+transport-api = { group = "com.google.android.datatransport", name = "transport-api", version.ref = "transportApi" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

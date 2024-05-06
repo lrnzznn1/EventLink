@@ -39,7 +39,6 @@
 
 package com.example.eventlink
 
-    //import com.google.firebase.auth.FirebaseAuth
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
@@ -61,7 +60,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
-import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -72,15 +70,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.io.File
-import java.io.FileInputStream
-import java.util.Properties
-import javax.mail.*
-import javax.mail.internet.InternetAddress
-import javax.mail.internet.MimeMessage
 
 @SuppressLint("StaticFieldLeak")
     private val db = Firebase.firestore
@@ -466,7 +457,7 @@ fun generateRandomPassword(length: Int): String {
         .joinToString("")
 }
 
-
+/*
 //funzione che ci permette di inviare mail con connessione cryptata con STRATTLS
 fun inviaEmail(destinatario: String, oggetto: String, testo: String) {
     // Configurazione delle proprietà per la connessione al server SMTP
@@ -505,7 +496,7 @@ fun inviaEmail(destinatario: String, oggetto: String, testo: String) {
     }
 }
 
-
+*/
 
 
 
