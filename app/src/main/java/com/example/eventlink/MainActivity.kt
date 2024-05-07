@@ -19,7 +19,7 @@
             - rendere o più leggerla l'app o allungare schermata caricamento
         - Login al db su PaginLogin
         - Registrazione al db su PaginaSignIn
-        - Sistemare xml delle date su PaginaSignIn
+        - Sistemare xml delle date su PaginaSignIn Mi fa scifo
         - Sistemare i 3 bottoni su PaginaEvento + aggiungere al db Numero Partecipanti
         - Aggiungere bottone aggiungi a preferiti direttamente dal Marker Info + gestione
         - Fare PaginaProfilo tutto
@@ -487,6 +487,10 @@ import com.google.firebase.ktx.Firebase
             spinnerGiorno.adapter = adapterGiorno
             spinnerMese.adapter = adapterMese
             spinnerAnno.adapter = adapterAnno
+
+            spinnerGiorno.setSelection(1)
+            spinnerMese.setSelection(1)
+            spinnerAnno.setSelection(100)
 
             val reg = findViewById<Button>(R.id.buttonSignup)
             val emailfield = findViewById<EditText>(R.id.editTextEmail)

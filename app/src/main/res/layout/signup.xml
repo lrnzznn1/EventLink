@@ -99,14 +99,24 @@
             android:paddingStart="20dp"
             android:importantForAutofill="no"
             tools:ignore="RtlSymmetry" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/data_di_nascita"
+            android:layout_gravity="start"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="67dp"
+            android:textSize="20sp">
+        </TextView>
         <LinearLayout
             android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="30dp">
+            android:layout_marginTop="10dp">
             <!-- TODO: Mettere apposto dio c-->
+
             <Spinner
-                android:layout_width="65dp"
+                android:layout_width="70dp"
                 android:layout_height="48dp"
                 android:id="@+id/Giorno"
                 android:background="@drawable/rounded_edittext_background"
@@ -116,7 +126,7 @@
             </Spinner>
 
             <Spinner
-                android:layout_width="65dp"
+                android:layout_width="70dp"
                 android:layout_height="48dp"
                 android:id="@+id/Mese"
                 android:background="@drawable/rounded_edittext_background"
@@ -124,7 +134,7 @@
                 android:gravity="center">
             </Spinner>
             <Spinner
-                android:layout_width="120dp"
+                android:layout_width="110dp"
                 android:layout_height="48dp"
                 android:id="@+id/Anno"
                 android:background="@drawable/rounded_edittext_background"
