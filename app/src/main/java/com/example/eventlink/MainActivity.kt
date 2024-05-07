@@ -15,11 +15,24 @@
 
     TODO:
         - Finire prima pagina con
-            - menu da fare le sue cose con i bottoni
             - filtri implementare filtri e quando
             - rendere o più leggerla l'app o allungare schermata caricamento
-        - Gestione Account + schermate
+        - Login al db su PaginLogin
+        - Registrazione al db su PaginaSignIn
+        - Sistemare xml delle date su PaginaSignIn
+        - Sistemare i 3 bottoni su PaginaEvento + aggiungere al db Numero Partecipanti
+        - Aggiungere bottone aggiungi a preferiti direttamente dal Marker Info + gestione
+        - Fare PaginaProfilo tutto
+        - Pagina Impostazioni tutto
+        - Pagina Contatti tutto
+        - Pagina Aiuto tutto
+        - Aggiungere al db utenti, aziende, prenotazioni e preferiti
+        - Variabile globale con id utente se 0 non loggato se n loggato
 
+
+
+
+        CODICE UTILE + o -
             // Registra un nuovo utente con email e password
             mAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
@@ -78,20 +91,20 @@ fun inviaEmail(destinatario: String, oggetto: String, testo: String) {
 
 
 
+
+
+
+
+
+
 @file:Suppress("DEPRECATION")
 
 package com.example.eventlink
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.location.Geocoder
-import android.net.Uri
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -108,19 +121,13 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 
 @SuppressLint("StaticFieldLeak")
     private val db = Firebase.firestore
-    private lateinit var auth : FirebaseAuth
     class MainActivity : Activity(), OnMapReadyCallback {
 
         // Coordinate della posizione centrale dell'Italia
@@ -203,6 +210,24 @@ import com.google.firebase.ktx.Firebase
                 startActivity(intent)
             }
 
+            val impostazionePulsante = findViewById<Button>(R.id.impostazioniMain)
+            val contattiPulsante = findViewById<Button>(R.id.contattiMain)
+            val aiutoPulsante = findViewById<Button>(R.id.aiutoMain)
+
+            impostazionePulsante.setOnClickListener {
+                val intent = Intent(this@MainActivity, PaginaImpostazioni::class.java)
+                startActivity(intent)
+            }
+            contattiPulsante.setOnClickListener {
+                val intent = Intent(this@MainActivity, PaginaContatti::class.java)
+                startActivity(intent)
+            }
+            aiutoPulsante.setOnClickListener {
+                val intent = Intent(this@MainActivity, PaginaAiuto::class.java)
+                startActivity(intent)
+            }
+
+
         }
 
 
@@ -216,9 +241,11 @@ import com.google.firebase.ktx.Firebase
                 // Sposta la telecamera al centro dell'Italia con il livello di zoom predefinito
                 moveCamera(CameraUpdateFactory.newLatLngZoom(italia,zoomlvl))
 
+                /* LAGGGGA
                 // Crea un oggetto Geocoder per la geocodifica degli indirizzi
                 val geocoder = Geocoder(this@MainActivity)
-
+                
+                
                 // Ottiene la collezione "Eventi" dal database Firestore
                 db.collection("Eventi")
                     .get()
@@ -340,6 +367,8 @@ import com.google.firebase.ktx.Firebase
 
                     true// Restituisce true per indicare che l'evento di click sul marker è stato gestito
                 }
+
+                 */
                 val zommpiu = findViewById<Button>(R.id.btp)
                 val zommmeno = findViewById<Button>(R.id.btm)
 
@@ -410,6 +439,10 @@ import com.google.firebase.ktx.Firebase
         }
     }
 
+
+
+
+
     class PaginaSignIn : Activity() {
         public override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -455,9 +488,6 @@ import com.google.firebase.ktx.Firebase
             spinnerMese.adapter = adapterMese
             spinnerAnno.adapter = adapterAnno
 
-
-            auth = Firebase.auth
-
             val reg = findViewById<Button>(R.id.buttonSignup)
             val emailfield = findViewById<EditText>(R.id.editTextEmail)
             val nomefield = findViewById<EditText>(R.id.editTextNome)
@@ -487,12 +517,21 @@ import com.google.firebase.ktx.Firebase
     }
 
 
+
+
+
+
+
+
+
+
+
     class PaginaLogin : Activity() {
         public override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.login)
             val buttonSignUp = findViewById<TextView>(R.id.registatiTesto)
-            val buttonLogin = findViewById<Button>(R.id.buttonLogin)
+            val buttonLogin = findViewById<Button>(R.id.buttonlogin)
             buttonSignUp.setOnClickListener {
                 val intent = Intent(this@PaginaLogin, PaginaSignIn::class.java)
                 startActivity(intent)
@@ -500,10 +539,82 @@ import com.google.firebase.ktx.Firebase
             buttonLogin.setOnClickListener {
                 val animation = AnimationUtils.loadAnimation(this, R.anim.button_click_animation)
                 buttonLogin.startAnimation(animation)
+                //Mettere controllo con db qui
+                //if true
+                val intent = Intent(this@PaginaLogin, PaginaProfilo::class.java)
+                startActivity(intent)
             }
+
+            val impostazioniViewLog = findViewById<LinearLayout>(R.id.ImpostazioniLoginComparsa)
+            impostazioniViewLog.visibility = View.GONE
+
+            val mostraNascondiImpostazioniLog = findViewById<ImageButton>(R.id.button_menu_log)
+            mostraNascondiImpostazioniLog.setOnClickListener {
+                if (impostazioniViewLog.visibility == View.VISIBLE) {
+                    // Se le impostazioni sono già visibili, nasconderle
+                    impostazioniViewLog.visibility = View.GONE
+                } else {
+                    // Altrimenti, mostrale
+                    impostazioniViewLog.visibility = View.VISIBLE
+                }
+            }
+
+            val tornaIndietroButton = findViewById<ImageButton>(R.id.tornaInDietroLog)
+            tornaIndietroButton.setOnClickListener{
+                finish()
+            }
+
+            val impostazionePulsanteLog = findViewById<Button>(R.id.impostazioniLogin)
+            val contattiPulsanteLog = findViewById<Button>(R.id.contattiLogin)
+            val aiutoPulsanteLog = findViewById<Button>(R.id.aiutoLogin)
+
+            impostazionePulsanteLog.setOnClickListener {
+                val intent = Intent(this@PaginaLogin, PaginaImpostazioni::class.java)
+                startActivity(intent)
+            }
+            contattiPulsanteLog.setOnClickListener {
+                val intent = Intent(this@PaginaLogin, PaginaContatti::class.java)
+                startActivity(intent)
+            }
+            aiutoPulsanteLog.setOnClickListener {
+                val intent = Intent(this@PaginaLogin, PaginaAiuto::class.java)
+                startActivity(intent)
+            }
+
+
 
         }
     }
+
+
+    class PaginaProfilo : Activity(){
+        public override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setContentView(R.layout.profilo)
+        }
+    }
+
+    class PaginaImpostazioni : Activity() {
+        public override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setContentView(R.layout.impostazioni)
+        }
+    }
+
+    class PaginaContatti : Activity(){
+        public override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setContentView(R.layout.contatti)
+        }
+    }
+    class PaginaAiuto : Activity(){
+        public override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setContentView(R.layout.aiuto)
+        }
+    }
+
+
 
 
 

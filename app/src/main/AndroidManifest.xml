@@ -32,6 +32,18 @@
         <activity
             android:name=".PaginaLogin">
         </activity>
+        <activity
+            android:name=".PaginaImpostazioni">
+        </activity>
+        <activity
+            android:name=".PaginaContatti">
+        </activity>
+        <activity
+            android:name=".PaginaAiuto">
+        </activity>
+        <activity
+            android:name=".PaginaProfilo">
+        </activity>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />

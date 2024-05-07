@@ -4,8 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    >
+    android:background="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +18,7 @@
 
         <!-- Primo bottone -->
         <ImageButton
-            android:id="@+id/button_menu_login"
+            android:id="@+id/button_menu_log"
             android:layout_width="58dp"
             android:layout_height="55dp"
             android:background="@android:color/transparent"
@@ -49,84 +48,119 @@
 
     </LinearLayout>
 
-
-
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_marginTop="-100dp">
+        android:orientation="vertical">
 
-        <!--scritta Registrati-->
-        <TextView
+
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="45dp"
-            android:text="@string/accedi"
-            android:textColor="@color/black"
-            android:textSize="45sp"
-            android:textStyle="bold"
-            android:layout_marginTop="45dp"
-            android:gravity="center_vertical"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="-100dp"
+            android:layout_gravity="end">
 
-        <!--sezione nome-->
-        <EditText
-            android:id="@+id/editTextEmailLogin"
-            android:layout_width="280dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="40dp"
-            android:background="@drawable/rounded_edittext_background"
-            android:hint="@string/inserisci_email"
-            android:inputType="textEmailAddress"
-            android:padding="1dp"
-            android:gravity="center_vertical"
-            android:paddingStart="20dp"
-            android:importantForAutofill="no"
-            tools:ignore="RtlSymmetry" />
+            <!--scritta Registrati-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="45dp"
+                android:text="@string/accedi"
+                android:textColor="@color/black"
+                android:textSize="45sp"
+                android:textStyle="bold"
+                android:layout_marginTop="45dp"
+                android:gravity="center_vertical"/>
 
-        <EditText
-            android:layout_marginTop="30dp"
-            android:id="@+id/editTextPasswordLogin"
-            android:layout_width="280dp"
-            android:layout_height="48dp"
-            android:inputType="textPassword"
-            android:hint="@string/password"
-            android:background="@drawable/rounded_edittext_background"
-            android:padding="1dp"
-            android:gravity="center_vertical"
-            android:paddingStart="20dp"
-            android:importantForAutofill="no"
-            tools:ignore="RtlSymmetry" />
+            <!--sezione nome-->
+            <EditText
+                android:id="@+id/editTextEmailLogin"
+                android:layout_width="280dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/rounded_edittext_background"
+                android:hint="@string/inserisci_email"
+                android:inputType="textEmailAddress"
+                android:padding="1dp"
+                android:gravity="center_vertical"
+                android:paddingStart="20dp"
+                android:importantForAutofill="no"
+                tools:ignore="RtlSymmetry" />
 
-
-        <!--bottone Signup -->
-
-        <Button
-            android:id="@+id/buttonLogin"
-            style="@style/CustomButtonStyle"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="45dp"
-            android:background="@drawable/rounded_bottom_background"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:text="@string/accedi" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/non_hai_un_account_registrati_qui"
-            android:id="@+id/registatiTesto"
-            android:focusable="true"
-            android:clickable="true"
-            android:layout_marginTop="30dp"
-            android:textColor="#0000FF"
-            android:layout_marginEnd="20dp"
-            android:textStyle="bold"
-            >
-        </TextView>
+            <EditText
+                android:layout_marginTop="30dp"
+                android:id="@+id/editTextPasswordLogin"
+                android:layout_width="280dp"
+                android:layout_height="48dp"
+                android:inputType="textPassword"
+                android:hint="@string/password"
+                android:background="@drawable/rounded_edittext_background"
+                android:padding="1dp"
+                android:gravity="center_vertical"
+                android:paddingStart="20dp"
+                android:importantForAutofill="no"
+                tools:ignore="RtlSymmetry" />
 
 
-    </LinearLayout>
+            <!--bottone Signup -->
 
+            <Button
+                android:id="@+id/buttonlogin"
+                style="@style/CustomButtonStyle"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="45dp"
+                android:background="@drawable/rounded_bottom_background"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="@string/accedi" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/non_hai_un_account_registrati_qui"
+                android:id="@+id/registatiTesto"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_marginTop="30dp"
+                android:textColor="#0000FF"
+                android:layout_marginEnd="20dp"
+                android:textStyle="bold">
+            </TextView>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ImpostazioniLoginComparsa"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="7dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/white"
+            android:layout_gravity="start">
+
+            <!-- Contenuto del primo LinearLayout -->
+            <Button
+                android:id="@+id/impostazioniLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/impostazioni"
+                tools:ignore="ButtonStyle"/>
+            <Button
+                android:id="@+id/contattiLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/contatti"
+                tools:ignore="ButtonStyle"
+                android:layout_marginTop="11dp"/>
+            <Button
+                android:id="@+id/aiutoLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/aiuto"
+                tools:ignore="ButtonStyle"
+                android:layout_marginTop="11dp"/>
+        </LinearLayout>
+    </FrameLayout>
 </LinearLayout>
