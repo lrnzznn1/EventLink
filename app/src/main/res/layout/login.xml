@@ -19,7 +19,7 @@
 
         <!-- Primo bottone -->
         <ImageButton
-            android:id="@+id/button_menu"
+            android:id="@+id/button_menu_login"
             android:layout_width="58dp"
             android:layout_height="55dp"
             android:background="@android:color/transparent"
@@ -36,7 +36,7 @@
             android:layout_weight="1" />
         <!-- Secondo bottone -->
         <ImageButton
-            android:id="@+id/tornaInDietroReg"
+            android:id="@+id/tornaInDietroLog"
             android:layout_width="65dp"
             android:layout_height="65dp"
             android:scaleType="fitCenter"
@@ -60,83 +60,22 @@
 
         <!--scritta Registrati-->
         <TextView
-            android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="45dp"
-            android:text="@string/iscriviti"
+            android:text="@string/accedi"
             android:textColor="@color/black"
             android:textSize="45sp"
             android:textStyle="bold"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="45dp"
             android:gravity="center_vertical"/>
 
         <!--sezione nome-->
         <EditText
-            android:id="@+id/editTextNome"
+            android:id="@+id/editTextEmailLogin"
             android:layout_width="280dp"
             android:layout_height="48dp"
-            android:layout_marginTop="20dp"
-            android:inputType="text"
-            android:hint="@string/inserisci_nome"
-            android:padding="1dp"
-            android:gravity="center_vertical"
-            android:paddingStart="20dp"
-            android:importantForAutofill="no"
-            android:background="@drawable/rounded_edittext_background"
-            tools:ignore="RtlSymmetry" />
-
-        <EditText
-            android:id="@+id/editTextCognome"
-            android:layout_marginTop="30dp"
-            android:layout_width="280dp"
-            android:layout_height="48dp"
-            android:inputType="text"
-            android:hint="@string/inserisci_cognome"
-            android:background="@drawable/rounded_edittext_background"
-            android:padding="1dp"
-            android:gravity="center_vertical"
-            android:paddingStart="20dp"
-            android:importantForAutofill="no"
-            tools:ignore="RtlSymmetry" />
-        <LinearLayout
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="30dp">
-            <!-- TODO: Mettere apposto dio c-->
-            <Spinner
-                android:layout_width="65dp"
-                android:layout_height="48dp"
-                android:id="@+id/Giorno"
-                android:background="@drawable/rounded_edittext_background"
-                android:layout_marginEnd="15dp"
-                android:layout_gravity="center"
-                android:gravity="center">
-            </Spinner>
-
-            <Spinner
-                android:layout_width="65dp"
-                android:layout_height="48dp"
-                android:id="@+id/Mese"
-                android:background="@drawable/rounded_edittext_background"
-                android:layout_marginEnd="15dp"
-                android:gravity="center">
-            </Spinner>
-            <Spinner
-                android:layout_width="120dp"
-                android:layout_height="48dp"
-                android:id="@+id/Anno"
-                android:background="@drawable/rounded_edittext_background"
-                android:gravity="center">
-            </Spinner>
-        </LinearLayout>
-
-        <EditText
-            android:id="@+id/editTextEmail"
-            android:layout_width="280dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="40dp"
             android:background="@drawable/rounded_edittext_background"
             android:hint="@string/inserisci_email"
             android:inputType="textEmailAddress"
@@ -148,11 +87,11 @@
 
         <EditText
             android:layout_marginTop="30dp"
-            android:id="@+id/editTextTelefono"
+            android:id="@+id/editTextPasswordLogin"
             android:layout_width="280dp"
             android:layout_height="48dp"
-            android:inputType="phone"
-            android:hint="@string/Numero_di_Telefono"
+            android:inputType="textPassword"
+            android:hint="@string/password"
             android:background="@drawable/rounded_edittext_background"
             android:padding="1dp"
             android:gravity="center_vertical"
@@ -162,17 +101,32 @@
 
 
         <!--bottone Signup -->
+
         <Button
-            android:id="@+id/buttonSignup"
+            android:id="@+id/buttonLogin"
+            style="@style/CustomButtonStyle"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:text="@string/iscriviti"
-            android:layout_marginTop="35dp"
-            style="@style/CustomButtonStyle"
-            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_marginTop="45dp"
             android:background="@drawable/rounded_bottom_background"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:text="@string/accedi" />
 
-            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/non_hai_un_account_registrati_qui"
+            android:id="@+id/registatiTesto"
+            android:focusable="true"
+            android:clickable="true"
+            android:layout_marginTop="30dp"
+            android:textColor="#0000FF"
+            android:layout_marginEnd="20dp"
+            android:textStyle="bold"
+            >
+        </TextView>
+
+
     </LinearLayout>
 
 </LinearLayout>

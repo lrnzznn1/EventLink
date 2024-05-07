@@ -34,7 +34,50 @@
             }
 
 
+
+//funzione che ci permette di inviare mail con connessione cryptata con STRATTLS
+fun inviaEmail(destinatario: String, oggetto: String, testo: String) {
+    // Configurazione delle proprietà per la connessione al server SMTP
+    val props = Properties()
+    props["mail.smtp.host"] = "smtp.gmail.com" // Indirizzo del server SMTP
+    props["mail.smtp.port"] = "587" // Porta del server SMTP
+    props["mail.smtp.auth"] = "true" // Abilita l'autenticazione SMTP
+    props["mail.smtp.starttls.enable"] = "true" // Abilita STARTTLS per la crittografia
+
+    // Autenticazione al server SMTP
+    val autenticazione = object : Authenticator() {
+        val pw = Properties().apply {
+            load(FileInputStream(File("local.properties")))
+        }.getProperty("PASSWORD")
+        override fun getPasswordAuthentication(): PasswordAuthentication {
+            return PasswordAuthentication("EventLinkAuth@gmail.com", pw)
+        }
+    }
+
+    // Creazione della sessione
+    val session = Session.getInstance(props, autenticazione)
+
+    try {
+        // Creazione del messaggio
+        val message = MimeMessage(session)
+        message.setFrom(InternetAddress("EventLinkAuth@gmail.com"))
+        message.addRecipient(Message.RecipientType.TO, InternetAddress(destinatario))
+        message.subject = oggetto
+        message.setText(testo)
+
+        // Invio dell'email
+        Transport.send(message)
+        println("Email inviata con successo!")
+    } catch (e: MessagingException) {
+        println("Si è verificato un errore durante l'invio dell'email: ${e.message}")
+    }
+}
+
 */
+
+
+
+
 @file:Suppress("DEPRECATION")
 
 package com.example.eventlink
@@ -48,10 +91,10 @@ import android.graphics.BitmapFactory
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -70,8 +113,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+
 
 @SuppressLint("StaticFieldLeak")
     private val db = Firebase.firestore
@@ -154,7 +199,7 @@ import com.google.firebase.ktx.Firebase
             val accountPulsante = findViewById<ImageButton>(R.id.button_profile)
 
             accountPulsante.setOnClickListener{
-                val intent = Intent(this@MainActivity, PaginaSignIn::class.java)
+                val intent = Intent(this@MainActivity, PaginaLogin::class.java)
                 startActivity(intent)
             }
 
@@ -411,9 +456,8 @@ import com.google.firebase.ktx.Firebase
             spinnerAnno.adapter = adapterAnno
 
 
-            //Fase Auth
-            //auth= Firebase.auth mio cugino usa solo questo
-            auth = FirebaseAuth.getInstance()
+            auth = Firebase.auth
+
             val reg = findViewById<Button>(R.id.buttonSignup)
             val emailfield = findViewById<EditText>(R.id.editTextEmail)
             val nomefield = findViewById<EditText>(R.id.editTextNome)
@@ -421,82 +465,47 @@ import com.google.firebase.ktx.Firebase
             val telefonofield = findViewById<EditText>(R.id.editTextTelefono)
 
             reg.setOnClickListener {
+                val animation = AnimationUtils.loadAnimation(this, R.anim.button_click_animation)
+                reg.startAnimation(animation)
+
                 val nome = nomefield.text.toString()
                 val cognome = cognomefield.text.toString()
                 val telefono = telefonofield.text.toString()
                 val email = emailfield.text.toString()
                 val password = generateRandomPassword(12)
-                auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this) { task ->
-                        if (task.isSuccessful) {
-                            // Registrazione avvenuta con successo
-                            val user = auth.currentUser
-                        } else {
-                            // Registrazione fallita
-                            val exception = task.exception
-                            exception?.let {
-                                Log.e("AuthError", "Registrazione fallita: ${it.message}")
-                            }
-                        }
-                    }
-                /*inviaEmail(
-                    email,
-                    "SignIn EventLink",
-                    "Gentile ${nome} ${cognome}, \n la ringraziamo per l'iscrizione alla nostra applicazione, \n la sua password preimpostata è: ${password}"
-                )*/
+
+
             }
         }
-    }
-
-
-//funzione finta per creare password randomiche, ovviamente da cambiare
-fun generateRandomPassword(length: Int): String {
-    val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?/{}[]"
-    return (1..length)
-        .map { allowedChars.random() }
-        .joinToString("")
-}
-
-/*
-//funzione che ci permette di inviare mail con connessione cryptata con STRATTLS
-fun inviaEmail(destinatario: String, oggetto: String, testo: String) {
-    // Configurazione delle proprietà per la connessione al server SMTP
-    val props = Properties()
-    props["mail.smtp.host"] = "smtp.gmail.com" // Indirizzo del server SMTP
-    props["mail.smtp.port"] = "587" // Porta del server SMTP
-    props["mail.smtp.auth"] = "true" // Abilita l'autenticazione SMTP
-    props["mail.smtp.starttls.enable"] = "true" // Abilita STARTTLS per la crittografia
-
-    // Autenticazione al server SMTP
-    val autenticazione = object : Authenticator() {
-        val pw = Properties().apply {
-            load(FileInputStream(File("local.properties")))
-        }.getProperty("PASSWORD")
-        override fun getPasswordAuthentication(): PasswordAuthentication {
-            return PasswordAuthentication("EventLinkAuth@gmail.com", pw)
+        //funzione finta per creare password randomiche, ovviamente da cambiare
+        fun generateRandomPassword(length: Int): String {
+            val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?/{}[]"
+            return (1..length)
+                .map { allowedChars.random() }
+                .joinToString("")
         }
     }
 
-    // Creazione della sessione
-    val session = Session.getInstance(props, autenticazione)
 
-    try {
-        // Creazione del messaggio
-        val message = MimeMessage(session)
-        message.setFrom(InternetAddress("EventLinkAuth@gmail.com"))
-        message.addRecipient(Message.RecipientType.TO, InternetAddress(destinatario))
-        message.subject = oggetto
-        message.setText(testo)
+    class PaginaLogin : Activity() {
+        public override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setContentView(R.layout.login)
+            val buttonSignUp = findViewById<TextView>(R.id.registatiTesto)
+            val buttonLogin = findViewById<Button>(R.id.buttonLogin)
+            buttonSignUp.setOnClickListener {
+                val intent = Intent(this@PaginaLogin, PaginaSignIn::class.java)
+                startActivity(intent)
+            }
+            buttonLogin.setOnClickListener {
+                val animation = AnimationUtils.loadAnimation(this, R.anim.button_click_animation)
+                buttonLogin.startAnimation(animation)
+            }
 
-        // Invio dell'email
-        Transport.send(message)
-        println("Email inviata con successo!")
-    } catch (e: MessagingException) {
-        println("Si è verificato un errore durante l'invio dell'email: ${e.message}")
+        }
     }
-}
 
-*/
+
 
 
 
