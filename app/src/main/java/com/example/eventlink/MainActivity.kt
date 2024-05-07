@@ -478,7 +478,7 @@ import com.google.firebase.ktx.Firebase
             }
         }
         //funzione finta per creare password randomiche, ovviamente da cambiare
-        fun generateRandomPassword(length: Int): String {
+        private fun generateRandomPassword(length: Int): String {
             val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?/{}[]"
             return (1..length)
                 .map { allowedChars.random() }
