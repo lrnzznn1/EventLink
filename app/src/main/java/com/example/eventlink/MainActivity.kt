@@ -104,6 +104,7 @@ package com.example.eventlink
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -125,6 +126,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.security.MessageDigest
 
 
 @SuppressLint("StaticFieldLeak")
@@ -509,6 +511,28 @@ import com.google.firebase.ktx.Firebase
                 val email = emailfield.text.toString()
                 val password = generateRandomPassword(12)
 
+                db.collection("Utenti").document(email).set(
+                    mapOf
+                        (
+                        "Nome" to nome,
+                        "Cognome" to cognome,
+                        "Telefono" to telefono,
+                        "Password" to hashString(password)
+                    )
+                ).addOnSuccessListener {
+                    val builder = AlertDialog.Builder(this)
+                    builder.setTitle("Registrazione Avvenuta")
+                    builder.setMessage("La tua registrazione è avvenuta con successo!")
+                    builder.setPositiveButton("OK") { dialog, which ->
+                        // L'utente ha premuto il pulsante "OK"
+                        // Puoi aggiungere qui eventuali azioni aggiuntive, ad esempio, navigare verso un'altra schermata
+
+                        finish() // Chiude l'activity corrente
+                    }
+                    val dialog = builder.create()
+                    dialog.show()
+                }
+
 
             }
         }
@@ -618,6 +642,14 @@ import com.google.firebase.ktx.Firebase
             setContentView(R.layout.aiuto)
         }
     }
+
+
+fun hashString(input: String): String {
+    val bytes = input.toByteArray()
+    val md = MessageDigest.getInstance("SHA-256")
+    val digest = md.digest(bytes)
+    return digest.fold("", { str, it -> str + "%02x".format(it) })
+}
 
 
 
