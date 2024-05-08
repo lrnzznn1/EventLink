@@ -107,6 +107,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -124,8 +125,19 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.sun.activation.viewers.TextEditor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.security.MessageDigest
 
 
@@ -443,9 +455,6 @@ import java.security.MessageDigest
     }
 
 
-
-
-
     class PaginaSignIn : Activity() {
         public override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -472,8 +481,7 @@ import java.security.MessageDigest
                 itemsAnno.add(i.toString())
             }
             // Creazione di un adapter per lo Spinner utilizzando l'array di stringhe
-            val adapterGiorno =
-                ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsGiorno)
+            val adapterGiorno = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsGiorno)
             val adapterMese = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsMese)
             val adapterAnno = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsAnno)
 
@@ -505,24 +513,26 @@ import java.security.MessageDigest
                 val animation = AnimationUtils.loadAnimation(this, R.anim.button_click_animation)
                 reg.startAnimation(animation)
 
+                val data =
+                    spinnerGiorno.getSelectedItem().toString() + "/" + spinnerMese.getSelectedItem()
+                        .toString() + "/" + spinnerAnno.getSelectedItem().toString()
                 val nome = nomefield.text.toString()
                 val cognome = cognomefield.text.toString()
                 val telefono = telefonofield.text.toString()
                 val email = emailfield.text.toString()
                 val password = generateRandomPassword(12)
 
-                db.collection("Utenti").document(email).set(
-                    mapOf
-                        (
-                        "Nome" to nome,
-                        "Cognome" to cognome,
-                        "Telefono" to telefono,
-                        "Password" to hashString(password)
-                    )
-                ).addOnSuccessListener {
+                var esiste = false
+
+                runBlocking {
+                    esiste = esisteInDB("Utenti", email)
+                }
+
+                if(esiste)
+                {
                     val builder = AlertDialog.Builder(this)
-                    builder.setTitle("Registrazione Avvenuta")
-                    builder.setMessage("La tua registrazione è avvenuta con successo!")
+                    builder.setTitle("Registrazione Fallita")
+                    builder.setMessage("La tua registrazione non è avvenuta con successo, potrebbe esistere già un account con questa mail, in caso Accedi!")
                     builder.setPositiveButton("OK") { dialog, which ->
                         // L'utente ha premuto il pulsante "OK"
                         // Puoi aggiungere qui eventuali azioni aggiuntive, ad esempio, navigare verso un'altra schermata
@@ -532,9 +542,39 @@ import java.security.MessageDigest
                     val dialog = builder.create()
                     dialog.show()
                 }
+                else{
+                    db.collection("Utenti").document(email).set(
+                        mapOf
+                            (
+                            "Nome" to nome,
+                            "Cognome" to cognome,
+                            "Telefono" to telefono,
+                            "Password" to hashString(password),
+                            "DDN" to data
+                        )
+                    ).addOnSuccessListener {
+                        val builder = AlertDialog.Builder(this)
+                        builder.setTitle("Registrazione Avvenuta")
+                        builder.setMessage("La tua registrazione è avvenuta con successo!")
+                        builder.setPositiveButton("OK") { dialog, which ->
 
-
+                            finish() // Chiude l'activity corrente
+                        }
+                        val dialog = builder.create()
+                        dialog.show()
+                    }.addOnFailureListener{
+                        val builder = AlertDialog.Builder(this)
+                        builder.setTitle("Registrazione Fallita")
+                        builder.setMessage("La tua registrazione non è avvenuta con successo, potresti avere già un account, in caso Accedi!")
+                        builder.setPositiveButton("OK") { dialog, which ->
+                            finish()
+                        }
+                        val dialog = builder.create()
+                        dialog.show()
+                    }
+                }
             }
+
         }
         //funzione finta per creare password randomiche, ovviamente da cambiare
         private fun generateRandomPassword(length: Int): String {
@@ -544,15 +584,6 @@ import java.security.MessageDigest
                 .joinToString("")
         }
     }
-
-
-
-
-
-
-
-
-
 
 
     class PaginaLogin : Activity() {
@@ -565,13 +596,37 @@ import java.security.MessageDigest
                 val intent = Intent(this@PaginaLogin, PaginaSignIn::class.java)
                 startActivity(intent)
             }
+
             buttonLogin.setOnClickListener {
                 val animation = AnimationUtils.loadAnimation(this, R.anim.button_click_animation)
                 buttonLogin.startAnimation(animation)
-                //Mettere controllo con db qui
-                //if true
-                val intent = Intent(this@PaginaLogin, PaginaProfilo::class.java)
-                startActivity(intent)
+
+                val emailfield = findViewById<EditText>(R.id.editTextEmailLogin)
+                val passwordfield = findViewById<EditText>(R.id.editTextPasswordLogin)
+                val email = emailfield.text.toString()
+                val password = passwordfield.text.toString()
+                var auth = false
+
+                runBlocking {
+                   auth = passwordCheck(email, password)
+                }
+
+                if(auth)
+                {
+                    val intent = Intent(this@PaginaLogin, PaginaProfilo::class.java)
+                    startActivity(intent)
+                }
+                else
+                {
+                    val builder = AlertDialog.Builder(this)
+                    builder.setTitle("Accesso Negato")
+                    builder.setMessage("Email o Password errati!")
+                    builder.setPositiveButton("OK") { dialog, which ->
+                        finish()
+                    }
+                    val dialog = builder.create()
+                    dialog.show()
+                }
             }
 
             val impostazioniViewLog = findViewById<LinearLayout>(R.id.ImpostazioniLoginComparsa)
@@ -653,8 +708,37 @@ fun hashString(input: String): String {
 
 
 
+suspend fun esisteInDB(collectionName: String, documentId: String): Boolean {
+    return withContext(Dispatchers.IO) {
+        val document= db.collection(collectionName).document(documentId).get().await()
+        if(document!=null && document.exists())
+        {
+            true
+        }
+        else
+        {
+            false
+        }
+    }
+}
 
 
 
 
+suspend fun passwordCheck(documentId: String, password: String): Boolean
+{
+    try {
+        val documentSnapshot = db.collection("Utenti").document(documentId).get().await()
+        val documentData = documentSnapshot.data
+        val documentPassword = documentData?.get("Password")
+        if (documentPassword == hashString(password)) {
+            return true
+        } else {
+            return false
+        }
+    }catch (e: Exception)
+    {
+        return false
+    }
+}
 

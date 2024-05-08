@@ -83,5 +83,4 @@ dependencies {
     implementation("com.sun.mail:javax.mail:1.6.2")
     implementation("javax.activation:activation:1.1.1")
     implementation ("com.google.android.gms:play-services-auth:19.2.0")
-    implementation ("com.google.android.gms:play-services-safetynet:18.0.0")
 }
