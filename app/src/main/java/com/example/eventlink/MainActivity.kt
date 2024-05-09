@@ -113,7 +113,9 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Geocoder
+import android.net.Uri
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -265,68 +267,15 @@ import java.security.MessageDigest
                 moveCamera(CameraUpdateFactory.newLatLngZoom(italia,zoomlvl))
 
 
-                // Crea un oggetto Geocoder per la geocodifica degli indirizzi
-                val geocoder = Geocoder(this@MainActivity)
-                // Inizializza il ClusterManager
-                clusterManager = ClusterManager<MyClusterItem>(this@MainActivity, googleMap)
+                runBlocking {
+                    caricaMappa(this@MainActivity,googleMap,resources,packageName)
+                }
 
-                // Inizializza il renderer personalizzato
-                customClusterRenderer = CustomClusterRenderer(this@MainActivity, googleMap, clusterManager)
-
-                // Associa il renderer personalizzato al ClusterManager
-                clusterManager.renderer = customClusterRenderer
-
-                googleMap.setOnCameraIdleListener(clusterManager)
-
-
-
-
-                val items = mutableListOf<MyClusterItem>()
-                // Ottiene la collezione "Eventi" dal database Firestore
-                db.collection("Eventi")
-                    .get()
-                    .addOnSuccessListener { result->
-                        // Loop attraverso ogni documento nell'insieme di risultati
-                        for(document in result){
-                            // Ottiene il tipo di evento dal documento
-                            val ico = document.data.getValue("Tipo").toString()
-
-                            // Ottiene l'ID della risorsa drawable utilizzando il suo nome
-                            val resourceId = resources.getIdentifier(ico, "drawable", packageName)
-
-                            // Carica la risorsa drawable come bitmap
-                            val bitmap = BitmapFactory.decodeResource(resources, resourceId)
-
-                            // Ridimensiona il bitmap
-                            val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 100 ,100, false)
-
-
-                            // Ottiene le informazioni sulla posizione dall'indirizzo nel documento
-                            val locations = geocoder.getFromLocationName(document.data.getValue("Indirizzo").toString(), 1)
-                            val firstLocation = locations!![0]
-                            val position = LatLng(firstLocation.latitude,firstLocation.longitude)
-                            val title = document.data.getValue("Titolo").toString()
-                            val descrizione = "Indirizzo: " + document.data.getValue("Indirizzo").toString() + "\n" +
-                                    "Data: " + document.data.getValue("Data").toString() + "\n" +
-                                    "Ora: " + document.data.getValue("Ora").toString() + "\n" +
-                                    "Prezzo: " + document.data.getValue("Prezzo").toString()
-                            val immagine = BitmapDescriptorFactory.fromBitmap(resizedBitmap)
-                            val tagg = document.id
-
-                            val clusterItem = MyClusterItem(position,title,descrizione,immagine,tagg)
-                            items.add(clusterItem)
-                        }
-                    }
-                clusterManager.addItems(items)
-                clusterManager.setAnimation(false)
-                clusterManager.cluster()
-
-
-                /*
+                googleMap.setOnMarkerClickListener(null)
                 // Imposta un listener per i click sui marker sulla mappa
-                googleMap.setOnMarkerClickListener { marker ->
+                clusterManager.setOnClusterItemClickListener { item ->
                     // Ottiene l'ID del marker dal suo tag
-                    val id = marker.tag as? String
+                    val id = item.tag as? String
 
                     // Infla la vista del layout personalizzato per il contenuto dell'indicatore
                     val view = layoutInflater.inflate(R.layout.indicatore_info_contents, null)
@@ -338,8 +287,8 @@ import java.security.MessageDigest
                     val button2 = view.findViewById<Button>(R.id.button2)
 
                     // Imposta il titolo e il testo aggiuntivo del marker nelle viste appropriate
-                    titleTextView.text = marker.title
-                    snippetTextView.text = marker.snippet
+                    titleTextView.text = item.title
+                    snippetTextView.text = item.snippet
 
                     // Imposta il listener del bottone 1 per avviare l'attività PaginaEvento con l'ID del marker come extra
                     button1.setOnClickListener {
@@ -350,15 +299,15 @@ import java.security.MessageDigest
 
                     // Imposta il listener del bottone 2 per aprire Google Maps con la posizione del marker
                     button2.setOnClickListener {
-                        val latitude = marker.position.latitude
-                        val longitude = marker.position.longitude
+                        val latitude = item.position.latitude
+                        val longitude = item.position.longitude
                         val uri = "http://maps.google.com/maps?q=loc:$latitude,$longitude"
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
                         startActivity(intent)
                     }
 
                     // Sposta leggermente la camera al di sotto del marker
-                    val target = LatLng(marker.position.latitude - 0.001, marker.position.longitude)
+                    val target = LatLng(item.position.latitude - 0.001, item.position.longitude)
                     val zoomLevel = 11f // Imposta il livello di zoom desiderato
                     val currentZoom = googleMap.cameraPosition.zoom
                     // Controlla se il livello di zoom attuale è inferiore al livello di zoom desiderato
@@ -399,7 +348,8 @@ import java.security.MessageDigest
                     true// Restituisce true per indicare che l'evento di click sul marker è stato gestito
                 }
 
-                 */
+
+
 
 
                 val zommpiu = findViewById<Button>(R.id.btp)
@@ -556,7 +506,7 @@ import java.security.MessageDigest
                         // L'utente ha premuto il pulsante "OK"
                         // Puoi aggiungere qui eventuali azioni aggiuntive, ad esempio, navigare verso un'altra schermata
 
-                        finish() // Chiude l'activity corrente
+                        //finish() // Chiude l'activity corrente
                     }
                     val dialog = builder.create()
                     dialog.show()
@@ -641,7 +591,7 @@ import java.security.MessageDigest
                     builder.setTitle("Accesso Negato")
                     builder.setMessage("Email o Password errati!")
                     builder.setPositiveButton("OK") { dialog, which ->
-                        finish()
+                        //finish()
                     }
                     val dialog = builder.create()
                     dialog.show()
@@ -771,12 +721,12 @@ class CustomClusterRenderer(
         //val defaultClusterIcon = BitmapDescriptorFactory.defaultMarker() // Utilizza l'icona predefinita per i cluster
         //markerOptions.icon(defaultClusterIcon)
         super.onBeforeClusterItemRendered(item, markerOptions)
-        //markerOptions.icon(item.icon)
+        markerOptions.icon(item.icon)
     }
 
     override fun onClusterItemRendered(clusterItem: MyClusterItem, marker: Marker) {
         super.onClusterItemRendered(clusterItem, marker)
-        //marker.tag = clusterItem.tag
+        marker.tag = clusterItem.tag
     }
 }
 
@@ -799,3 +749,69 @@ suspend fun passwordCheck(documentId: String, password: String): Boolean
     }
 }
 
+suspend fun caricaMappa(context1: Context, googleMap: GoogleMap, resources :  android.content.res.Resources, packageName:String){
+    // Crea un oggetto Geocoder per la geocodifica degli indirizzi
+    val geocoder = Geocoder(context1)
+    // Inizializza il ClusterManager
+    clusterManager = ClusterManager<MyClusterItem>(context1, googleMap)
+
+    // Inizializza il renderer personalizzato
+    customClusterRenderer = CustomClusterRenderer(context1, googleMap, clusterManager)
+
+    // Associa il renderer personalizzato al ClusterManager
+    clusterManager.renderer = customClusterRenderer
+
+    googleMap.setOnCameraIdleListener(clusterManager)
+
+    val items = mutableListOf<MyClusterItem>()
+    // Ottiene la collezione "Eventi" dal database Firestore
+    val result = db.collection("Eventi")
+        .get()
+        .await()
+
+    // Loop attraverso ogni documento nell'insieme di risultati
+    for (document in result) {
+        // Ottiene il tipo di evento dal documento
+        val ico = document.data.getValue("Tipo").toString()
+
+        // Ottiene l'ID della risorsa drawable utilizzando il suo nome
+        val resourceId =
+            resources.getIdentifier(ico, "drawable", packageName)
+
+        // Carica la risorsa drawable come bitmap
+        val bitmap = BitmapFactory.decodeResource(resources, resourceId)
+
+        // Ridimensiona il bitmap
+        val resizedBitmap =
+            Bitmap.createScaledBitmap(bitmap, 100, 100, false)
+
+
+
+        val locstring =  document.data.getValue("Posizione").toString()
+        val delimiter ="&"
+        val location = locstring.split(delimiter)
+
+
+        val position =
+            LatLng(location[0].toDouble(), location[1].toDouble())
+
+        val title = document.data.getValue("Titolo").toString()
+        val descrizione =
+            "Indirizzo: " + document.data.getValue("Indirizzo")
+                .toString() + "\n" +
+                    "Data: " + document.data.getValue("Data")
+                .toString() + "\n" +
+                    "Ora: " + document.data.getValue("Ora")
+                .toString() + "\n" +
+                    "Prezzo: " + document.data.getValue("Prezzo").toString()
+        val immagine = BitmapDescriptorFactory.fromBitmap(resizedBitmap)
+        val tagg = document.id
+
+        val clusterItem =
+            MyClusterItem(position, title, descrizione, immagine, tagg)
+        items.add(clusterItem)
+    }
+    clusterManager.addItems(items)
+    clusterManager.setAnimation(false)
+    clusterManager.cluster()
+}
