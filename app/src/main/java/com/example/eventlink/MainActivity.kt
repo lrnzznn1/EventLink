@@ -116,6 +116,7 @@ import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -125,6 +126,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.Spinner
 import android.widget.TextView
 import com.bumptech.glide.Glide
@@ -137,6 +139,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.maps.android.clustering.ClusterItem
@@ -646,13 +649,12 @@ import java.security.MessageDigest
         public override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.profilo)
-
             val email = intent.getStringExtra("email")
-
-            db.collection("Prenotazioni")
-                .get()
-
-
+            var document = null
+            val parente = this.findViewById<ScrollView>(R.id.parente_nascosto)
+            runBlocking {
+                //setPre(email, this@PaginaProfilo, parente)
+            }
         }
     }
 
@@ -824,3 +826,27 @@ suspend fun caricaMappa(context1: Context, googleMap: GoogleMap, resources :  an
     clusterManager.setAnimation(false)
     clusterManager.cluster()
 }
+
+//funzione per settare pagina profilo
+/*
+suspend fun setPre(email: String?, context: Context, parente: ScrollView)
+{
+   val eventi = db.collection("Prenotazioni").whereEqualTo("ID_Utente", email).get().await()
+    for(document in eventi ){
+        val evento = db.collection("Eventi").whereEqualTo(FieldPath.documentId(), document).get().await()
+        val immagine = document.data.get("Immagine")
+        val titolo = document.data.get("Titolo")
+        val ora = document.data.get("Ora")
+        val data = document.data.get("Data")
+        val inflater = LayoutInflater.from(context)
+        val duplicateView = inflater.inflate(R.layout.baseeventi, null)
+
+        val text = duplicateView.findViewById<TextView>(R.id.pUtente_DescrizioneEvento)
+        text.text = "${titolo}\n\n${data} ${ora}"
+
+        val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento)
+        Glide.with(context).load(immagine).into(img)
+        img.contentDescription = "Immagine"
+        parente.addView(duplicateView)
+    }
+}*/
