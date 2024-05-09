@@ -69,7 +69,7 @@
             android:textSize="45sp"
             android:textStyle="bold"
             android:layout_marginTop="30dp"
-            android:gravity="center_vertical"/>
+            android:gravity="center_vertical" />
 
         <!--sezione nome-->
         <EditText
