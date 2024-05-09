@@ -29,6 +29,7 @@
         - Aggiungere al db utenti, aziende, prenotazioni e preferiti
         - Variabile globale con id utente se 0 non loggato se n loggato
         - Spostare tutte le pagine in altri file
+        - Aggiungere cluster per i marker
 
 
 
