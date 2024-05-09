@@ -583,7 +583,9 @@ import java.security.MessageDigest
                 if(auth)
                 {
                     val intent = Intent(this@PaginaLogin, PaginaProfilo::class.java)
+                    intent.putExtra("email", email)
                     startActivity(intent)
+
                 }
                 else
                 {
@@ -644,6 +646,13 @@ import java.security.MessageDigest
         public override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.profilo)
+
+            val email = intent.getStringExtra("email")
+
+            db.collection("Prenotazioni")
+                .get()
+
+
         }
     }
 
