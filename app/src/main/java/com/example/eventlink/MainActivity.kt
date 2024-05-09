@@ -29,8 +29,10 @@
         - Aggiungere al db utenti, aziende, prenotazioni e preferiti
         - Variabile globale con id utente se 0 non loggato se n loggato
         - Spostare tutte le pagine in altri file
-        - Aggiungere cluster per i marker
-
+        - Aggiungere cluster per i marker (PS: non mi sta andando, neanche chatgpt va molto bene...) non entra nel db??????
+        - Nella schermata login quando non insierisci credenziali vere il log non deve avere finish perchè così torna alla mappa
+        - Credo ci sia lo stesso problema con registrati quando email già utilizzata non finisce ma rimane li
+        - Spostare il codice del menu su pagina login
 
 
 
@@ -106,9 +108,12 @@ package com.example.eventlink
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.location.Geocoder
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -125,17 +130,17 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.firestore.FieldPath
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.QuerySnapshot
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.sun.activation.viewers.TextEditor
+import com.google.maps.android.clustering.ClusterItem
+import com.google.maps.android.clustering.ClusterManager
+import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -144,6 +149,8 @@ import java.security.MessageDigest
 
 @SuppressLint("StaticFieldLeak")
     private val db = Firebase.firestore
+    private lateinit var clusterManager: ClusterManager<MyClusterItem>
+    private lateinit var customClusterRenderer: CustomClusterRenderer
     class MainActivity : Activity(), OnMapReadyCallback {
 
         // Coordinate della posizione centrale dell'Italia
@@ -257,11 +264,24 @@ import java.security.MessageDigest
                 // Sposta la telecamera al centro dell'Italia con il livello di zoom predefinito
                 moveCamera(CameraUpdateFactory.newLatLngZoom(italia,zoomlvl))
 
-                /* LAGGGGA
+
                 // Crea un oggetto Geocoder per la geocodifica degli indirizzi
                 val geocoder = Geocoder(this@MainActivity)
-                
-                
+                // Inizializza il ClusterManager
+                clusterManager = ClusterManager<MyClusterItem>(this@MainActivity, googleMap)
+
+                // Inizializza il renderer personalizzato
+                customClusterRenderer = CustomClusterRenderer(this@MainActivity, googleMap, clusterManager)
+
+                // Associa il renderer personalizzato al ClusterManager
+                clusterManager.renderer = customClusterRenderer
+
+                googleMap.setOnCameraIdleListener(clusterManager)
+
+
+
+
+                val items = mutableListOf<MyClusterItem>()
                 // Ottiene la collezione "Eventi" dal database Firestore
                 db.collection("Eventi")
                     .get()
@@ -284,30 +304,25 @@ import java.security.MessageDigest
                             // Ottiene le informazioni sulla posizione dall'indirizzo nel documento
                             val locations = geocoder.getFromLocationName(document.data.getValue("Indirizzo").toString(), 1)
                             val firstLocation = locations!![0]
-
-
-                            // Crea un oggetto MarkerOptions per impostare le proprietà del marker sulla mappa
-                            val punto = MarkerOptions()
-                                .position(LatLng(firstLocation.latitude, firstLocation.longitude)) // Imposta la posizione del marker
-                                .anchor(-0.1f, 1.0f) // Imposta l'ancoraggio del marker
-                                .title(document.data.getValue("Titolo").toString()) // Imposta il titolo del marker
-                                .snippet( // Imposta il testo aggiuntivo del marker (informazioni sull'evento)
-                                    "Indirizzo: " + document.data.getValue("Indirizzo").toString() + "\n" +
+                            val position = LatLng(firstLocation.latitude,firstLocation.longitude)
+                            val title = document.data.getValue("Titolo").toString()
+                            val descrizione = "Indirizzo: " + document.data.getValue("Indirizzo").toString() + "\n" +
                                     "Data: " + document.data.getValue("Data").toString() + "\n" +
                                     "Ora: " + document.data.getValue("Ora").toString() + "\n" +
                                     "Prezzo: " + document.data.getValue("Prezzo").toString()
-                                )
+                            val immagine = BitmapDescriptorFactory.fromBitmap(resizedBitmap)
+                            val tagg = document.id
 
-                            // Imposta l'icona personalizzata per il marker utilizzando il bitmap ridimensionato
-                            punto.icon(BitmapDescriptorFactory.fromBitmap(resizedBitmap))
-
-                            // Aggiunge il marker alla mappa e memorizza il suo ID del documento come tag
-                            val marker: Marker? = googleMap.addMarker(punto)
-                            marker?.tag=document.id
+                            val clusterItem = MyClusterItem(position,title,descrizione,immagine,tagg)
+                            items.add(clusterItem)
                         }
                     }
+                clusterManager.addItems(items)
+                clusterManager.setAnimation(false)
+                clusterManager.cluster()
 
 
+                /*
                 // Imposta un listener per i click sui marker sulla mappa
                 googleMap.setOnMarkerClickListener { marker ->
                     // Ottiene l'ID del marker dal suo tag
@@ -385,6 +400,8 @@ import java.security.MessageDigest
                 }
 
                  */
+
+
                 val zommpiu = findViewById<Button>(R.id.btp)
                 val zommmeno = findViewById<Button>(R.id.btm)
 
@@ -415,6 +432,7 @@ import java.security.MessageDigest
         public override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.activity_evento)
+
 
             val markerId = intent.getStringExtra("markerId")
             db.collection("Eventi")
@@ -723,6 +741,44 @@ suspend fun esisteInDB(collectionName: String, documentId: String): Boolean {
     }
 }
 
+
+class MyClusterItem(
+    @JvmField val pos: LatLng,
+    @JvmField val titolo: String,
+    @JvmField val desc: String,
+    val icon: BitmapDescriptor,
+    val tag: String
+) : ClusterItem{
+    override fun getPosition(): LatLng {
+        return pos
+    }
+
+    override fun getTitle(): String {
+        return titolo
+    }
+
+    override fun getSnippet(): String {
+        return desc
+    }
+}
+
+class CustomClusterRenderer(
+    context: Context,
+    map: GoogleMap,
+    clusterManager: ClusterManager<MyClusterItem>
+) : DefaultClusterRenderer<MyClusterItem>(context,map,clusterManager){
+    override fun onBeforeClusterItemRendered(item: MyClusterItem, markerOptions: MarkerOptions) {
+        //val defaultClusterIcon = BitmapDescriptorFactory.defaultMarker() // Utilizza l'icona predefinita per i cluster
+        //markerOptions.icon(defaultClusterIcon)
+        super.onBeforeClusterItemRendered(item, markerOptions)
+        //markerOptions.icon(item.icon)
+    }
+
+    override fun onClusterItemRendered(clusterItem: MyClusterItem, marker: Marker) {
+        super.onClusterItemRendered(clusterItem, marker)
+        //marker.tag = clusterItem.tag
+    }
+}
 
 
 
