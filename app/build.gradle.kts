@@ -35,6 +35,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -47,6 +48,8 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/NOTICE.md"
+            excludes += "META-INF/LICENSE.md"
         }
     }
 }
@@ -80,7 +83,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.12.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
     implementation("com.google.firebase:firebase-auth:21.0.1")
-    implementation("com.sun.mail:javax.mail:1.6.2")
-    implementation("javax.activation:activation:1.1.1")
+    implementation("com.sun.mail:javax.activation:1.2.0")
+    implementation("com.sun.mail:javax.mail:1.6.7")
     implementation ("com.google.android.gms:play-services-auth:19.2.0")
 }

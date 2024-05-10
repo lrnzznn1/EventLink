@@ -115,6 +115,7 @@ import android.graphics.BitmapFactory
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -149,7 +150,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileInputStream
+import java.net.PasswordAuthentication
 import java.security.MessageDigest
+import java.util.*
 
 
 @SuppressLint("StaticFieldLeak")
@@ -494,55 +499,99 @@ import java.security.MessageDigest
                 val email = emailfield.text.toString()
                 val password = generateRandomPassword(12)
 
+                var block = false
                 var esiste = false
 
-                runBlocking {
-                    esiste = esisteInDB("Utenti", email)
+                //controlli per field
+                if (nome.isEmpty()) {
+                        // Mostra un alert
+                    block = true
+                    AlertDialog.Builder(this)
+                        .setTitle("Campo Vuoto")
+                        .setMessage("Il campo Nome non può essere vuoto.")
+                        .setPositiveButton("OK", null)
+                        .show()
+                } else if (cognome.isEmpty()) {
+                    // Mostra un alert
+                    block = true
+                    AlertDialog.Builder(this)
+                        .setTitle("Campo Vuoto")
+                        .setMessage("Il campo Cognome non può essere vuoto.")
+                        .setPositiveButton("OK", null)
+                        .show()
+                } else if (email.isEmpty()) {
+                    // Mostra un alert
+                    block = true
+                    AlertDialog.Builder(this)
+                        .setTitle("Campo Vuoto")
+                        .setMessage("Il campo Email non può essere vuoto.")
+                        .setPositiveButton("OK", null)
+                        .show()
                 }
-
-                if(esiste)
-                {
-                    val builder = AlertDialog.Builder(this)
-                    builder.setTitle("Registrazione Fallita")
-                    builder.setMessage("La tua registrazione non è avvenuta con successo, potrebbe esistere già un account con questa mail, in caso Accedi!")
-                    builder.setPositiveButton("OK") { dialog, which ->
-                        // L'utente ha premuto il pulsante "OK"
-                        // Puoi aggiungere qui eventuali azioni aggiuntive, ad esempio, navigare verso un'altra schermata
-
-                        //finish() // Chiude l'activity corrente
+                else if (telefono.isEmpty()) {
+                    // Mostra un alert
+                    block = true
+                    AlertDialog.Builder(this)
+                        .setTitle("Campo Vuoto")
+                        .setMessage("Il campo Numero di Telefono non può essere vuoto.")
+                        .setPositiveButton("OK", null)
+                        .show()
                     }
-                    val dialog = builder.create()
-                    dialog.show()
-                }
-                else{
-                    db.collection("Utenti").document(email).set(
-                        mapOf
-                            (
-                            "Nome" to nome,
-                            "Cognome" to cognome,
-                            "Telefono" to telefono,
-                            "Password" to hashString(password),
-                            "DDN" to data
-                        )
-                    ).addOnSuccessListener {
-                        val builder = AlertDialog.Builder(this)
-                        builder.setTitle("Registrazione Avvenuta")
-                        builder.setMessage("La tua registrazione è avvenuta con successo!")
-                        builder.setPositiveButton("OK") { dialog, which ->
 
-                            finish() // Chiude l'activity corrente
-                        }
-                        val dialog = builder.create()
-                        dialog.show()
-                    }.addOnFailureListener{
+                if(!block)
+                {
+                    runBlocking {
+                        esiste = esisteInDB("Utenti", email)
+                    }
+
+                    if(esiste)
+                    {
                         val builder = AlertDialog.Builder(this)
                         builder.setTitle("Registrazione Fallita")
-                        builder.setMessage("La tua registrazione non è avvenuta con successo, potresti avere già un account, in caso Accedi!")
+                        builder.setMessage("La tua registrazione non è avvenuta con successo, potrebbe esistere già un account con questa mail, in caso Accedi!")
                         builder.setPositiveButton("OK") { dialog, which ->
-                            finish()
+                            // L'utente ha premuto il pulsante "OK"
+                            // Puoi aggiungere qui eventuali azioni aggiuntive, ad esempio, navigare verso un'altra schermata
+
+                            //finish() // Chiude l'activity corrente
                         }
                         val dialog = builder.create()
                         dialog.show()
+                    }
+                    else{
+                        db.collection("Utenti").document(email).set(
+                            mapOf
+                                (
+                                "Nome" to nome,
+                                "Cognome" to cognome,
+                                "Telefono" to telefono,
+                                "Password" to hashString(password),
+                                "DDN" to data
+                            )
+                        ).addOnSuccessListener {
+                            val builder = AlertDialog.Builder(this)
+                            builder.setTitle("Registrazione Avvenuta")
+                            builder.setMessage("La tua registrazione è avvenuta con successo!\nControlla la mail per ottenere la password.")
+                            builder.setPositiveButton("OK") { dialog, which ->
+
+                                finish() // Chiude l'activity corrente
+                            }
+                            val dialog = builder.create()
+                            dialog.show()
+                        }.addOnFailureListener{
+                            val builder = AlertDialog.Builder(this)
+                            builder.setTitle("Registrazione Fallita")
+                            builder.setMessage("La tua registrazione non è avvenuta con successo, potresti avere già un account, in caso Accedi!")
+                            builder.setPositiveButton("OK") { dialog, which ->
+                                finish()
+                            }
+                            val dialog = builder.create()
+                            dialog.show()
+                        }
+
+                        //inviare mail
+                        val a = EmailSender()
+                        a.Send(email,"Registrazione EventLink", "Gentile Cliente ${nome} ${cognome},\nLa ringraziamo per essersi iscritto alla nostra applicazione.\nLa sua password con cui potrà effettuare l'accesso è: ${password}" )
                     }
                 }
             }
@@ -578,29 +627,51 @@ import java.security.MessageDigest
                 val email = emailfield.text.toString()
                 val password = passwordfield.text.toString()
                 var auth = false
+                var block = false
 
-                runBlocking {
-                   auth = passwordCheck(email, password)
+                if (email.isEmpty()) {
+                    // Mostra un alert
+                    block = true
+                    AlertDialog.Builder(this)
+                        .setTitle("Campo Vuoto")
+                        .setMessage("Il campo Email non può essere vuoto.")
+                        .setPositiveButton("OK", null)
+                        .show()
+                } else if (password.isEmpty()) {
+                    // Mostra un alert
+                    block = true
+                    AlertDialog.Builder(this)
+                        .setTitle("Campo Vuoto")
+                        .setMessage("Il campo Password non può essere vuoto.")
+                        .setPositiveButton("OK", null)
+                        .show()
                 }
 
-                if(auth)
-                {
-                    val intent = Intent(this@PaginaLogin, PaginaProfilo::class.java)
-                    intent.putExtra("email", email)
-                    startActivity(intent)
-
-                }
-                else
-                {
-                    val builder = AlertDialog.Builder(this)
-                    builder.setTitle("Accesso Negato")
-                    builder.setMessage("Email o Password errati!")
-                    builder.setPositiveButton("OK") { dialog, which ->
-                        //finish()
+                if(!block){
+                    runBlocking {
+                        auth = passwordCheck(email, password)
                     }
-                    val dialog = builder.create()
-                    dialog.show()
+
+                    if(auth)
+                    {
+                        val intent = Intent(this@PaginaLogin, PaginaProfilo::class.java)
+                        intent.putExtra("email", email)
+                        startActivity(intent)
+
+                    }
+                    else
+                    {
+                        val builder = AlertDialog.Builder(this)
+                        builder.setTitle("Accesso Negato")
+                        builder.setMessage("Email o Password errati!")
+                        builder.setPositiveButton("OK") { dialog, which ->
+                            //finish()
+                        }
+                        val dialog = builder.create()
+                        dialog.show()
+                    }
                 }
+
             }
 
             val impostazioniViewLog = findViewById<LinearLayout>(R.id.ImpostazioniLoginComparsa)
@@ -653,7 +724,7 @@ import java.security.MessageDigest
             var document = null
             val parente = this.findViewById<ScrollView>(R.id.parente_nascosto)
             runBlocking {
-                //setPre(email, this@PaginaProfilo, parente)
+                setPre(email, this@PaginaProfilo, parente)
             }
         }
     }
@@ -828,7 +899,7 @@ suspend fun caricaMappa(context1: Context, googleMap: GoogleMap, resources :  an
 }
 
 //funzione per settare pagina profilo
-/*
+
 suspend fun setPre(email: String?, context: Context, parente: ScrollView)
 {
    val eventi = db.collection("Prenotazioni").whereEqualTo("ID_Utente", email).get().await()
@@ -849,4 +920,7 @@ suspend fun setPre(email: String?, context: Context, parente: ScrollView)
         img.contentDescription = "Immagine"
         parente.addView(duplicateView)
     }
-}*/
+}
+
+
+
