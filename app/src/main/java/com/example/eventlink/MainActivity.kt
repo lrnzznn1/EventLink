@@ -143,18 +143,22 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
 import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileInputStream
-import java.net.PasswordAuthentication
+import org.json.JSONObject
+import java.io.OutputStreamWriter
+import java.net.URL
 import java.security.MessageDigest
-import java.util.*
+import javax.net.ssl.HttpsURLConnection
 
 
 @SuppressLint("StaticFieldLeak")
@@ -569,10 +573,17 @@ import java.util.*
                                 "DDN" to data
                             )
                         ).addOnSuccessListener {
+                            rawJSON(email,"Gentile Cliente ${nome} ${cognome},\n" +
+                                    "La ringraziamo per essersi iscritto alla nostra applicazione.\n" +
+                                    "La sue credenziali con cui potrà effettuare l'accesso sono: \n" +
+                                    "Email: ${email}\n" +
+                                    "Password: ${password}" )
                             val builder = AlertDialog.Builder(this)
                             builder.setTitle("Registrazione Avvenuta")
                             builder.setMessage("La tua registrazione è avvenuta con successo!\nControlla la mail per ottenere la password.")
                             builder.setPositiveButton("OK") { dialog, which ->
+
+
 
                                 finish() // Chiude l'activity corrente
                             }
@@ -589,9 +600,11 @@ import java.util.*
                             dialog.show()
                         }
 
+                            /*
                         //inviare mail
                         val a = EmailSender()
                         a.Send(email,"Registrazione EventLink", "Gentile Cliente ${nome} ${cognome},\nLa ringraziamo per essersi iscritto alla nostra applicazione.\nLa sua password con cui potrà effettuare l'accesso è: ${password}" )
+                    */
                     }
                 }
             }
@@ -599,13 +612,55 @@ import java.util.*
         }
         //funzione finta per creare password randomiche, ovviamente da cambiare
         private fun generateRandomPassword(length: Int): String {
-            val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?/{}[]"
+            val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
             return (1..length)
                 .map { allowedChars.random() }
                 .joinToString("")
         }
     }
 
+fun rawJSON(emailc : String, textc : String) {
+
+    // Create JSON using JSONObject
+    val jsonObject = JSONObject()
+    jsonObject.put("email", emailc)
+    jsonObject.put("text", textc)
+
+    // Convert JSONObject to String
+    val jsonObjectString = jsonObject.toString()
+
+    GlobalScope.launch(Dispatchers.IO) {
+        val url = URL("https://us-central1-eventlinkv2.cloudfunctions.net/handlePostRequest")
+        val httpsURLConnection = url.openConnection() as HttpsURLConnection
+        httpsURLConnection.requestMethod = "POST"
+        httpsURLConnection.setRequestProperty("Content-Type", "application/json") // The format of the content we're sending to the server
+        httpsURLConnection.setRequestProperty("Accept", "application/json") // The format of response we want to get from the server
+        httpsURLConnection.doInput = true
+        httpsURLConnection.doOutput = true
+
+        // Send the JSON we created
+        val outputStreamWriter = OutputStreamWriter(httpsURLConnection.outputStream)
+        outputStreamWriter.write(jsonObjectString)
+        outputStreamWriter.flush()
+
+        // Check if the connection is successful
+        val responseCode = httpsURLConnection.responseCode
+        if (responseCode == HttpsURLConnection.HTTP_OK) {
+            val response = httpsURLConnection.inputStream.bufferedReader()
+                .use { it.readText() }  // defaults to UTF-8
+            withContext(Dispatchers.Main) {
+
+                // Convert raw JSON to pretty JSON using GSON library
+                val gson = GsonBuilder().setPrettyPrinting().create()
+                val prettyJson = gson.toJson(JsonParser.parseString(response))
+                Log.d("Pretty Printed JSON :", prettyJson)
+
+            }
+        } else {
+            Log.e("HTTPSURLCONNECTION_ERROR", responseCode.toString())
+        }
+    }
+}
 
     class PaginaLogin : Activity() {
         public override fun onCreate(savedInstanceState: Bundle?) {
@@ -784,11 +839,9 @@ class MyClusterItem(
     override fun getPosition(): LatLng {
         return pos
     }
-
     override fun getTitle(): String {
         return titolo
     }
-
     override fun getSnippet(): String {
         return desc
     }
@@ -805,7 +858,6 @@ class CustomClusterRenderer(
         super.onBeforeClusterItemRendered(item, markerOptions)
         markerOptions.icon(item.icon)
     }
-
     override fun onClusterItemRendered(clusterItem: MyClusterItem, marker: Marker) {
         super.onClusterItemRendered(clusterItem, marker)
         marker.tag = clusterItem.tag
@@ -814,8 +866,7 @@ class CustomClusterRenderer(
 
 
 
-suspend fun passwordCheck(documentId: String, password: String): Boolean
-{
+suspend fun passwordCheck(documentId: String, password: String): Boolean {
     try {
         val documentSnapshot = db.collection("Utenti").document(documentId).get().await()
         val documentData = documentSnapshot.data
@@ -900,8 +951,7 @@ suspend fun caricaMappa(context1: Context, googleMap: GoogleMap, resources :  an
 
 //funzione per settare pagina profilo
 
-suspend fun setPre(email: String?, context: Context, parente: ScrollView)
-{
+suspend fun setPre(email: String?, context: Context, parente: ScrollView){
    val eventi = db.collection("Prenotazioni").whereEqualTo("ID_Utente", email).get().await()
     for(document in eventi ){
         val evento = db.collection("Eventi").whereEqualTo(FieldPath.documentId(), document).get().await()
