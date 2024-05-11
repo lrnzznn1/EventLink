@@ -951,6 +951,7 @@ suspend fun caricaMappa(context1: Context, googleMap: GoogleMap, resources :  an
 
 //funzione per settare pagina profilo
 
+@SuppressLint("SetTextI18n")
 suspend fun setPre(email: String?, context: Context, parente: ScrollView){
    val eventi = db.collection("Prenotazioni").whereEqualTo("ID_Utente", email).get().await()
     for(document in eventi ){
