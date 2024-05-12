@@ -573,18 +573,26 @@ import javax.net.ssl.HttpsURLConnection
                                 "DDN" to data
                             )
                         ).addOnSuccessListener {
-                            rawJSON(email,"Gentile Cliente ${nome} ${cognome},\n" +
-                                    "La ringraziamo per essersi iscritto alla nostra applicazione.\n" +
-                                    "La sue credenziali con cui potrà effettuare l'accesso sono: \n" +
+                            rawJSON(email,"" +
+                                    "Gentile Cliente ${nome} ${cognome},\n" +
+                                    "\n" +
+                                    "Siamo lieti di darle il benvenuto alla nostra applicazione. La sua registrazione è stata completata con successo.\n" +
+                                    "\n" +
+                                    "Di seguito troverà le credenziali necessarie per accedere al suo account:\n" +
+                                    "\n" +
                                     "Email: ${email}\n" +
-                                    "Password: ${password}" )
+                                    "\n" +
+                                    "Password: ${password}\n" +
+                                    "\n" +
+                                    "Grazie per aver scelto di unirsi a noi. Per qualsiasi domanda o assistenza, non esiti a contattarci.\n" +
+                                    "\n" +
+                                    "Cordiali saluti,\n" +
+                                    "\n" +
+                                    "EventLink")
                             val builder = AlertDialog.Builder(this)
                             builder.setTitle("Registrazione Avvenuta")
                             builder.setMessage("La tua registrazione è avvenuta con successo!\nControlla la mail per ottenere la password.")
                             builder.setPositiveButton("OK") { dialog, which ->
-
-
-
                                 finish() // Chiude l'activity corrente
                             }
                             val dialog = builder.create()
@@ -599,16 +607,9 @@ import javax.net.ssl.HttpsURLConnection
                             val dialog = builder.create()
                             dialog.show()
                         }
-
-                            /*
-                        //inviare mail
-                        val a = EmailSender()
-                        a.Send(email,"Registrazione EventLink", "Gentile Cliente ${nome} ${cognome},\nLa ringraziamo per essersi iscritto alla nostra applicazione.\nLa sua password con cui potrà effettuare l'accesso è: ${password}" )
-                    */
                     }
                 }
             }
-
         }
         //funzione finta per creare password randomiche, ovviamente da cambiare
         private fun generateRandomPassword(length: Int): String {
