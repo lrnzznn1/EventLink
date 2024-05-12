@@ -11,95 +11,29 @@
    - networking
    - educazione
 
-
-
     TODO:
-        - Finire prima pagina con
-            - filtri implementare filtri e quando
-            - rendere o più leggerla l'app o allungare schermata caricamento
-        - Login al db su PaginLogin
-        - Registrazione al db su PaginaSignIn
-        - Sistemare xml delle date su PaginaSignIn Mi fa scifo
-        - Sistemare i 3 bottoni su PaginaEvento + aggiungere al db Numero Partecipanti
-        - Aggiungere bottone aggiungi a preferiti direttamente dal Marker Info + gestione
-        - Fare PaginaProfilo tutto
-        - Pagina Impostazioni tutto
-        - Pagina Contatti tutto
-        - Pagina Aiuto tutto
-        - Aggiungere al db utenti, aziende, prenotazioni e preferiti
-        - Variabile globale con id utente se 0 non loggato se n loggato
-        - Spostare tutte le pagine in altri file
-        - Aggiungere cluster per i marker (PS: non mi sta andando, neanche chatgpt va molto bene...) non entra nel db??????
-        - Nella schermata login quando non insierisci credenziali vere il log non deve avere finish perchè così torna alla mappa
-        - Credo ci sia lo stesso problema con registrati quando email già utilizzata non finisce ma rimane li
-        - Spostare il codice del menu su pagina login
-
-
-
-        CODICE UTILE + o -
-            // Registra un nuovo utente con email e password
-            mAuth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Registrazione riuscita, l'utente è stato creato correttamente
-                    val user: FirebaseUser? = mAuth.currentUser
-                    // Puoi aggiungere qui la logica per reindirizzare l'utente alla schemata successiva
-                } else {
-                    // Registrazione fallita
-                    // Puoi gestire gli errori qui
-                }
-            }
-
-
-
-//funzione che ci permette di inviare mail con connessione cryptata con STRATTLS
-fun inviaEmail(destinatario: String, oggetto: String, testo: String) {
-    // Configurazione delle proprietà per la connessione al server SMTP
-    val props = Properties()
-    props["mail.smtp.host"] = "smtp.gmail.com" // Indirizzo del server SMTP
-    props["mail.smtp.port"] = "587" // Porta del server SMTP
-    props["mail.smtp.auth"] = "true" // Abilita l'autenticazione SMTP
-    props["mail.smtp.starttls.enable"] = "true" // Abilita STARTTLS per la crittografia
-
-    // Autenticazione al server SMTP
-    val autenticazione = object : Authenticator() {
-        val pw = Properties().apply {
-            load(FileInputStream(File("local.properties")))
-        }.getProperty("PASSWORD")
-        override fun getPasswordAuthentication(): PasswordAuthentication {
-            return PasswordAuthentication("EventLinkAuth@gmail.com", pw)
-        }
-    }
-
-    // Creazione della sessione
-    val session = Session.getInstance(props, autenticazione)
-
-    try {
-        // Creazione del messaggio
-        val message = MimeMessage(session)
-        message.setFrom(InternetAddress("EventLinkAuth@gmail.com"))
-        message.addRecipient(Message.RecipientType.TO, InternetAddress(destinatario))
-        message.subject = oggetto
-        message.setText(testo)
-
-        // Invio dell'email
-        Transport.send(message)
-        println("Email inviata con successo!")
-    } catch (e: MessagingException) {
-        println("Si è verificato un errore durante l'invio dell'email: ${e.message}")
-    }
-}
-
+        - MainActivity
+            - Implementare filtri: tag + data
+            - Alleggerire loadMap()
+            - Implementare bottone Preferiti al indicatore_info_contents + logica
+        - PaginaEvento
+            - Implementare menu e profilo
+            - Implementare prenota
+        - PaginaSignIn
+            - Implementare menu e back
+        - PaginaLogin
+            - Aggiungere variabile globale con id utente se loggato
+        - PaginaProfilo
+            - Implementare Preferiti, Impostazioni Profilo ed eventuali bottoni(torna alla mappa, ecc..)
+        - PaginaImpostazioni
+            - Implementare cambio lingua e cambio tema app
+        - PaginaContatti
+            - Aggiungere info
+        - PaginaAiuto
+            - Aggiungere FAQ
+        - Altro
+            - Spostare classi in altri file
 */
-
-
-
-
-
-
-
-
-
 
 @file:Suppress("DEPRECATION")
 
@@ -126,7 +60,6 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.Spinner
 import android.widget.TextView
 import com.bumptech.glide.Glide
@@ -139,7 +72,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.GsonBuilder
@@ -147,6 +79,7 @@ import com.google.gson.JsonParser
 import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -159,672 +92,595 @@ import java.net.URL
 import java.security.MessageDigest
 import javax.net.ssl.HttpsURLConnection
 
-
 @SuppressLint("StaticFieldLeak")
-    private val db = Firebase.firestore
-    private lateinit var clusterManager: ClusterManager<MyClusterItem>
-    private lateinit var customClusterRenderer: CustomClusterRenderer
-    class MainActivity : Activity(), OnMapReadyCallback {
+private val db = Firebase.firestore
+private lateinit var clusterManager: ClusterManager<MyClusterItem>
+private lateinit var customClusterRenderer: CustomClusterRenderer
+class MainActivity : Activity(), OnMapReadyCallback {
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-        // Coordinate della posizione centrale dell'Italia
-        private val italia = LatLng(42.0, 11.53)
+        val mapFragment: MapFragment? =
+            fragmentManager.findFragmentById(R.id.map) as? MapFragment
+        mapFragment?.getMapAsync(this)
 
-        // Livello di zoom predefinito per visualizzare l'intera Italia sulla mappa
-        private val zoomlvl = 6f
+        val settingsViewMain = findViewById<LinearLayout>(R.id.Impostazioni)
+        settingsViewMain.visibility = View.GONE
+        val showHideSettingsMain = findViewById<ImageButton>(R.id.button_menu)
+        showHideSettingsMain.setOnClickListener {
+            if (settingsViewMain.visibility == View.VISIBLE) {
+                settingsViewMain.visibility = View.GONE
+            } else {
+                settingsViewMain.visibility = View.VISIBLE
+            }
+        }
+        val settingsButtonMain = findViewById<Button>(R.id.impostazioniMain)
+        val contactsButtonMain = findViewById<Button>(R.id.contattiMain)
+        val helpButtonMain = findViewById<Button>(R.id.aiutoMain)
+        settingsButtonMain.setOnClickListener {
+            val intent = Intent(this@MainActivity, PaginaImpostazioni::class.java)
+            startActivity(intent)
+        }
+        contactsButtonMain.setOnClickListener {
+            val intent = Intent(this@MainActivity, PaginaContatti::class.java)
+            startActivity(intent)
+        }
+        helpButtonMain.setOnClickListener {
+            val intent = Intent(this@MainActivity, PaginaAiuto::class.java)
+            startActivity(intent)
+        }
 
-        public override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            // Imposta il layout dell'attività
-            setContentView(R.layout.activity_main)
 
-            val impostazioniView = findViewById<LinearLayout>(R.id.Impostazioni)
-            impostazioniView.visibility = View.GONE
+        val filterView = findViewById<LinearLayout>(R.id.filtrilayout)
+        filterView.visibility = View.GONE
 
-            val filtriView = findViewById<LinearLayout>(R.id.filtrilayout)
-            filtriView.visibility = View.GONE
+        val zoomView = findViewById<LinearLayout>(R.id.zoomview)
 
-            val zoomView = findViewById<LinearLayout>(R.id.zoomview)
+        val buttonShowFilter = findViewById<Button>(R.id.filtri)
+        val buttonHideFilter = findViewById<Button>(R.id.chiudifiltri)
 
-            // Trova il frammento della mappa nel layout dell'attività
-            val mapFragment: MapFragment? =
-                fragmentManager.findFragmentById(R.id.map) as? MapFragment
+        buttonShowFilter.setOnClickListener{
+            buttonShowFilter.visibility= View.GONE
+            filterView.visibility = View.VISIBLE
+            val layoutParams = zoomView.layoutParams as ViewGroup.MarginLayoutParams
+            val newMarginTop = resources.getDimensionPixelSize(R.dimen.margin_top_120dp)
+            layoutParams.topMargin = newMarginTop
+            zoomView.layoutParams = layoutParams
+        }
+        buttonHideFilter.setOnClickListener{
+            filterView.visibility = View.GONE
+            buttonShowFilter.visibility= View.VISIBLE
+            val layoutParams = zoomView.layoutParams as ViewGroup.MarginLayoutParams
+            val newMarginTop = resources.getDimensionPixelSize(R.dimen.margin_top_400dp)
+            layoutParams.topMargin = newMarginTop
+            zoomView.layoutParams = layoutParams
+        }
 
-            // Trova il frammento della mappa nel layout dell'attività
-            mapFragment?.getMapAsync(this)
+        val items = arrayOf("Oggi", "Domani", "Weekend", "Questa settimana", "Prossima settimana", "Questo mese")
 
-            val buttonMostraNascondiImpostazioni = findViewById<ImageButton>(R.id.button_menu)
-            val buttonMostraFiltri = findViewById<Button>(R.id.filtri)
-            val buttonNascondiFiltri = findViewById<Button>(R.id.chiudifiltri)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-            buttonMostraNascondiImpostazioni.setOnClickListener {
-                if (impostazioniView.visibility == View.VISIBLE) {
-                    // Se le impostazioni sono già visibili, nasconderle
-                    impostazioniView.visibility = View.GONE
+        val spinnerDate = findViewById<Spinner>(R.id.date)
+
+        spinnerDate.adapter = adapter
+
+
+        val accountButton = findViewById<ImageButton>(R.id.button_profile)
+        accountButton.setOnClickListener{
+            val intent = Intent(this@MainActivity, PaginaLogin::class.java)
+            startActivity(intent)
+        }
+
+
+    }
+    @SuppressLint("PotentialBehaviorOverride", "DiscouragedApi")
+    override fun onMapReady(googleMap: GoogleMap) {
+        with(googleMap) {
+            uiSettings.isMapToolbarEnabled = false
+            val italia = LatLng(42.0, 11.53)
+            val zoomlvl = 6f
+            moveCamera(CameraUpdateFactory.newLatLngZoom(italia,zoomlvl))
+            runBlocking {
+                loadMap(this@MainActivity,googleMap,resources,packageName)
+            }
+            googleMap.setOnMarkerClickListener(null)
+            clusterManager.setOnClusterItemClickListener { item ->
+                val id = item.tag as? String
+
+                val view = layoutInflater.inflate(R.layout.indicatore_info_contents, null)
+
+                val titleTextView = view.findViewById<TextView>(R.id.title)
+                val snippetTextView = view.findViewById<TextView>(R.id.description)
+                val buttonEvent = view.findViewById<Button>(R.id.button1)
+                val buttonNavigator = view.findViewById<Button>(R.id.button2)
+
+                titleTextView.text = item.title
+                snippetTextView.text = item.snippet
+                buttonEvent.setOnClickListener {
+                    val intent = Intent(this@MainActivity, PaginaEvento::class.java)
+                    intent.putExtra("markerId", id)
+                    startActivity(intent)
+                }
+                buttonNavigator.setOnClickListener {
+                    val latitude = item.position.latitude
+                    val longitude = item.position.longitude
+                    val uri = "http://maps.google.com/maps?q=loc:$latitude,$longitude"
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+                    startActivity(intent)
+                }
+                val target = LatLng(item.position.latitude - 0.001, item.position.longitude)
+                val zoomLevel = 11f
+                val currentZoom = googleMap.cameraPosition.zoom
+                if (currentZoom < zoomLevel) {
+                    val cameraUpdate = CameraUpdateFactory.newLatLngZoom(target, zoomLevel)
+                    googleMap.animateCamera(cameraUpdate, 1000, null)
                 } else {
-                    // Altrimenti, mostrale
-                    impostazioniView.visibility = View.VISIBLE
+                    val cameraUpdate = CameraUpdateFactory.newLatLng(target)
+                    googleMap.animateCamera(cameraUpdate, 1000, null)
+                }
+
+                val dialog = AlertDialog.Builder(this@MainActivity, R.style.AlertDialogCustom)
+                    .setView(view)
+                    .create()
+                dialog.setOnShowListener {
+                    val window = dialog.window
+                    val params = window?.attributes
+                    val gravity = Gravity.TOP
+                    val xOffset = 0
+                    val yOffset = 370
+                    params?.gravity = gravity
+                    params?.x = xOffset
+                    params?.y = yOffset
+                    window?.attributes = params
+                }
+                dialog.show()
+                true
+            }
+            val zoomInButton = findViewById<Button>(R.id.btp)
+            val zoomOutButton = findViewById<Button>(R.id.btm)
+            zoomInButton.setOnClickListener {
+                val currentZoomLevel = googleMap.cameraPosition.zoom
+                val newZoomLevel = currentZoomLevel + 1
+                val cameraUpdate = CameraUpdateFactory.zoomTo(newZoomLevel)
+                googleMap.animateCamera(cameraUpdate)
+            }
+            zoomOutButton.setOnClickListener {
+                val currentZoomLevel = googleMap.cameraPosition.zoom
+                val newZoomLevel = currentZoomLevel - 1
+                val cameraUpdate = CameraUpdateFactory.zoomTo(newZoomLevel)
+                googleMap.animateCamera(cameraUpdate)
+            }
+        }
+    }
+    @SuppressLint("DiscouragedApi")
+    suspend fun loadMap(context1: Context, googleMap: GoogleMap, resources :  android.content.res.Resources, packageName:String){
+        clusterManager = ClusterManager<MyClusterItem>(context1, googleMap)
+        customClusterRenderer = CustomClusterRenderer(context1, googleMap, clusterManager)
+        clusterManager.renderer = customClusterRenderer
+        googleMap.setOnCameraIdleListener(clusterManager)
+        val items = mutableListOf<MyClusterItem>()
+        val result = db.collection("Eventi")
+            .get()
+            .await()
+        for (document in result) {
+            val ico = document.data.getValue("Tipo").toString()
+            val resourceId = resources.getIdentifier(ico, "drawable", packageName)
+            val bitmap = BitmapFactory.decodeResource(resources, resourceId)
+            val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, false)
+            val locString =  document.data.getValue("Posizione").toString()
+            val delimiter ="&"
+            val location = locString.split(delimiter)
+            val position = LatLng(location[0].toDouble(), location[1].toDouble())
+            val title = document.data.getValue("Titolo").toString()
+            val description =
+                "Indirizzo: " + document.data.getValue("Indirizzo")
+                    .toString() + "\n" +
+                        "Data: " + document.data.getValue("Data")
+                    .toString() + "\n" +
+                        "Ora: " + document.data.getValue("Ora")
+                    .toString() + "\n" +
+                        "Prezzo: " + document.data.getValue("Prezzo").toString()
+            val immagine = BitmapDescriptorFactory.fromBitmap(resizedBitmap)
+            val tag = document.id
+            val clusterItem = MyClusterItem(position, title, description, immagine, tag)
+            items.add(clusterItem)
+        }
+        clusterManager.addItems(items)
+        clusterManager.setAnimation(false)
+        clusterManager.cluster()
+    }
+}
+class PaginaEvento : Activity(){
+    @SuppressLint("SetTextI18n")
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_evento)
+        val markerId = intent.getStringExtra("markerId")
+        db.collection("Eventi")
+            .get()
+            .addOnSuccessListener { result ->
+                val document = result.documents.find { it.id == markerId }
+                if (document != null) {
+                    val srcImage = findViewById<ImageView>(R.id.ImmagineEvento)
+                    val titleView = findViewById<TextView>(R.id.TitoloEvento)
+                    val infoView = findViewById<TextView>(R.id.InfoEvento)
+                    val descView = findViewById<TextView>(R.id.DescrizioneEvento)
+
+                    val urlImmagine = document.data?.getValue("Immagine").toString()
+
+                    try {
+                        Glide.with(this@PaginaEvento).load(urlImmagine).into(srcImage)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
+                    titleView.text= document.data?.getValue("Titolo").toString()
+                    infoView.text= "Indirizzo: ${ document.data?.getValue("Indirizzo").toString() }\n" +
+                                   "Quando: ${document.data?.getValue("Data").toString()}" +
+                                   " ore ${document.data?.getValue("Ora").toString()}\n" +
+                                   "Prezzo: ${document.data?.getValue("Prezzo").toString()}"
+                    descView.text= document.data?.getValue("Descrizione").toString()
+
                 }
             }
-            buttonMostraFiltri.setOnClickListener{
-                buttonMostraFiltri.visibility= View.GONE
-                filtriView.visibility = View.VISIBLE
-                val layoutParams = zoomView.layoutParams as ViewGroup.MarginLayoutParams
-                val newMarginTop = resources.getDimensionPixelSize(R.dimen.margin_top_120dp) // Sostituisci R.dimen.margin_top_show_filters con la tua dimensione desiderata
-                layoutParams.topMargin = newMarginTop
-                zoomView.layoutParams = layoutParams
-            }
-            buttonNascondiFiltri.setOnClickListener{
-                filtriView.visibility = View.GONE
-                buttonMostraFiltri.visibility= View.VISIBLE
-                val layoutParams = zoomView.layoutParams as ViewGroup.MarginLayoutParams
-                val newMarginTop = resources.getDimensionPixelSize(R.dimen.margin_top_400dp) // R.dimen.margin_top_400dp è una dimensione di 400dp definita nelle risorse
-                layoutParams.topMargin = newMarginTop
-                zoomView.layoutParams = layoutParams
-            }
-
-            // Array di stringhe con gli elementi da caricare sullo Spinner
-            val items = arrayOf("Oggi", "Domani", "Weekend", "Questa settimana", "Prossima settimana", "Questo mese")
-
-            // Creazione di un adapter per lo Spinner utilizzando l'array di stringhe
-            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
-
-            // Imposta lo stile del dropdown
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-            // Ottieni il riferimento al tuo Spinner utilizzando l'ID
-            val spinnerDate = findViewById<Spinner>(R.id.date)
-
-            // Imposta l'adapter sullo Spinner
-            spinnerDate.adapter = adapter
-
-
-            //Pulsante pagina login
-            val accountPulsante = findViewById<ImageButton>(R.id.button_profile)
-
-            accountPulsante.setOnClickListener{
-                val intent = Intent(this@MainActivity, PaginaLogin::class.java)
-                startActivity(intent)
-            }
-
-            val impostazionePulsante = findViewById<Button>(R.id.impostazioniMain)
-            val contattiPulsante = findViewById<Button>(R.id.contattiMain)
-            val aiutoPulsante = findViewById<Button>(R.id.aiutoMain)
-
-            impostazionePulsante.setOnClickListener {
-                val intent = Intent(this@MainActivity, PaginaImpostazioni::class.java)
-                startActivity(intent)
-            }
-            contattiPulsante.setOnClickListener {
-                val intent = Intent(this@MainActivity, PaginaContatti::class.java)
-                startActivity(intent)
-            }
-            aiutoPulsante.setOnClickListener {
-                val intent = Intent(this@MainActivity, PaginaAiuto::class.java)
-                startActivity(intent)
-            }
-
-
+            .addOnFailureListener {}
+    }
+}
+class PaginaSignIn : Activity() {
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.signup)
+        val itemsDay = ArrayList<String>()
+        for (i in 1..31) {
+            itemsDay.add(String.format("%02d", i))
         }
+        val itemsMonth = ArrayList<String>()
+        for (i in 1..12) {
+            itemsMonth.add(String.format("%02d", i))
+        }
+        val itemsYear = ArrayList<String>()
+        for (i in 1900..2030) {
+            itemsYear.add(i.toString())
+        }
+        val adapterDay = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsDay)
+        val adapterMonth = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsMonth)
+        val adapterYear = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsYear)
 
+        adapterDay.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapterMonth.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapterYear.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-        @SuppressLint("PotentialBehaviorOverride", "DiscouragedApi")
-        override fun onMapReady(googleMap: GoogleMap) {
-            with(googleMap) {
+        val spinnerDay = findViewById<Spinner>(R.id.Giorno)
+        val spinnerMonth = findViewById<Spinner>(R.id.Mese)
+        val spinnerYear = findViewById<Spinner>(R.id.Anno)
 
-                // Disabilita i pulsanti di navigazione sulla mappa
-                uiSettings.isMapToolbarEnabled = false
+        spinnerDay.adapter = adapterDay
+        spinnerMonth.adapter = adapterMonth
+        spinnerYear.adapter = adapterYear
 
-                // Sposta la telecamera al centro dell'Italia con il livello di zoom predefinito
-                moveCamera(CameraUpdateFactory.newLatLngZoom(italia,zoomlvl))
+        spinnerDay.setSelection(0)
+        spinnerMonth.setSelection(0)
+        spinnerYear.setSelection(100)
 
+        val reg = findViewById<Button>(R.id.buttonSignup)
+        val emailField = findViewById<EditText>(R.id.editTextEmail)
+        val nameField = findViewById<EditText>(R.id.editTextNome)
+        val surnameField = findViewById<EditText>(R.id.editTextCognome)
+        val phoneField = findViewById<EditText>(R.id.editTextTelefono)
 
+        reg.setOnClickListener {
+            val animation = AnimationUtils.loadAnimation(this, R.anim.button_click_animation)
+            reg.startAnimation(animation)
+            val dateOfBirth = spinnerDay.getSelectedItem().toString() + "/" +
+                              spinnerMonth.getSelectedItem().toString() + "/" +
+                              spinnerYear.getSelectedItem().toString()
+            val name = nameField.text.toString()
+            val surname = surnameField.text.toString()
+            val phone = phoneField.text.toString()
+            val email = emailField.text.toString()
+            val password = generateRandomPassword()
+            var block = false
+            var exist: Boolean
+            exist = false
+            if (name.isEmpty()) {
+                block = true
+                AlertDialog.Builder(this)
+                    .setTitle("Campo Vuoto")
+                    .setMessage("Il campo Nome non può essere vuoto.")
+                    .setPositiveButton("OK", null)
+                    .show()
+            } else if (surname.isEmpty()) {
+                block = true
+                AlertDialog.Builder(this)
+                    .setTitle("Campo Vuoto")
+                    .setMessage("Il campo Cognome non può essere vuoto.")
+                    .setPositiveButton("OK", null)
+                    .show()
+            } else if (email.isEmpty()) {
+                block = true
+                AlertDialog.Builder(this)
+                    .setTitle("Campo Vuoto")
+                    .setMessage("Il campo Email non può essere vuoto.")
+                    .setPositiveButton("OK", null)
+                    .show()
+            }
+            else if (phone.isEmpty()) {
+                block = true
+                AlertDialog.Builder(this)
+                    .setTitle("Campo Vuoto")
+                    .setMessage("Il campo Numero di Telefono non può essere vuoto.")
+                    .setPositiveButton("OK", null)
+                    .show()
+                }
+
+            if(!block)
+            {
                 runBlocking {
-                    caricaMappa(this@MainActivity,googleMap,resources,packageName)
+                    exist = existsInDB("Utenti", email)
                 }
 
-                googleMap.setOnMarkerClickListener(null)
-                // Imposta un listener per i click sui marker sulla mappa
-                clusterManager.setOnClusterItemClickListener { item ->
-                    // Ottiene l'ID del marker dal suo tag
-                    val id = item.tag as? String
-
-                    // Infla la vista del layout personalizzato per il contenuto dell'indicatore
-                    val view = layoutInflater.inflate(R.layout.indicatore_info_contents, null)
-
-                    // Trova le viste all'interno della vista del layout personalizzato
-                    val titleTextView = view.findViewById<TextView>(R.id.title)
-                    val snippetTextView = view.findViewById<TextView>(R.id.description)
-                    val button1 = view.findViewById<Button>(R.id.button1)
-                    val button2 = view.findViewById<Button>(R.id.button2)
-
-                    // Imposta il titolo e il testo aggiuntivo del marker nelle viste appropriate
-                    titleTextView.text = item.title
-                    snippetTextView.text = item.snippet
-
-                    // Imposta il listener del bottone 1 per avviare l'attività PaginaEvento con l'ID del marker come extra
-                    button1.setOnClickListener {
-                        val intent = Intent(this@MainActivity, PaginaEvento::class.java)
-                        intent.putExtra("markerId", id)
-                        startActivity(intent)
-                    }
-
-                    // Imposta il listener del bottone 2 per aprire Google Maps con la posizione del marker
-                    button2.setOnClickListener {
-                        val latitude = item.position.latitude
-                        val longitude = item.position.longitude
-                        val uri = "http://maps.google.com/maps?q=loc:$latitude,$longitude"
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-                        startActivity(intent)
-                    }
-
-                    // Sposta leggermente la camera al di sotto del marker
-                    val target = LatLng(item.position.latitude - 0.001, item.position.longitude)
-                    val zoomLevel = 11f // Imposta il livello di zoom desiderato
-                    val currentZoom = googleMap.cameraPosition.zoom
-                    // Controlla se il livello di zoom attuale è inferiore al livello di zoom desiderato
-                    if (currentZoom < zoomLevel) {
-                        // Se sì, crea un'animazione per spostare e zoomare la camera alla posizione desiderata
-                        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(target, zoomLevel)
-                        googleMap.animateCamera(cameraUpdate, 1000, null)
-                    } else {
-                        // Altrimenti, crea un'animazione per spostare la camera alla posizione desiderata mantenendo lo stesso livello di zoom
-                        val cameraUpdate = CameraUpdateFactory.newLatLng(target)
-                        googleMap.animateCamera(cameraUpdate, 1000, null)
-                    }
-
-                    // Crea e mostra un AlertDialog personalizzato con la vista del layout personalizzato
-                    val dialog = AlertDialog.Builder(this@MainActivity, R.style.AlertDialogCustom)
-                        .setView(view)
-                        .create()
-
-                    // Imposta un listener per mostrare l'AlertDialog personalizzato in una posizione specifica
-                    dialog.setOnShowListener {
-                        val window = dialog.window
-                        val params = window?.attributes
-
-                        val gravity = Gravity.TOP
-                        val xOffset = 0
-                        val yOffset = 370 // Modifica il valore a seconda di quanto vuoi spostare l'AlertDialog
-
-                        params?.gravity = gravity
-                        params?.x = xOffset
-                        params?.y = yOffset
-
-                        window?.attributes = params
-                    }
-
-                    dialog.show() // Mostra l'AlertDialog personalizzato
-
-
-                    true// Restituisce true per indicare che l'evento di click sul marker è stato gestito
-                }
-
-
-
-
-
-                val zommpiu = findViewById<Button>(R.id.btp)
-                val zommmeno = findViewById<Button>(R.id.btm)
-
-                zommpiu.setOnClickListener {
-                    // Incrementa il livello di zoom attuale di un valore desiderato
-                    val currentZoomLevel = googleMap.cameraPosition.zoom
-                    val newZoomLevel = currentZoomLevel + 1 // Modifica il valore di incremento del livello di zoom
-                    val cameraUpdate = CameraUpdateFactory.zoomTo(newZoomLevel)
-                    googleMap.animateCamera(cameraUpdate)
-                }
-
-                // Imposta un listener per il bottone di zoom out (-)
-                zommmeno.setOnClickListener {
-                    // Decrementa il livello di zoom attuale di un valore desiderato
-                    val currentZoomLevel = googleMap.cameraPosition.zoom
-                    val newZoomLevel = currentZoomLevel - 1 // Modifica il valore di decremento del livello di zoom
-                    val cameraUpdate = CameraUpdateFactory.zoomTo(newZoomLevel)
-                    googleMap.animateCamera(cameraUpdate)
-                }
-            }
-
-        }
-
-    }
-
-    class PaginaEvento : Activity(){
-        @SuppressLint("SetTextI18n")
-        public override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            setContentView(R.layout.activity_evento)
-
-
-            val markerId = intent.getStringExtra("markerId")
-            db.collection("Eventi")
-                .get()
-                .addOnSuccessListener { result ->
-                    val document = result.documents.find { it.id == markerId }
-                    if (document != null) {
-                        // Il documento esiste, esegui le azioni desiderate
-
-                        val srcImage = findViewById<ImageView>(R.id.ImmagineEvento)
-                        val titleView = findViewById<TextView>(R.id.TitoloEvento)
-                        val infoView = findViewById<TextView>(R.id.InfoEvento)
-                        val descView = findViewById<TextView>(R.id.DescrizioneEvento)
-
-                        val urlImmagine = document.data?.getValue("Immagine").toString()
-
-                        try {
-                            Glide.with(this@PaginaEvento).load(urlImmagine).into(srcImage)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-
-                        titleView.text= document.data?.getValue("Titolo").toString()
-                        infoView.text= "Indirizzo: ${ document.data?.getValue("Indirizzo").toString() }\n" +
-                                       "Quando: ${document.data?.getValue("Data").toString()}" +
-                                       " ore ${document.data?.getValue("Ora").toString()}\n" +
-                                       "Prezzo: ${document.data?.getValue("Prezzo").toString()}"
-                        descView.text= document.data?.getValue("Descrizione").toString()
-
-                    } else {
-                        // Il documento non esiste, esegui un'altra azione o gestisci la mancanza del documento
-                    }
-                }
-                .addOnFailureListener {
-                    // Gestisci eventuali errori nel recupero dei dati dalla collezione "Eventi"
-                }
-
-        }
-    }
-
-
-    class PaginaSignIn : Activity() {
-        public override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            setContentView(R.layout.signup)
-            val itemsGiorno = ArrayList<String>()
-            for (i in 1..31) {
-                itemsGiorno.add(
-                    String.format(
-                        "%02d",
-                        i
-                    )
-                ) // Aggiunge giorni formattati con due cifre
-            }
-
-            // Popola l'array dei mesi
-            val itemsMese = ArrayList<String>()
-            for (i in 1..12) {
-                itemsMese.add(String.format("%02d", i)) // Aggiunge mesi formattati con due cifre
-            }
-
-            // Popola l'array degli anni
-            val itemsAnno = ArrayList<String>()
-            for (i in 1900..2030) {
-                itemsAnno.add(i.toString())
-            }
-            // Creazione di un adapter per lo Spinner utilizzando l'array di stringhe
-            val adapterGiorno = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsGiorno)
-            val adapterMese = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsMese)
-            val adapterAnno = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsAnno)
-
-            // Imposta lo stile del dropdown
-            adapterGiorno.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            adapterMese.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            adapterAnno.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-            // Ottieni il riferimento al tuo Spinner utilizzando l'ID
-            val spinnerGiorno = findViewById<Spinner>(R.id.Giorno)
-            val spinnerMese = findViewById<Spinner>(R.id.Mese)
-            val spinnerAnno = findViewById<Spinner>(R.id.Anno)
-            // Imposta l'adapter sullo Spinner
-            spinnerGiorno.adapter = adapterGiorno
-            spinnerMese.adapter = adapterMese
-            spinnerAnno.adapter = adapterAnno
-
-            spinnerGiorno.setSelection(1)
-            spinnerMese.setSelection(1)
-            spinnerAnno.setSelection(100)
-
-            val reg = findViewById<Button>(R.id.buttonSignup)
-            val emailfield = findViewById<EditText>(R.id.editTextEmail)
-            val nomefield = findViewById<EditText>(R.id.editTextNome)
-            val cognomefield = findViewById<EditText>(R.id.editTextCognome)
-            val telefonofield = findViewById<EditText>(R.id.editTextTelefono)
-
-            reg.setOnClickListener {
-                val animation = AnimationUtils.loadAnimation(this, R.anim.button_click_animation)
-                reg.startAnimation(animation)
-
-                val data =
-                    spinnerGiorno.getSelectedItem().toString() + "/" + spinnerMese.getSelectedItem()
-                        .toString() + "/" + spinnerAnno.getSelectedItem().toString()
-                val nome = nomefield.text.toString()
-                val cognome = cognomefield.text.toString()
-                val telefono = telefonofield.text.toString()
-                val email = emailfield.text.toString()
-                val password = generateRandomPassword(12)
-
-                var block = false
-                var esiste = false
-
-                //controlli per field
-                if (nome.isEmpty()) {
-                        // Mostra un alert
-                    block = true
-                    AlertDialog.Builder(this)
-                        .setTitle("Campo Vuoto")
-                        .setMessage("Il campo Nome non può essere vuoto.")
-                        .setPositiveButton("OK", null)
-                        .show()
-                } else if (cognome.isEmpty()) {
-                    // Mostra un alert
-                    block = true
-                    AlertDialog.Builder(this)
-                        .setTitle("Campo Vuoto")
-                        .setMessage("Il campo Cognome non può essere vuoto.")
-                        .setPositiveButton("OK", null)
-                        .show()
-                } else if (email.isEmpty()) {
-                    // Mostra un alert
-                    block = true
-                    AlertDialog.Builder(this)
-                        .setTitle("Campo Vuoto")
-                        .setMessage("Il campo Email non può essere vuoto.")
-                        .setPositiveButton("OK", null)
-                        .show()
-                }
-                else if (telefono.isEmpty()) {
-                    // Mostra un alert
-                    block = true
-                    AlertDialog.Builder(this)
-                        .setTitle("Campo Vuoto")
-                        .setMessage("Il campo Numero di Telefono non può essere vuoto.")
-                        .setPositiveButton("OK", null)
-                        .show()
-                    }
-
-                if(!block)
+                if(exist)
                 {
-                    runBlocking {
-                        esiste = esisteInDB("Utenti", email)
-                    }
-
-                    if(esiste)
-                    {
+                    val builder = AlertDialog.Builder(this)
+                    builder.setTitle("Registrazione Fallita")
+                    builder.setMessage("La tua registrazione non è avvenuta con successo, potrebbe esistere già un account con questa mail, in caso Accedi!")
+                    builder.setPositiveButton("OK",null)
+                    val dialog = builder.create()
+                    dialog.show()
+                }
+                else{
+                    db.collection("Utenti").document(email).set(
+                        mapOf
+                            (
+                            "Nome" to name,
+                            "Cognome" to surname,
+                            "Telefono" to phone,
+                            "Password" to hashString(password),
+                            "DDN" to dateOfBirth
+                        )
+                    ).addOnSuccessListener {
+                        rawJSON(email, "" +
+                                "Gentile Cliente $name $surname, \n" +
+                                "Siamo lieti di darle il benvenuto alla nostra applicazione. La sua registrazione è stata completata con successo. \n" +
+                                "Di seguito troverà le credenziali necessarie per accedere al suo account:\n" +
+                                "Email: $email \n" +
+                                "Password: $password \n" +
+                                "Grazie per aver scelto di unirsi a noi. Per qualsiasi domanda o assistenza, non esiti a contattarci. \n" +
+                                "Cordiali saluti, \n" +
+                                "EventLink"
+                        )
                         val builder = AlertDialog.Builder(this)
-                        builder.setTitle("Registrazione Fallita")
-                        builder.setMessage("La tua registrazione non è avvenuta con successo, potrebbe esistere già un account con questa mail, in caso Accedi!")
-                        builder.setPositiveButton("OK") { dialog, which ->
-                            // L'utente ha premuto il pulsante "OK"
-                            // Puoi aggiungere qui eventuali azioni aggiuntive, ad esempio, navigare verso un'altra schermata
-
-                            //finish() // Chiude l'activity corrente
+                        builder.setTitle("Registrazione Avvenuta")
+                        builder.setMessage("La tua registrazione è avvenuta con successo!\nControlla la mail per ottenere la password.")
+                        builder.setPositiveButton("OK"){_, _ ->
+                            finish()
                         }
                         val dialog = builder.create()
                         dialog.show()
-                    }
-                    else{
-                        db.collection("Utenti").document(email).set(
-                            mapOf
-                                (
-                                "Nome" to nome,
-                                "Cognome" to cognome,
-                                "Telefono" to telefono,
-                                "Password" to hashString(password),
-                                "DDN" to data
-                            )
-                        ).addOnSuccessListener {
-                            rawJSON(email,"" +
-                                    "Gentile Cliente ${nome} ${cognome},\n" +
-                                    "\n" +
-                                    "Siamo lieti di darle il benvenuto alla nostra applicazione. La sua registrazione è stata completata con successo.\n" +
-                                    "\n" +
-                                    "Di seguito troverà le credenziali necessarie per accedere al suo account:\n" +
-                                    "\n" +
-                                    "Email: ${email}\n" +
-                                    "\n" +
-                                    "Password: ${password}\n" +
-                                    "\n" +
-                                    "Grazie per aver scelto di unirsi a noi. Per qualsiasi domanda o assistenza, non esiti a contattarci.\n" +
-                                    "\n" +
-                                    "Cordiali saluti,\n" +
-                                    "\n" +
-                                    "EventLink")
-                            val builder = AlertDialog.Builder(this)
-                            builder.setTitle("Registrazione Avvenuta")
-                            builder.setMessage("La tua registrazione è avvenuta con successo!\nControlla la mail per ottenere la password.")
-                            builder.setPositiveButton("OK") { dialog, which ->
-                                finish() // Chiude l'activity corrente
-                            }
-                            val dialog = builder.create()
-                            dialog.show()
-                        }.addOnFailureListener{
-                            val builder = AlertDialog.Builder(this)
-                            builder.setTitle("Registrazione Fallita")
-                            builder.setMessage("La tua registrazione non è avvenuta con successo, potresti avere già un account, in caso Accedi!")
-                            builder.setPositiveButton("OK") { dialog, which ->
-                                finish()
-                            }
-                            val dialog = builder.create()
-                            dialog.show()
-                        }
+                    }.addOnFailureListener{
+                        val builder = AlertDialog.Builder(this)
+                        builder.setTitle("Registrazione Fallita")
+                        builder.setMessage("La tua registrazione non è avvenuta con successo, potresti avere già un account, in caso Accedi!")
+                        builder.setPositiveButton("OK", null)
+                        val dialog = builder.create()
+                        dialog.show()
                     }
                 }
             }
         }
-        //funzione finta per creare password randomiche, ovviamente da cambiare
-        private fun generateRandomPassword(length: Int): String {
-            val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-            return (1..length)
-                .map { allowedChars.random() }
-                .joinToString("")
+    }
+    private fun generateRandomPassword(): String {
+        val length  = 12
+        val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
+    }
+    private suspend fun existsInDB(collectionName: String, documentId: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            val document= db.collection(collectionName).document(documentId).get().await()
+            document!=null && document.exists()
         }
     }
-
-fun rawJSON(emailc : String, textc : String) {
-
-    // Create JSON using JSONObject
-    val jsonObject = JSONObject()
-    jsonObject.put("email", emailc)
-    jsonObject.put("text", textc)
-
-    // Convert JSONObject to String
-    val jsonObjectString = jsonObject.toString()
-
-    GlobalScope.launch(Dispatchers.IO) {
-        val url = URL("https://us-central1-eventlinkv2.cloudfunctions.net/handlePostRequest")
-        val httpsURLConnection = url.openConnection() as HttpsURLConnection
-        httpsURLConnection.requestMethod = "POST"
-        httpsURLConnection.setRequestProperty("Content-Type", "application/json") // The format of the content we're sending to the server
-        httpsURLConnection.setRequestProperty("Accept", "application/json") // The format of response we want to get from the server
-        httpsURLConnection.doInput = true
-        httpsURLConnection.doOutput = true
-
-        // Send the JSON we created
-        val outputStreamWriter = OutputStreamWriter(httpsURLConnection.outputStream)
-        outputStreamWriter.write(jsonObjectString)
-        outputStreamWriter.flush()
-
-        // Check if the connection is successful
-        val responseCode = httpsURLConnection.responseCode
-        if (responseCode == HttpsURLConnection.HTTP_OK) {
-            val response = httpsURLConnection.inputStream.bufferedReader()
-                .use { it.readText() }  // defaults to UTF-8
-            withContext(Dispatchers.Main) {
-
-                // Convert raw JSON to pretty JSON using GSON library
-                val gson = GsonBuilder().setPrettyPrinting().create()
-                val prettyJson = gson.toJson(JsonParser.parseString(response))
-                Log.d("Pretty Printed JSON :", prettyJson)
-
+    @OptIn(DelicateCoroutinesApi::class)
+    fun rawJSON(email : String, text : String) {
+        val jsonObject = JSONObject()
+        jsonObject.put("email", email)
+        jsonObject.put("text", text)
+        val jsonObjectString = jsonObject.toString()
+        GlobalScope.launch(Dispatchers.IO) {
+            val url = URL("https://us-central1-eventlinkv2.cloudfunctions.net/handlePostRequest")
+            val httpsURLConnection = url.openConnection() as HttpsURLConnection
+            httpsURLConnection.requestMethod = "POST"
+            httpsURLConnection.setRequestProperty("Content-Type", "application/json")
+            httpsURLConnection.setRequestProperty("Accept", "application/json")
+            httpsURLConnection.doInput = true
+            httpsURLConnection.doOutput = true
+            val outputStreamWriter = OutputStreamWriter(httpsURLConnection.outputStream)
+            outputStreamWriter.write(jsonObjectString)
+            outputStreamWriter.flush()
+            val responseCode = httpsURLConnection.responseCode
+            if (responseCode == HttpsURLConnection.HTTP_OK) {
+                val response = httpsURLConnection.inputStream.bufferedReader()
+                    .use { it.readText() }
+                withContext(Dispatchers.Main) {
+                    val gson = GsonBuilder().setPrettyPrinting().create()
+                    val prettyJson = gson.toJson(JsonParser.parseString(response))
+                    Log.d("Pretty Printed JSON :", prettyJson)
+                }
+            } else {
+                Log.e("HTTPSURLCONNECTION_ERROR", responseCode.toString())
             }
-        } else {
-            Log.e("HTTPSURLCONNECTION_ERROR", responseCode.toString())
         }
     }
 }
+class PaginaLogin : Activity() {
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.login)
+        val buttonSignUp = findViewById<TextView>(R.id.registatiTesto)
+        val buttonLogin = findViewById<Button>(R.id.buttonlogin)
+        buttonSignUp.setOnClickListener {
+            val intent = Intent(this@PaginaLogin, PaginaSignIn::class.java)
+            startActivity(intent)
+        }
 
-    class PaginaLogin : Activity() {
-        public override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            setContentView(R.layout.login)
-            val buttonSignUp = findViewById<TextView>(R.id.registatiTesto)
-            val buttonLogin = findViewById<Button>(R.id.buttonlogin)
-            buttonSignUp.setOnClickListener {
-                val intent = Intent(this@PaginaLogin, PaginaSignIn::class.java)
-                startActivity(intent)
+        buttonLogin.setOnClickListener {
+            val animation = AnimationUtils.loadAnimation(this, R.anim.button_click_animation)
+            buttonLogin.startAnimation(animation)
+
+            val emailField = findViewById<EditText>(R.id.editTextEmailLogin)
+            val passwordField = findViewById<EditText>(R.id.editTextPasswordLogin)
+            val email = emailField.text.toString()
+            val password = passwordField.text.toString()
+            var auth: Boolean
+            auth = false
+            var block = false
+
+            if (email.isEmpty()) {
+                block = true
+                AlertDialog.Builder(this)
+                    .setTitle("Campo Vuoto")
+                    .setMessage("Il campo Email non può essere vuoto.")
+                    .setPositiveButton("OK", null)
+                    .show()
+            } else if (password.isEmpty()) {
+                block = true
+                AlertDialog.Builder(this)
+                    .setTitle("Campo Vuoto")
+                    .setMessage("Il campo Password non può essere vuoto.")
+                    .setPositiveButton("OK", null)
+                    .show()
             }
 
-            buttonLogin.setOnClickListener {
-                val animation = AnimationUtils.loadAnimation(this, R.anim.button_click_animation)
-                buttonLogin.startAnimation(animation)
-
-                val emailfield = findViewById<EditText>(R.id.editTextEmailLogin)
-                val passwordfield = findViewById<EditText>(R.id.editTextPasswordLogin)
-                val email = emailfield.text.toString()
-                val password = passwordfield.text.toString()
-                var auth = false
-                var block = false
-
-                if (email.isEmpty()) {
-                    // Mostra un alert
-                    block = true
-                    AlertDialog.Builder(this)
-                        .setTitle("Campo Vuoto")
-                        .setMessage("Il campo Email non può essere vuoto.")
-                        .setPositiveButton("OK", null)
-                        .show()
-                } else if (password.isEmpty()) {
-                    // Mostra un alert
-                    block = true
-                    AlertDialog.Builder(this)
-                        .setTitle("Campo Vuoto")
-                        .setMessage("Il campo Password non può essere vuoto.")
-                        .setPositiveButton("OK", null)
-                        .show()
+            if(!block){
+                runBlocking {
+                    auth = passwordCheck(email, password)
                 }
 
-                if(!block){
-                    runBlocking {
-                        auth = passwordCheck(email, password)
-                    }
+                if(auth) {
+                    val intent = Intent(this@PaginaLogin, PaginaProfilo::class.java)
+                    intent.putExtra("email", email)
+                    startActivity(intent)
 
-                    if(auth)
-                    {
-                        val intent = Intent(this@PaginaLogin, PaginaProfilo::class.java)
-                        intent.putExtra("email", email)
-                        startActivity(intent)
-
-                    }
-                    else
-                    {
-                        val builder = AlertDialog.Builder(this)
-                        builder.setTitle("Accesso Negato")
-                        builder.setMessage("Email o Password errati!")
-                        builder.setPositiveButton("OK") { dialog, which ->
-                            //finish()
-                        }
-                        val dialog = builder.create()
-                        dialog.show()
-                    }
                 }
-
-            }
-
-            val impostazioniViewLog = findViewById<LinearLayout>(R.id.ImpostazioniLoginComparsa)
-            impostazioniViewLog.visibility = View.GONE
-
-            val mostraNascondiImpostazioniLog = findViewById<ImageButton>(R.id.button_menu_log)
-            mostraNascondiImpostazioniLog.setOnClickListener {
-                if (impostazioniViewLog.visibility == View.VISIBLE) {
-                    // Se le impostazioni sono già visibili, nasconderle
-                    impostazioniViewLog.visibility = View.GONE
-                } else {
-                    // Altrimenti, mostrale
-                    impostazioniViewLog.visibility = View.VISIBLE
+                else {
+                    val builder = AlertDialog.Builder(this)
+                    builder.setTitle("Accesso Negato")
+                    builder.setMessage("Email o Password errati!")
+                    builder.setPositiveButton("OK", null)
+                    val dialog = builder.create()
+                    dialog.show()
                 }
             }
+        }
 
-            val tornaIndietroButton = findViewById<ImageButton>(R.id.tornaInDietroLog)
-            tornaIndietroButton.setOnClickListener{
-                finish()
+        val settingsViewLog = findViewById<LinearLayout>(R.id.ImpostazioniLoginComparsa)
+        settingsViewLog.visibility = View.GONE
+
+        val showHideSettingsLog = findViewById<ImageButton>(R.id.button_menu_log)
+        showHideSettingsLog.setOnClickListener {
+            if (settingsViewLog.visibility == View.VISIBLE) {
+                settingsViewLog.visibility = View.GONE
+            } else {
+                settingsViewLog.visibility = View.VISIBLE
             }
+        }
 
-            val impostazionePulsanteLog = findViewById<Button>(R.id.impostazioniLogin)
-            val contattiPulsanteLog = findViewById<Button>(R.id.contattiLogin)
-            val aiutoPulsanteLog = findViewById<Button>(R.id.aiutoLogin)
+        val backButton = findViewById<ImageButton>(R.id.tornaInDietroLog)
+        backButton.setOnClickListener{
+            finish()
+        }
 
-            impostazionePulsanteLog.setOnClickListener {
-                val intent = Intent(this@PaginaLogin, PaginaImpostazioni::class.java)
-                startActivity(intent)
-            }
-            contattiPulsanteLog.setOnClickListener {
-                val intent = Intent(this@PaginaLogin, PaginaContatti::class.java)
-                startActivity(intent)
-            }
-            aiutoPulsanteLog.setOnClickListener {
-                val intent = Intent(this@PaginaLogin, PaginaAiuto::class.java)
-                startActivity(intent)
-            }
+        val settingsButtonLog = findViewById<Button>(R.id.impostazioniLogin)
+        val contactsButtonLog = findViewById<Button>(R.id.contattiLogin)
+        val helpButtonLog = findViewById<Button>(R.id.aiutoLogin)
 
-
-
+        settingsButtonLog.setOnClickListener {
+            val intent = Intent(this@PaginaLogin, PaginaImpostazioni::class.java)
+            startActivity(intent)
+        }
+        contactsButtonLog.setOnClickListener {
+            val intent = Intent(this@PaginaLogin, PaginaContatti::class.java)
+            startActivity(intent)
+        }
+        helpButtonLog.setOnClickListener {
+            val intent = Intent(this@PaginaLogin, PaginaAiuto::class.java)
+            startActivity(intent)
+        }
+    }
+    private suspend fun passwordCheck(documentId: String, password: String): Boolean {
+        return try {
+            val documentSnapshot = db.collection("Utenti").document(documentId).get().await()
+            val documentData = documentSnapshot.data
+            val documentPassword = documentData?.get("Password")
+            documentPassword == hashString(password)
+        }catch (e: Exception){
+            false
+        }
+    }
+}
+class PaginaProfilo : Activity(){
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.profilo)
+        val email = intent.getStringExtra("email")
+        val parent = this.findViewById<LinearLayout>(R.id.parente_nascosto)
+        runBlocking {
+            setPre(email, this@PaginaProfilo, parent)
+        }
+    }
+    @SuppressLint("SetTextI18n", "InflateParams")
+    suspend fun setPre(email: String?, context: Context, parent: LinearLayout){
+        val events = db.collection("Prenotazioni").whereEqualTo("ID_Utente", email).get().await()
+        for(document in events ){
+            val eventId = document.data["ID_Evento"]
+            val event = db.collection("Eventi").document(eventId!!.toString()).get().await()
+            val image = event.data?.get("Immagine")
+            val title = event.data?.get("Titolo")
+            val time = event.data?.get("Ora")
+            val date = event.data?.get("Data")
+            val inflater = LayoutInflater.from(context)
+            val duplicateView = inflater.inflate(R.layout.baseeventi, null)
+            val text = duplicateView.findViewById<TextView>(R.id.pUtente_DescrizioneEvento)
+            text.text = "$title\n\n$date $time"
+            val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento)
+            Glide.with(context).load(image).into(img)
+            img.contentDescription = "Image"
+            parent.addView(duplicateView)
         }
     }
 
-
-    class PaginaProfilo : Activity(){
-        public override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            setContentView(R.layout.profilo)
-            val email = intent.getStringExtra("email")
-            var document = null
-            val parente = this.findViewById<ScrollView>(R.id.parente_nascosto)
-            runBlocking {
-                setPre(email, this@PaginaProfilo, parente)
-            }
-        }
+}
+class PaginaImpostazioni : Activity() {
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.impostazioni)
     }
-
-    class PaginaImpostazioni : Activity() {
-        public override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            setContentView(R.layout.impostazioni)
-        }
-    }
-
-    class PaginaContatti : Activity(){
+}
+class PaginaContatti : Activity(){
         public override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.contatti)
         }
     }
-    class PaginaAiuto : Activity(){
-        public override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            setContentView(R.layout.aiuto)
-        }
+class PaginaAiuto : Activity(){
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.aiuto)
     }
-
-
+}
 fun hashString(input: String): String {
     val bytes = input.toByteArray()
     val md = MessageDigest.getInstance("SHA-256")
     val digest = md.digest(bytes)
-    return digest.fold("", { str, it -> str + "%02x".format(it) })
+    return digest.fold("") { str, it -> str + "%02x".format(it) }
 }
-
-
-
-suspend fun esisteInDB(collectionName: String, documentId: String): Boolean {
-    return withContext(Dispatchers.IO) {
-        val document= db.collection(collectionName).document(documentId).get().await()
-        document!=null && document.exists()
-    }
-}
-
-
 class MyClusterItem(
     @JvmField val pos: LatLng,
-    @JvmField val titolo: String,
+    @JvmField val title: String,
     @JvmField val desc: String,
     val icon: BitmapDescriptor,
     val tag: String
@@ -833,21 +689,18 @@ class MyClusterItem(
         return pos
     }
     override fun getTitle(): String {
-        return titolo
+        return title
     }
     override fun getSnippet(): String {
         return desc
     }
 }
-
 class CustomClusterRenderer(
     context: Context,
     map: GoogleMap,
     clusterManager: ClusterManager<MyClusterItem>
 ) : DefaultClusterRenderer<MyClusterItem>(context,map,clusterManager){
     override fun onBeforeClusterItemRendered(item: MyClusterItem, markerOptions: MarkerOptions) {
-        //val defaultClusterIcon = BitmapDescriptorFactory.defaultMarker() // Utilizza l'icona predefinita per i cluster
-        //markerOptions.icon(defaultClusterIcon)
         super.onBeforeClusterItemRendered(item, markerOptions)
         markerOptions.icon(item.icon)
     }
@@ -856,109 +709,3 @@ class CustomClusterRenderer(
         marker.tag = clusterItem.tag
     }
 }
-
-
-
-suspend fun passwordCheck(documentId: String, password: String): Boolean {
-    return try {
-        val documentSnapshot = db.collection("Utenti").document(documentId).get().await()
-        val documentData = documentSnapshot.data
-        val documentPassword = documentData?.get("Password")
-        documentPassword == hashString(password)
-    }catch (e: Exception)
-    {
-        false
-    }
-}
-
-suspend fun caricaMappa(context1: Context, googleMap: GoogleMap, resources :  android.content.res.Resources, packageName:String){
-    // Inizializza il ClusterManager
-    clusterManager = ClusterManager<MyClusterItem>(context1, googleMap)
-
-    // Inizializza il renderer personalizzato
-    customClusterRenderer = CustomClusterRenderer(context1, googleMap, clusterManager)
-
-    // Associa il renderer personalizzato al ClusterManager
-    clusterManager.renderer = customClusterRenderer
-
-    googleMap.setOnCameraIdleListener(clusterManager)
-
-    val items = mutableListOf<MyClusterItem>()
-    // Ottiene la collezione "Eventi" dal database Firestore
-    val result = db.collection("Eventi")
-        .get()
-        .await()
-
-    // Loop attraverso ogni documento nell'insieme di risultati
-    for (document in result) {
-        // Ottiene il tipo di evento dal documento
-        val ico = document.data.getValue("Tipo").toString()
-
-        // Ottiene l'ID della risorsa drawable utilizzando il suo nome
-        val resourceId =
-            resources.getIdentifier(ico, "drawable", packageName)
-
-        // Carica la risorsa drawable come bitmap
-        val bitmap = BitmapFactory.decodeResource(resources, resourceId)
-
-        // Ridimensiona il bitmap
-        val resizedBitmap =
-            Bitmap.createScaledBitmap(bitmap, 100, 100, false)
-
-
-
-        val locstring =  document.data.getValue("Posizione").toString()
-        val delimiter ="&"
-        val location = locstring.split(delimiter)
-
-
-        val position =
-            LatLng(location[0].toDouble(), location[1].toDouble())
-
-        val title = document.data.getValue("Titolo").toString()
-        val descrizione =
-            "Indirizzo: " + document.data.getValue("Indirizzo")
-                .toString() + "\n" +
-                    "Data: " + document.data.getValue("Data")
-                .toString() + "\n" +
-                    "Ora: " + document.data.getValue("Ora")
-                .toString() + "\n" +
-                    "Prezzo: " + document.data.getValue("Prezzo").toString()
-        val immagine = BitmapDescriptorFactory.fromBitmap(resizedBitmap)
-        val tagg = document.id
-
-        val clusterItem =
-            MyClusterItem(position, title, descrizione, immagine, tagg)
-        items.add(clusterItem)
-    }
-    clusterManager.addItems(items)
-    clusterManager.setAnimation(false)
-    clusterManager.cluster()
-}
-
-//funzione per settare pagina profilo
-
-@SuppressLint("SetTextI18n")
-suspend fun setPre(email: String?, context: Context, parente: ScrollView){
-   val eventi = db.collection("Prenotazioni").whereEqualTo("ID_Utente", email).get().await()
-    for(document in eventi ){
-        val evento = db.collection("Eventi").whereEqualTo(FieldPath.documentId(), document).get().await()
-        val immagine = document.data["Immagine"]
-        val titolo = document.data["Titolo"]
-        val ora = document.data["Ora"]
-        val data = document.data["Data"]
-        val inflater = LayoutInflater.from(context)
-        val duplicateView = inflater.inflate(R.layout.baseeventi, null)
-
-        val text = duplicateView.findViewById<TextView>(R.id.pUtente_DescrizioneEvento)
-        text.text = "${titolo}\n\n${data} ${ora}"
-
-        val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento)
-        Glide.with(context).load(immagine).into(img)
-        img.contentDescription = "Immagine"
-        parente.addView(duplicateView)
-    }
-}
-
-
-

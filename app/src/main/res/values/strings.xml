@@ -35,4 +35,8 @@
     <string name="accedi">Accedi</string>
     <string name="password">Password</string>
     <string name="non_hai_un_account_registrati_qui">Non hai un account? Registrati qui</string>
+    <string name="niente">NULL</string>
+    <string name="visita_guidata_colosseo_n_n5_maggio_14_00">Visita Guidata Colosseo\n\n5 Maggio 14.00</string>
+    <string name="annulla">Annulla</string>
+    <string name="prenotazioni">Prenotazioni</string>
 </resources>

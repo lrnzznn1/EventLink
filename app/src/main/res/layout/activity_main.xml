@@ -4,7 +4,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,8 +13,6 @@
         android:layout_marginTop="-5dp"
         android:layout_marginBottom="-5dp"
         android:orientation="horizontal">
-
-        <!-- Primo bottone -->
         <ImageButton
             android:id="@+id/button_menu"
             android:layout_width="58dp"
@@ -27,13 +24,11 @@
             tools:ignore="HardcodedText"
             android:layout_marginTop="2dp"
             android:layout_marginStart="5dp"/>
-
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1" />
-        <!-- Secondo bottone -->
-        <ImageButton
+           <ImageButton
             android:id="@+id/button_profile"
             android:layout_width="65dp"
             android:layout_height="65dp"
@@ -44,7 +39,6 @@
             tools:ignore="HardcodedText"
             android:layout_marginTop="3dp"
             android:layout_marginEnd="5dp"/>
-
     </LinearLayout>
     <FrameLayout
         android:layout_width="match_parent"
@@ -57,8 +51,6 @@
             android:layout_height="match_parent"
             tools:context="com.example.eventlink.MainActivity"
             tools:ignore="FragmentTagUsage" />
-        <!-- Primo LinearLayout sovrapposto -->
-
         <LinearLayout
             android:id="@+id/Impostazioni"
             android:layout_width="150dp"
@@ -67,8 +59,6 @@
             android:layout_gravity="top"
             android:padding="7dp"
             android:background="@color/white">
-
-            <!-- Contenuto del primo LinearLayout -->
             <Button
                 android:id="@+id/impostazioniMain"
                 android:layout_width="match_parent"
@@ -90,8 +80,6 @@
                 tools:ignore="ButtonStyle"
                 android:layout_marginTop="11dp"/>
         </LinearLayout>
-
-        <!-- Secondo LinearLayout sovrapposto -->
         <LinearLayout
             android:id="@+id/zoomview"
             android:layout_width="wrap_content"
@@ -101,10 +89,7 @@
             android:layout_marginRight="2dp"
             android:layout_marginTop="400dp"
             android:background="@color/white"
-            tools:ignore="RtlHardcoded"
-            >
-
-            <!-- Contenuto del secondo LinearLayout -->
+            tools:ignore="RtlHardcoded">
             <Button
                 android:id="@+id/btp"
                 android:layout_width="55dp"
@@ -124,9 +109,6 @@
                 tools:ignore="ButtonStyle"
                 android:background="@color/white"/>
         </LinearLayout>
-        <!-- Terzo LinearLayout sovrapposto -->
-
-        <!-- Contenuto del terzo LinearLayout -->
         <Button
             android:layout_gravity="right"
             android:layout_marginRight="2dp"
@@ -138,8 +120,6 @@
             android:text="@string/filtri"
             tools:ignore="ButtonStyle,RtlHardcoded"
             android:background="@color/white"/>
-
-        
         <LinearLayout
             android:layout_width="220dp"
             android:layout_height="wrap_content"
@@ -151,7 +131,6 @@
             tools:ignore="RtlHardcoded"
             android:padding="5dp"
             android:id="@+id/filtrilayout">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -182,7 +161,6 @@
                     android:text="@string/x"
                     tools:ignore="ButtonStyle"
                     android:background="@color/white"/>
-
             </LinearLayout>
             <Spinner
                 android:layout_width="wrap_content"

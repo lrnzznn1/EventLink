@@ -6,31 +6,26 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="10dp">
-
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:gravity=""
         android:text="prova"
         android:textColor="@android:color/black"
         android:textSize="16sp"
         android:textStyle="bold"
         tools:ignore="HardcodedText" />
-
     <TextView
         android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:textColor="@android:color/black"
-        android:text="Pprova 2dsaaaaaaaaaaaaaaaaaaaaaaaadsaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-        android:gravity=""
+        android:text="prova"
         android:lineSpacingExtra="2dp"
         android:textSize="13sp"
         tools:ignore="HardcodedText" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,7 +38,6 @@
             android:layout_weight="1"
             android:text="@string/apri"
             tools:ignore="ButtonStyle" />
-
         <Button
             android:id="@+id/button2"
             android:layout_width="0dp"
@@ -51,9 +45,5 @@
             android:layout_weight="1"
             android:text="@string/naviga"
             tools:ignore="ButtonStyle" />
-
     </LinearLayout>
-
-
-
 </LinearLayout>

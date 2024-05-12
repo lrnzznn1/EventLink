@@ -4,9 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    >
-
+    android:background="#FFFFFF">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,8 +14,6 @@
         android:layout_marginTop="-5dp"
         android:layout_marginBottom="-5dp"
         android:orientation="horizontal">
-
-        <!-- Primo bottone -->
         <ImageButton
             android:id="@+id/button_menu"
             android:layout_width="58dp"
@@ -29,12 +25,10 @@
             tools:ignore="HardcodedText"
             android:layout_marginTop="2dp"
             android:layout_marginStart="5dp"/>
-
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1" />
-        <!-- Secondo bottone -->
         <ImageButton
             android:id="@+id/tornaInDietroReg"
             android:layout_width="65dp"
@@ -46,19 +40,13 @@
             tools:ignore="HardcodedText"
             android:layout_marginTop="3dp"
             android:layout_marginEnd="5dp"/>
-
     </LinearLayout>
-
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center"
         android:layout_marginTop="-100dp">
-
-        <!--scritta Registrati-->
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
@@ -70,8 +58,6 @@
             android:textStyle="bold"
             android:layout_marginTop="30dp"
             android:gravity="center_vertical" />
-
-        <!--sezione nome-->
         <EditText
             android:id="@+id/editTextNome"
             android:layout_width="280dp"
@@ -85,7 +71,6 @@
             android:importantForAutofill="no"
             android:background="@drawable/rounded_edittext_background"
             tools:ignore="RtlSymmetry" />
-
         <EditText
             android:id="@+id/editTextCognome"
             android:layout_marginTop="30dp"
@@ -113,8 +98,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="10dp">
-            <!-- TODO: Mettere apposto dio c-->
-
             <Spinner
                 android:layout_width="70dp"
                 android:layout_height="48dp"
@@ -124,7 +107,6 @@
                 android:layout_gravity="center"
                 android:gravity="center">
             </Spinner>
-
             <Spinner
                 android:layout_width="70dp"
                 android:layout_height="48dp"
@@ -141,7 +123,6 @@
                 android:gravity="center">
             </Spinner>
         </LinearLayout>
-
         <EditText
             android:id="@+id/editTextEmail"
             android:layout_width="280dp"
@@ -155,7 +136,6 @@
             android:paddingStart="20dp"
             android:importantForAutofill="no"
             tools:ignore="RtlSymmetry" />
-
         <EditText
             android:layout_marginTop="30dp"
             android:id="@+id/editTextTelefono"
@@ -169,9 +149,6 @@
             android:paddingStart="20dp"
             android:importantForAutofill="no"
             tools:ignore="RtlSymmetry" />
-
-
-        <!--bottone Signup -->
         <Button
             android:id="@+id/buttonSignup"
             android:layout_width="250dp"
@@ -180,9 +157,6 @@
             android:layout_marginTop="35dp"
             style="@style/CustomButtonStyle"
             android:foreground="?android:attr/selectableItemBackground"
-            android:background="@drawable/rounded_bottom_background"
-
-            />
+            android:background="@drawable/rounded_bottom_background"/>
     </LinearLayout>
-
 </LinearLayout>
