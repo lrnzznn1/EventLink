@@ -83,23 +83,36 @@ class MainActivity : Activity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val mapFragment: MapFragment? =
-            fragmentManager.findFragmentById(R.id.map) as? MapFragment
+        // Initialize the map fragment
+        val mapFragment: MapFragment? = fragmentManager.findFragmentById(R.id.map) as? MapFragment
         mapFragment?.getMapAsync(this)
 
+        // Initialize UI elements
         val settingsViewMain = findViewById<LinearLayout>(R.id.Impostazioni)
-        settingsViewMain.visibility = View.GONE
         val showHideSettingsMain = findViewById<ImageButton>(R.id.button_menu)
+        val settingsButtonMain = findViewById<Button>(R.id.impostazioniMain)
+        val contactsButtonMain = findViewById<Button>(R.id.contattiMain)
+        val helpButtonMain = findViewById<Button>(R.id.aiutoMain)
+        val filterView = findViewById<LinearLayout>(R.id.filtrilayout)
+        val zoomView = findViewById<LinearLayout>(R.id.zoomview)
+        val buttonShowFilter = findViewById<Button>(R.id.filtri)
+        val buttonHideFilter = findViewById<Button>(R.id.chiudifiltri)
+        val spinnerDate = findViewById<Spinner>(R.id.date)
+        val accountButton = findViewById<ImageButton>(R.id.button_profile)
+
+
+        // Setup for main settings view
+        settingsViewMain.visibility = View.GONE
         showHideSettingsMain.setOnClickListener {
+            // Toggle visibility of settings view
             if (settingsViewMain.visibility == View.VISIBLE) {
                 settingsViewMain.visibility = View.GONE
             } else {
                 settingsViewMain.visibility = View.VISIBLE
             }
         }
-        val settingsButtonMain = findViewById<Button>(R.id.impostazioniMain)
-        val contactsButtonMain = findViewById<Button>(R.id.contattiMain)
-        val helpButtonMain = findViewById<Button>(R.id.aiutoMain)
+
+        // Click listeners for main settings, contacts, and help buttons
         settingsButtonMain.setOnClickListener {
             val intent = Intent(this@MainActivity, PaginaImpostazioni::class.java)
             startActivity(intent)
@@ -113,16 +126,12 @@ class MainActivity : Activity(), OnMapReadyCallback {
             startActivity(intent)
         }
 
-
-        val filterView = findViewById<LinearLayout>(R.id.filtrilayout)
+        // Setup for filter view and its visibility
         filterView.visibility = View.GONE
 
-        val zoomView = findViewById<LinearLayout>(R.id.zoomview)
-
-        val buttonShowFilter = findViewById<Button>(R.id.filtri)
-        val buttonHideFilter = findViewById<Button>(R.id.chiudifiltri)
-
+        // Setup for zoom view and buttons to show/hide filter
         buttonShowFilter.setOnClickListener{
+            // Show filter view and adjust top margin of zoom view
             buttonShowFilter.visibility= View.GONE
             filterView.visibility = View.VISIBLE
             val layoutParams = zoomView.layoutParams as ViewGroup.MarginLayoutParams
@@ -131,6 +140,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
             zoomView.layoutParams = layoutParams
         }
         buttonHideFilter.setOnClickListener{
+            // Hide filter view and adjust top margin of zoom view
             filterView.visibility = View.GONE
             buttonShowFilter.visibility= View.VISIBLE
             val layoutParams = zoomView.layoutParams as ViewGroup.MarginLayoutParams
@@ -139,52 +149,79 @@ class MainActivity : Activity(), OnMapReadyCallback {
             zoomView.layoutParams = layoutParams
         }
 
+        // Setup spinner for selecting dates
         val items = arrayOf("Oggi", "Domani", "Weekend", "Questa settimana", "Prossima settimana", "Questo mese")
-
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-        val spinnerDate = findViewById<Spinner>(R.id.date)
-
         spinnerDate.adapter = adapter
 
-
-        val accountButton = findViewById<ImageButton>(R.id.button_profile)
+        // Click listener for account button to navigate to login page
         accountButton.setOnClickListener{
             val intent = Intent(this@MainActivity, PaginaLogin::class.java)
             startActivity(intent)
         }
-
-
     }
     @SuppressLint("PotentialBehaviorOverride", "DiscouragedApi")
     override fun onMapReady(googleMap: GoogleMap) {
         with(googleMap) {
+            // Disable default map toolbar
             uiSettings.isMapToolbarEnabled = false
+
+            // Set initial camera position to Italy
             val italia = LatLng(42.0, 11.53)
             val zoomlvl = 6f
             moveCamera(CameraUpdateFactory.newLatLngZoom(italia,zoomlvl))
+
+            // Set click listeners for zoom buttons
+            val zoomInButton = findViewById<Button>(R.id.btp)
+            val zoomOutButton = findViewById<Button>(R.id.btm)
+            zoomInButton.setOnClickListener {
+                val currentZoomLevel = googleMap.cameraPosition.zoom
+                val newZoomLevel = currentZoomLevel + 1
+                val cameraUpdate = CameraUpdateFactory.zoomTo(newZoomLevel)
+                googleMap.animateCamera(cameraUpdate)
+            }
+            zoomOutButton.setOnClickListener {
+                val currentZoomLevel = googleMap.cameraPosition.zoom
+                val newZoomLevel = currentZoomLevel - 1
+                val cameraUpdate = CameraUpdateFactory.zoomTo(newZoomLevel)
+                googleMap.animateCamera(cameraUpdate)
+            }
+
+            // Load map markers asynchronously
             runBlocking {
                 loadMap(this@MainActivity,googleMap,resources,packageName)
             }
+
+            // Disable default marker click event
             googleMap.setOnMarkerClickListener(null)
+
+            // Set custom marker click listener
             clusterManager.setOnClusterItemClickListener { item ->
+                // Get marker tag
                 val id = item.tag as? String
 
+                // Inflate custom info window layout
                 val view = layoutInflater.inflate(R.layout.indicatore_info_contents, null)
 
+                // Initialize views
                 val titleTextView = view.findViewById<TextView>(R.id.title)
                 val snippetTextView = view.findViewById<TextView>(R.id.description)
                 val buttonEvent = view.findViewById<Button>(R.id.button1)
                 val buttonNavigator = view.findViewById<Button>(R.id.button2)
 
+                // Set marker title and snippet to views
                 titleTextView.text = item.title
                 snippetTextView.text = item.snippet
+
+                // Click listener for event button
                 buttonEvent.setOnClickListener {
                     val intent = Intent(this@MainActivity, PaginaEvento::class.java)
                     intent.putExtra("markerId", id)
                     startActivity(intent)
                 }
+
+                // Click listener for navigation button
                 buttonNavigator.setOnClickListener {
                     val latitude = item.position.latitude
                     val longitude = item.position.longitude
@@ -192,6 +229,8 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
                     startActivity(intent)
                 }
+
+                // Adjust camera position to show info window
                 val target = LatLng(item.position.latitude - 0.001, item.position.longitude)
                 val zoomLevel = 11f
                 val currentZoom = googleMap.cameraPosition.zoom
@@ -203,6 +242,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     googleMap.animateCamera(cameraUpdate, 1000, null)
                 }
 
+                // Customize and show AlertDialog with custom view
                 val dialog = AlertDialog.Builder(this@MainActivity, R.style.AlertDialogCustom)
                     .setView(view)
                     .create()
@@ -220,33 +260,27 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 dialog.show()
                 true
             }
-            val zoomInButton = findViewById<Button>(R.id.btp)
-            val zoomOutButton = findViewById<Button>(R.id.btm)
-            zoomInButton.setOnClickListener {
-                val currentZoomLevel = googleMap.cameraPosition.zoom
-                val newZoomLevel = currentZoomLevel + 1
-                val cameraUpdate = CameraUpdateFactory.zoomTo(newZoomLevel)
-                googleMap.animateCamera(cameraUpdate)
-            }
-            zoomOutButton.setOnClickListener {
-                val currentZoomLevel = googleMap.cameraPosition.zoom
-                val newZoomLevel = currentZoomLevel - 1
-                val cameraUpdate = CameraUpdateFactory.zoomTo(newZoomLevel)
-                googleMap.animateCamera(cameraUpdate)
-            }
         }
     }
     @SuppressLint("DiscouragedApi")
     suspend fun loadMap(context1: Context, googleMap: GoogleMap, resources :  android.content.res.Resources, packageName:String){
+        // Initialize ClusterManager and custom renderer
         clusterManager = ClusterManager<MyClusterItem>(context1, googleMap)
         customClusterRenderer = CustomClusterRenderer(context1, googleMap, clusterManager)
         clusterManager.renderer = customClusterRenderer
         googleMap.setOnCameraIdleListener(clusterManager)
+
+        // Initialize list for map markers
         val items = mutableListOf<MyClusterItem>()
+
+        // Fetch event data from Firestore
         val result = db.collection("Eventi")
             .get()
             .await()
+
+        // Process each event document
         for (document in result) {
+            // Extract data from document
             val ico = document.data.getValue("Tipo").toString()
             val resourceId = resources.getIdentifier(ico, "drawable", packageName)
             val bitmap = BitmapFactory.decodeResource(resources, resourceId)
@@ -257,18 +291,21 @@ class MainActivity : Activity(), OnMapReadyCallback {
             val position = LatLng(location[0].toDouble(), location[1].toDouble())
             val title = document.data.getValue("Titolo").toString()
             val description =
-                "Indirizzo: " + document.data.getValue("Indirizzo")
-                    .toString() + "\n" +
-                        "Data: " + document.data.getValue("Data")
-                    .toString() + "\n" +
-                        "Ora: " + document.data.getValue("Ora")
-                    .toString() + "\n" +
+                        "Indirizzo: " + document.data.getValue("Indirizzo").toString() + "\n" +
+                        "Data: " + document.data.getValue("Data").toString() + "\n" +
+                        "Ora: " + document.data.getValue("Ora").toString() + "\n" +
                         "Prezzo: " + document.data.getValue("Prezzo").toString()
+
+            // Create BitmapDescriptor for marker icon
             val immagine = BitmapDescriptorFactory.fromBitmap(resizedBitmap)
             val tag = document.id
+
+            // Create cluster item
             val clusterItem = MyClusterItem(position, title, description, immagine, tag)
             items.add(clusterItem)
         }
+
+        // Add markers to ClusterManager
         clusterManager.addItems(items)
         clusterManager.setAnimation(false)
         clusterManager.cluster()

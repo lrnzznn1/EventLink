@@ -21,19 +21,29 @@ class PaginaLogin : Activity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login)
+
+        // Initialize UI elements
+        val emailField = findViewById<EditText>(R.id.editTextEmailLogin)
+        val passwordField = findViewById<EditText>(R.id.editTextPasswordLogin)
+        val settingsViewLog = findViewById<LinearLayout>(R.id.ImpostazioniLoginComparsa)
+        val showHideSettingsLog = findViewById<ImageButton>(R.id.button_menu_log)
+        val backButton = findViewById<ImageButton>(R.id.tornaInDietroLog)
+        val settingsButtonLog = findViewById<Button>(R.id.impostazioniLogin)
+        val contactsButtonLog = findViewById<Button>(R.id.contattiLogin)
+        val helpButtonLog = findViewById<Button>(R.id.aiutoLogin)
         val buttonSignUp = findViewById<TextView>(R.id.registatiTesto)
         val buttonLogin = findViewById<Button>(R.id.buttonlogin)
+
+        // Set click listeners
         buttonSignUp.setOnClickListener {
             val intent = Intent(this@PaginaLogin, PaginaSignIn::class.java)
             startActivity(intent)
         }
 
         buttonLogin.setOnClickListener {
+            // Perform login operation
             val animation = AnimationUtils.loadAnimation(this, R.anim.button_click_animation)
             buttonLogin.startAnimation(animation)
-
-            val emailField = findViewById<EditText>(R.id.editTextEmailLogin)
-            val passwordField = findViewById<EditText>(R.id.editTextPasswordLogin)
             val email = emailField.text.toString()
             val password = passwordField.text.toString()
             var auth: Boolean
@@ -78,10 +88,10 @@ class PaginaLogin : Activity() {
             }
         }
 
-        val settingsViewLog = findViewById<LinearLayout>(R.id.ImpostazioniLoginComparsa)
+        // Set visibility of settings view
         settingsViewLog.visibility = View.GONE
 
-        val showHideSettingsLog = findViewById<ImageButton>(R.id.button_menu_log)
+        // Set click listener for showing/hiding settings
         showHideSettingsLog.setOnClickListener {
             if (settingsViewLog.visibility == View.VISIBLE) {
                 settingsViewLog.visibility = View.GONE
@@ -90,15 +100,12 @@ class PaginaLogin : Activity() {
             }
         }
 
-        val backButton = findViewById<ImageButton>(R.id.tornaInDietroLog)
+        // Set click listener for back button
         backButton.setOnClickListener{
             finish()
         }
 
-        val settingsButtonLog = findViewById<Button>(R.id.impostazioniLogin)
-        val contactsButtonLog = findViewById<Button>(R.id.contattiLogin)
-        val helpButtonLog = findViewById<Button>(R.id.aiutoLogin)
-
+        // Set click listeners for settings, contacts, and help buttons
         settingsButtonLog.setOnClickListener {
             val intent = Intent(this@PaginaLogin, PaginaImpostazioni::class.java)
             startActivity(intent)
@@ -112,6 +119,8 @@ class PaginaLogin : Activity() {
             startActivity(intent)
         }
     }
+
+    //Suspended function to check if the provided password matches the one stored in the database for the given document ID.
     private suspend fun passwordCheck(documentId: String, password: String): Boolean {
         return try {
             val documentSnapshot = db.collection("Utenti").document(documentId).get().await()

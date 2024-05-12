@@ -30,30 +30,38 @@ class PaginaSignIn : Activity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.signup)
+
+        // Initializing UI elements
+        val spinnerDay = findViewById<Spinner>(R.id.Giorno)
+        val spinnerMonth = findViewById<Spinner>(R.id.Mese)
+        val spinnerYear = findViewById<Spinner>(R.id.Anno)
+        val reg = findViewById<Button>(R.id.buttonSignup)
+        val emailField = findViewById<EditText>(R.id.editTextEmail)
+        val nameField = findViewById<EditText>(R.id.editTextNome)
+        val surnameField = findViewById<EditText>(R.id.editTextCognome)
+        val phoneField = findViewById<EditText>(R.id.editTextTelefono)
+
+        // Creating lists for spinners
         val itemsDay = ArrayList<String>()
-        for (i in 1..31) {
-            itemsDay.add(String.format("%02d", i))
-        }
+        for (i in 1..31) itemsDay.add(String.format("%02d", i))
+
         val itemsMonth = ArrayList<String>()
-        for (i in 1..12) {
-            itemsMonth.add(String.format("%02d", i))
-        }
+        for (i in 1..12) itemsMonth.add(String.format("%02d", i))
+
         val itemsYear = ArrayList<String>()
-        for (i in 1900..2030) {
-            itemsYear.add(i.toString())
-        }
+        for (i in 1900..2030) itemsYear.add(i.toString())
+
+        // Creating adapters for spinners
         val adapterDay = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsDay)
         val adapterMonth = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsMonth)
         val adapterYear = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsYear)
 
+        // Setting dropdown view resource for adapters
         adapterDay.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         adapterMonth.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         adapterYear.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-        val spinnerDay = findViewById<Spinner>(R.id.Giorno)
-        val spinnerMonth = findViewById<Spinner>(R.id.Mese)
-        val spinnerYear = findViewById<Spinner>(R.id.Anno)
-
+        // Setting adapters for spinners
         spinnerDay.adapter = adapterDay
         spinnerMonth.adapter = adapterMonth
         spinnerYear.adapter = adapterYear
@@ -62,12 +70,7 @@ class PaginaSignIn : Activity() {
         spinnerMonth.setSelection(0)
         spinnerYear.setSelection(100)
 
-        val reg = findViewById<Button>(R.id.buttonSignup)
-        val emailField = findViewById<EditText>(R.id.editTextEmail)
-        val nameField = findViewById<EditText>(R.id.editTextNome)
-        val surnameField = findViewById<EditText>(R.id.editTextCognome)
-        val phoneField = findViewById<EditText>(R.id.editTextTelefono)
-
+        // Setting click listener for sign-up button
         reg.setOnClickListener {
             val animation = AnimationUtils.loadAnimation(this, R.anim.button_click_animation)
             reg.startAnimation(animation)
@@ -82,6 +85,8 @@ class PaginaSignIn : Activity() {
             var block = false
             var exist: Boolean
             exist = false
+
+            // Validating user input
             if (name.isEmpty()) {
                 block = true
                 AlertDialog.Builder(this)
@@ -113,12 +118,11 @@ class PaginaSignIn : Activity() {
                     .show()
             }
 
-            if(!block)
-            {
+            // Proceeding with sign-up if input is valid
+            if(!block) {
                 runBlocking {
                     exist = existsInDB("Utenti", email)
                 }
-
                 if(exist)
                 {
                     val builder = AlertDialog.Builder(this)
@@ -129,6 +133,7 @@ class PaginaSignIn : Activity() {
                     dialog.show()
                 }
                 else{
+                    // Creating user document in Firestore
                     db.collection("Utenti").document(email).set(
                         mapOf
                             (
@@ -139,6 +144,7 @@ class PaginaSignIn : Activity() {
                             "DDN" to dateOfBirth
                         )
                     ).addOnSuccessListener {
+                        // Sending registration confirmation email
                         rawJSON(email, "" +
                                 "Gentile Cliente $name $surname, \n\n" +
                                 "Siamo lieti di darle il benvenuto alla nostra applicazione. La sua registrazione è stata completata con successo. \n\n" +
@@ -149,6 +155,7 @@ class PaginaSignIn : Activity() {
                                 "Cordiali saluti, \n\n" +
                                 "EventLink"
                         )
+                        // Showing success dialog
                         val builder = AlertDialog.Builder(this)
                         builder.setTitle("Registrazione Avvenuta")
                         builder.setMessage("La tua registrazione è avvenuta con successo!\nControlla la mail per ottenere la password.")
@@ -158,6 +165,7 @@ class PaginaSignIn : Activity() {
                         val dialog = builder.create()
                         dialog.show()
                     }.addOnFailureListener{
+                        // Showing failure dialog
                         val builder = AlertDialog.Builder(this)
                         builder.setTitle("Registrazione Fallita")
                         builder.setMessage("La tua registrazione non è avvenuta con successo, potresti avere già un account, in caso Accedi!")
@@ -169,6 +177,8 @@ class PaginaSignIn : Activity() {
             }
         }
     }
+
+    // Generates a random password consisting of uppercase letters, lowercase letters, and digits.
     private fun generateRandomPassword(): String {
         val length  = 12
         val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
@@ -176,29 +186,51 @@ class PaginaSignIn : Activity() {
             .map { allowedChars.random() }
             .joinToString("")
     }
+
+    // Checks if a document exists in the specified Firestore collection.
     private suspend fun existsInDB(collectionName: String, documentId: String): Boolean {
         return withContext(Dispatchers.IO) {
             val document= db.collection(collectionName).document(documentId).get().await()
             document!=null && document.exists()
         }
     }
+
+    //Sends a raw JSON payload to a specified URL using a POST request.
     @OptIn(DelicateCoroutinesApi::class)
     fun rawJSON(email : String, text : String) {
+        // Create a JSON object with email and text properties
         val jsonObject = JSONObject()
         jsonObject.put("email", email)
         jsonObject.put("text", text)
+
+        // Convert the JSON object to a string
         val jsonObjectString = jsonObject.toString()
+
+        // Perform network operation in a background thread
         GlobalScope.launch(Dispatchers.IO) {
+            // Define the URL to send the POST request
             val url = URL("https://us-central1-eventlinkv2.cloudfunctions.net/handlePostRequest")
+
+            // Open a connection to the URL
             val httpsURLConnection = url.openConnection() as HttpsURLConnection
+
+            // Set the request method to POST
             httpsURLConnection.requestMethod = "POST"
+
+            // Set request headers
             httpsURLConnection.setRequestProperty("Content-Type", "application/json")
             httpsURLConnection.setRequestProperty("Accept", "application/json")
+
+            // Allow input and output streams
             httpsURLConnection.doInput = true
             httpsURLConnection.doOutput = true
+
+            // Write the JSON payload to the output stream
             val outputStreamWriter = OutputStreamWriter(httpsURLConnection.outputStream)
             outputStreamWriter.write(jsonObjectString)
             outputStreamWriter.flush()
+
+            // Print the JSON response to logcat
             val responseCode = httpsURLConnection.responseCode
             if (responseCode == HttpsURLConnection.HTTP_OK) {
                 val response = httpsURLConnection.inputStream.bufferedReader()

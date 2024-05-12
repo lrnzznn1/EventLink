@@ -14,32 +14,38 @@ class PaginaEvento : Activity(){
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_evento)
+
+        // Get the marker ID passed from the Main Activity
         val markerId = intent.getStringExtra("markerId")
+
+        // Initialize UI elements
+        val srcImage = findViewById<ImageView>(R.id.ImmagineEvento)
+        val titleView = findViewById<TextView>(R.id.TitoloEvento)
+        val infoView = findViewById<TextView>(R.id.InfoEvento)
+        val descView = findViewById<TextView>(R.id.DescrizioneEvento)
+
+        // Retrieve event details from Firestore based on the marker ID
         db.collection("Eventi")
             .get()
             .addOnSuccessListener { result ->
+                // Find the document associated with the marker ID
                 val document = result.documents.find { it.id == markerId }
                 if (document != null) {
-                    val srcImage = findViewById<ImageView>(R.id.ImmagineEvento)
-                    val titleView = findViewById<TextView>(R.id.TitoloEvento)
-                    val infoView = findViewById<TextView>(R.id.InfoEvento)
-                    val descView = findViewById<TextView>(R.id.DescrizioneEvento)
-
+                    // Load event image using Glide library
                     val urlImmagine = document.data?.getValue("Immagine").toString()
-
                     try {
                         Glide.with(this@PaginaEvento).load(urlImmagine).into(srcImage)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
 
+                    // Set text for title, info, and description views
                     titleView.text= document.data?.getValue("Titolo").toString()
                     infoView.text= "Indirizzo: ${ document.data?.getValue("Indirizzo").toString() }\n" +
                             "Quando: ${document.data?.getValue("Data").toString()}" +
                             " ore ${document.data?.getValue("Ora").toString()}\n" +
                             "Prezzo: ${document.data?.getValue("Prezzo").toString()}"
                     descView.text= document.data?.getValue("Descrizione").toString()
-
                 }
             }
             .addOnFailureListener {}
