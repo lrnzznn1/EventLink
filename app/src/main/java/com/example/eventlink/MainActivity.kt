@@ -16,6 +16,7 @@
             - Implementare filtri: tag + data
             - Alleggerire loadMap()
             - Implementare bottone Preferiti al indicatore_info_contents + logica
+            - Implementare geolocalizzazione
         - PaginaEvento
             - Implementare menu e profilo
             - Implementare prenota
