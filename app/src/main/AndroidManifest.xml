@@ -23,25 +23,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Pages.PaginaEvento">
+            android:name=".pages.PaginaEvento">
         </activity>
         <activity
-            android:name=".Pages.PaginaSignIn">
+            android:name=".pages.PaginaSignIn">
         </activity>
         <activity
-            android:name=".Pages.PaginaLogin">
+            android:name=".pages.PaginaLogin">
         </activity>
         <activity
-            android:name=".Pages.PaginaImpostazioni">
+            android:name=".pages.PaginaImpostazioni">
         </activity>
         <activity
-            android:name=".Pages.PaginaContatti">
+            android:name=".pages.PaginaContatti">
         </activity>
         <activity
-            android:name=".Pages.PaginaAiuto">
+            android:name=".pages.PaginaAiuto">
         </activity>
         <activity
-            android:name=".Pages.PaginaProfilo">
+            android:name=".pages.PaginaProfilo">
         </activity>
         <meta-data
             android:name="com.google.android.geo.API_KEY"

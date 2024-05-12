@@ -1,4 +1,4 @@
-package com.example.eventlink.Pages
+package com.example.eventlink.pages
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -13,7 +13,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.eventlink.R
 import com.example.eventlink.db
-import com.example.eventlink.Other.hashString
+import com.example.eventlink.other.hashString
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 

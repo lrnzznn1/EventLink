@@ -1,4 +1,4 @@
-package com.example.eventlink.Pages
+package com.example.eventlink.pages
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -9,9 +9,9 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
-import com.example.eventlink.Other.hashString
 import com.example.eventlink.R
 import com.example.eventlink.db
+import com.example.eventlink.other.hashString
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import kotlinx.coroutines.DelicateCoroutinesApi

@@ -1,4 +1,4 @@
-package com.example.eventlink.Other
+package com.example.eventlink.other
 
 import android.content.Context
 import com.google.android.gms.maps.GoogleMap

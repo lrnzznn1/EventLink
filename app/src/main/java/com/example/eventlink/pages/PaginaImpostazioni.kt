@@ -1,4 +1,4 @@
-package com.example.eventlink.Pages
+package com.example.eventlink.pages
 
 import android.app.Activity
 import android.os.Bundle

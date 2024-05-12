@@ -1,4 +1,4 @@
-package com.example.eventlink.Other
+package com.example.eventlink.other
 
 import java.security.MessageDigest
 
