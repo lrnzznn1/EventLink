@@ -8,6 +8,5 @@
         <item name="android:textColor">#333333</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
-        <!-- Altri attributi del bottone -->
     </style>
 </resources>

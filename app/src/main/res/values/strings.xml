@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">EventLink</string>
+    <string name="app_name" translatable="false">EventLink</string>
     <string name="naviga">Naviga</string>
     <string name="apri">Apri</string>
     <string name="impostazioni">Impostazioni</string>
-    <string name="contatti">Contatti</string>
+    <string name="contatti" translatable="false">Contatti</string>
     <string name="aiuto">Aiuto!</string>
     <string name="Minus">-</string>
     <string name="Piu">+</string>

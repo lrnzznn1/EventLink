@@ -1,5 +1,4 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Background del Spinner -->
     <item>
         <shape android:shape="rectangle">
             <corners android:radius="12dp" />
@@ -9,8 +8,6 @@
                 android:color="#CCCCCC" />
         </shape>
     </item>
-
-    <!-- Icona della freccetta -->
     <item android:left="1dp" android:top="1dp" android:bottom="1dp">
         <bitmap
             android:src="@drawable/icons8_scorri_gi__96"
