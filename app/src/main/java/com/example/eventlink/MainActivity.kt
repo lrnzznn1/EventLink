@@ -112,7 +112,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -818,14 +817,7 @@ fun hashString(input: String): String {
 suspend fun esisteInDB(collectionName: String, documentId: String): Boolean {
     return withContext(Dispatchers.IO) {
         val document= db.collection(collectionName).document(documentId).get().await()
-        if(document!=null && document.exists())
-        {
-            true
-        }
-        else
-        {
-            false
-        }
+        document!=null && document.exists()
     }
 }
 
@@ -868,24 +860,18 @@ class CustomClusterRenderer(
 
 
 suspend fun passwordCheck(documentId: String, password: String): Boolean {
-    try {
+    return try {
         val documentSnapshot = db.collection("Utenti").document(documentId).get().await()
         val documentData = documentSnapshot.data
         val documentPassword = documentData?.get("Password")
-        if (documentPassword == hashString(password)) {
-            return true
-        } else {
-            return false
-        }
+        documentPassword == hashString(password)
     }catch (e: Exception)
     {
-        return false
+        false
     }
 }
 
 suspend fun caricaMappa(context1: Context, googleMap: GoogleMap, resources :  android.content.res.Resources, packageName:String){
-    // Crea un oggetto Geocoder per la geocodifica degli indirizzi
-    val geocoder = Geocoder(context1)
     // Inizializza il ClusterManager
     clusterManager = ClusterManager<MyClusterItem>(context1, googleMap)
 
@@ -957,10 +943,10 @@ suspend fun setPre(email: String?, context: Context, parente: ScrollView){
    val eventi = db.collection("Prenotazioni").whereEqualTo("ID_Utente", email).get().await()
     for(document in eventi ){
         val evento = db.collection("Eventi").whereEqualTo(FieldPath.documentId(), document).get().await()
-        val immagine = document.data.get("Immagine")
-        val titolo = document.data.get("Titolo")
-        val ora = document.data.get("Ora")
-        val data = document.data.get("Data")
+        val immagine = document.data["Immagine"]
+        val titolo = document.data["Titolo"]
+        val ora = document.data["Ora"]
+        val data = document.data["Data"]
         val inflater = LayoutInflater.from(context)
         val duplicateView = inflater.inflate(R.layout.baseeventi, null)
 
