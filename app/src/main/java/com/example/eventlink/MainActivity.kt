@@ -15,7 +15,7 @@
         - MainActivity
             - I filtri funzionano ma vorrei che sia applicassero anche al loadMap non solo quando si attiavano quando apri
                 e vedi tutti gli eventi di oggi di default
-            - Alleggerire loadMap()
+            - Alleggerire loadMap() impossibile credo..
             - Implementare bottone Preferiti al indicatore_info_contents + logica
             - Implementare geolocalizzazione
         - PaginaEvento
