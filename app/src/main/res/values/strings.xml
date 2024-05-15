@@ -39,4 +39,6 @@
     <string name="visita_guidata_colosseo_n_n5_maggio_14_00">Visita Guidata Colosseo\n\n5 Maggio 14.00</string>
     <string name="annulla">Annulla</string>
     <string name="prenotazioni">Prenotazioni</string>
+    <string name="reset_filtri">Reset Filtri</string>
+    <string name="applica_filtri">Applica Filtri</string>
 </resources>

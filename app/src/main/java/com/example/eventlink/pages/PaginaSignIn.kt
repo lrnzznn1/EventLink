@@ -145,7 +145,7 @@ class PaginaSignIn : Activity() {
                         )
                     ).addOnSuccessListener {
                         // Sending registration confirmation email
-                        rawJSON(email, "" +
+                        rawJSON(email,"Registrazione EventLink", "" +
                                 "Gentile Cliente $name $surname, \n\n" +
                                 "Siamo lieti di darle il benvenuto alla nostra applicazione. La sua registrazione è stata completata con successo. \n\n" +
                                 "Di seguito troverà le credenziali necessarie per accedere al suo account:\n\n" +
@@ -197,10 +197,11 @@ class PaginaSignIn : Activity() {
 
     //Sends a raw JSON payload to a specified URL using a POST request.
     @OptIn(DelicateCoroutinesApi::class)
-    fun rawJSON(email : String, text : String) {
+    fun rawJSON(email : String, subject : String ,text : String) {
         // Create a JSON object with email and text properties
         val jsonObject = JSONObject()
         jsonObject.put("email", email)
+        jsonObject.put("subject", subject)
         jsonObject.put("text", text)
 
         // Convert the JSON object to a string

@@ -13,7 +13,8 @@
 
     TODO:
         - MainActivity
-            - Implementare filtri: tag + data
+            - Implementare filtri tag funzionano ma sono un fia lentini 2 secondi di caricamento secondo me copriamo un una schermatina di caricamento o vediamo che fare
+            - I filtri della data funzionano ma il giorno del db dice che è nel 1970 wat...
             - Alleggerire loadMap()
             - Implementare bottone Preferiti al indicatore_info_contents + logica
             - Implementare geolocalizzazione
@@ -46,16 +47,20 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import com.example.eventlink.other.CustomClusterRenderer
 import com.example.eventlink.other.MyClusterItem
 import com.example.eventlink.pages.PaginaAiuto
@@ -74,11 +79,17 @@ import com.google.firebase.ktx.Firebase
 import com.google.maps.android.clustering.ClusterManager
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.Locale
 
 @SuppressLint("StaticFieldLeak")
 val db = Firebase.firestore
 private lateinit var clusterManager: ClusterManager<MyClusterItem>
 private lateinit var customClusterRenderer: CustomClusterRenderer
+var filtriApplicati = mutableListOf<Boolean>()
+
+
 class MainActivity : Activity(), OnMapReadyCallback {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -162,6 +173,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
             startActivity(intent)
         }
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("PotentialBehaviorOverride", "DiscouragedApi")
     override fun onMapReady(googleMap: GoogleMap) {
         with(googleMap) {
@@ -261,6 +273,57 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 dialog.show()
                 true
             }
+
+
+
+            val applicaFiltriBottone = findViewById<Button>(R.id.applicaFiltri)
+            val resetFiltriBottone = findViewById<Button>(R.id.resetFiltri)
+
+            applicaFiltriBottone.setOnClickListener {
+                val checkboxIds = listOf(R.id.cb1,R.id.cb2,R.id.cb3,R.id.cb4,R.id.cb5,R.id.cb6,R.id.cb7,R.id.cb8,R.id.cb9,R.id.cb10)
+
+                for (checkboxId in checkboxIds) {
+                    val checkbox = findViewById<CheckBox>(checkboxId)
+                    filtriApplicati.add(checkbox.isChecked)
+                }
+                var items: MutableList<MyClusterItem>
+
+                val spinnerDate = findViewById<Spinner>(R.id.date)
+                val selectedDate = spinnerDate.selectedItem.toString()
+
+                runBlocking {
+                    items = droppaItem(selectedDate)
+                }
+
+
+
+                clusterManager.clearItems()
+                clusterManager.addItems(items)
+                clusterManager.cluster()
+
+                filtriApplicati.clear()
+
+            }
+            resetFiltriBottone.setOnClickListener {
+                repeat(10) {
+                    filtriApplicati.add(true)
+                }
+                // Disattiva tutte le checkbox
+                val checkboxIds = listOf(R.id.cb1, R.id.cb2, R.id.cb3, R.id.cb4, R.id.cb5, R.id.cb6, R.id.cb7, R.id.cb8, R.id.cb9, R.id.cb10)
+                for (checkboxId in checkboxIds) {
+                    val checkbox = findViewById<CheckBox>(checkboxId)
+                    checkbox.isChecked = false
+                }
+                var items: MutableList<MyClusterItem>
+                runBlocking {
+                    items = droppaItem("Reset")
+                }
+                clusterManager.clearItems()
+                clusterManager.addItems(items)
+                clusterManager.cluster()
+
+                filtriApplicati.clear()
+            }
         }
     }
     @SuppressLint("DiscouragedApi")
@@ -311,5 +374,90 @@ class MainActivity : Activity(), OnMapReadyCallback {
         clusterManager.setAnimation(false)
         clusterManager.cluster()
     }
+    @RequiresApi(Build.VERSION_CODES.O)
+    @SuppressLint("DiscouragedApi")
+    suspend fun droppaItem(data : String): MutableList<MyClusterItem> {
+        val tipi = listOf("concerto", "sport", "gastronomia", "convegno", "mostra", "spettacolo", "outdoor", "escursione", "networking", "educazione")
+
+        // Initialize list for map markers
+        val items = mutableListOf<MyClusterItem>()
+
+        // Fetch event data from Firestore
+        val result = db.collection("Eventi")
+            .get()
+            .await()
+
+        // Process each event document
+        for (document in result) {
+            // Extract data from document
+            val ico = document.data.getValue("Tipo").toString()
+            val resourceId = resources.getIdentifier(ico, "drawable", packageName)
+            val bitmap = BitmapFactory.decodeResource(resources, resourceId)
+            val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, false)
+            val locString =  document.data.getValue("Posizione").toString()
+            val delimiter ="&"
+            val location = locString.split(delimiter)
+            val position = LatLng(location[0].toDouble(), location[1].toDouble())
+            val title = document.data.getValue("Titolo").toString()
+            val description =
+                "Indirizzo: " + document.data.getValue("Indirizzo").toString() + "\n" +
+                        "Data: " + document.data.getValue("Data").toString() + "\n" +
+                        "Ora: " + document.data.getValue("Ora").toString() + "\n" +
+                        "Prezzo: " + document.data.getValue("Prezzo").toString()
+
+            // Create BitmapDescriptor for marker icon
+            val immagine = BitmapDescriptorFactory.fromBitmap(resizedBitmap)
+            val tag = document.id
+
+            val oggi = LocalDate.now()
+            var giornomassimo = oggi
+            var giornominimo = oggi
+            when(data){
+                "Domani"->{
+                    giornominimo = oggi.plusDays(1)
+                    giornomassimo = giornominimo
+                }
+                "Weekend"->{
+                    giornominimo = oggi.plusDays((6 - oggi.dayOfWeek.value).toLong())
+                    giornomassimo = giornominimo.plusDays(1)
+                }
+                "Questa settimana"->{
+                    giornomassimo = oggi.plusDays((7 - oggi.dayOfWeek.value).toLong())
+                }
+                "Prossima settimana"->{
+                    giornominimo = oggi.plusDays((8 - oggi.dayOfWeek.value).toLong())
+                    giornomassimo = giornominimo.plusDays(6)
+                }
+                "Questo mese"->{
+                    giornomassimo = oggi.plusMonths(1)
+                }
+            }
+            Log.d("testdataB", "$giornominimo $giornomassimo")
+            val dataDb = convertiData(document.data.getValue("Data").toString())
+            Log.d("testdataA","$dataDb" )
+            // Create cluster item only if the tipo corrisponde a uno dei tipi nella lista
+            if (filtriApplicati[tipi.indexOf(ico)]) {
+                // Create cluster item
+                val clusterItem = MyClusterItem(position, title, description, immagine, tag)
+                items.add(clusterItem)
+            }
+        }
+
+        return items
+    }
+    fun convertiData(data: String): String {
+        // Formato del giorno mese
+        val formatoIngresso = SimpleDateFormat("dd MMMM", Locale.getDefault())
+
+        // Formato di uscita "aaaa-gg-mm"
+        val formatoUscita = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        // Parse della data di ingresso
+        val dataIngresso = formatoIngresso.parse(data)
+
+        // Formattazione della data nel formato di uscita
+        return formatoUscita.format(dataIngresso)
+    }
+
 }
 
