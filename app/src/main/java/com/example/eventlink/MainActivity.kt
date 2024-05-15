@@ -434,7 +434,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
             }
             Log.d("testdataB", "$giornominimo $giornomassimo")
             val dataDb = convertiData(document.data.getValue("Data").toString())
-            Log.d("testdataA","$dataDb" )
+            Log.d("testdataA", dataDb)
             // Create cluster item only if the tipo corrisponde a uno dei tipi nella lista
             if (filtriApplicati[tipi.indexOf(ico)]) {
                 // Create cluster item
@@ -445,7 +445,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
         return items
     }
-    fun convertiData(data: String): String {
+    private fun convertiData(data: String): String {
         // Formato del giorno mese
         val formatoIngresso = SimpleDateFormat("dd MMMM", Locale.getDefault())
 
@@ -456,7 +456,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
         val dataIngresso = formatoIngresso.parse(data)
 
         // Formattazione della data nel formato di uscita
-        return formatoUscita.format(dataIngresso)
+        return formatoUscita.format(dataIngresso!!)
     }
 
 }
