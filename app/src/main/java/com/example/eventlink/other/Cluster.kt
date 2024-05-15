@@ -6,6 +6,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
@@ -49,5 +50,8 @@ class CustomClusterRenderer(
         super.onClusterItemRendered(clusterItem, marker)
         // Attach tag to cluster item marker
         marker.tag = clusterItem.tag
+    }
+    override fun shouldRenderAsCluster(cluster: Cluster<MyClusterItem>): Boolean {
+        return cluster.size > 1
     }
 }
