@@ -41,4 +41,6 @@
     <string name="prenotazioni">Prenotazioni</string>
     <string name="reset_filtri">Reset Filtri</string>
     <string name="applica_filtri">Applica Filtri</string>
+    <string name="mappa">Mappa</string>
+    <string name="lista">Lista</string>
 </resources>

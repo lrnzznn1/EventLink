@@ -46,6 +46,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -58,6 +59,7 @@ import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Spinner
+import android.widget.TextSwitcher
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import com.example.eventlink.other.CustomClusterRenderer
@@ -90,7 +92,9 @@ val db = Firebase.firestore
 private lateinit var clusterManager: ClusterManager<MyClusterItem>
 private lateinit var customClusterRenderer: CustomClusterRenderer
 var filtriApplicati = mutableListOf<Boolean>()
-
+private val texts = arrayOf("Hello", "World")
+private var textIndex = 0
+private lateinit var textSwitcher: TextSwitcher
 
 class MainActivity : Activity(), OnMapReadyCallback {
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -114,6 +118,25 @@ class MainActivity : Activity(), OnMapReadyCallback {
         val spinnerDate = findViewById<Spinner>(R.id.date)
         val accountButton = findViewById<ImageButton>(R.id.button_profile)
 
+
+        val textView1 = findViewById<TextView>(R.id.textmappa)
+        val textView2 = findViewById<TextView>(R.id.textlista)
+
+        textView1.setTextColor(Color.BLACK)
+        val lista = findViewById<LinearLayout>(R.id.listaview)
+
+        // Set click listeners
+        textView1.setOnClickListener {
+            textView1.setTextColor(Color.BLACK)
+            textView2.setTextColor(resources.getColor(android.R.color.darker_gray))
+            lista.visibility = View.GONE
+        }
+
+        textView2.setOnClickListener {
+            textView2.setTextColor(Color.BLACK)
+            textView1.setTextColor(resources.getColor(android.R.color.darker_gray))
+            lista.visibility = View.VISIBLE
+        }
 
         // Setup for main settings view
         settingsViewMain.visibility = View.GONE

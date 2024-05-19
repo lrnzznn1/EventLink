@@ -52,6 +52,41 @@
             tools:context="com.example.eventlink.MainActivity"
             tools:ignore="FragmentTagUsage" />
         <LinearLayout
+            android:id ="@+id/listaview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:visibility="gone">
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/rounded_edittext_background">
+            <TextView
+                android:id="@+id/textmappa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mappa"
+                android:textSize="24sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginEnd="16dp"
+                android:padding="10dp"/>
+
+            <TextView
+                android:id="@+id/textlista"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lista"
+                android:textSize="24sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginStart="16dp"
+                android:padding="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/Impostazioni"
             android:layout_width="150dp"
             android:layout_height="match_parent"
