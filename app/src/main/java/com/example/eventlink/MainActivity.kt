@@ -46,7 +46,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -59,15 +60,12 @@ import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Spinner
-import android.widget.TextSwitcher
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import com.example.eventlink.other.CustomClusterRenderer
 import com.example.eventlink.other.MyClusterItem
-import com.example.eventlink.pages.PaginaAiuto
-import com.example.eventlink.pages.PaginaContatti
 import com.example.eventlink.pages.PaginaEvento
-import com.example.eventlink.pages.PaginaImpostazioni
 import com.example.eventlink.pages.PaginaLogin
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -92,9 +90,6 @@ val db = Firebase.firestore
 private lateinit var clusterManager: ClusterManager<MyClusterItem>
 private lateinit var customClusterRenderer: CustomClusterRenderer
 var filtriApplicati = mutableListOf<Boolean>()
-private val texts = arrayOf("Hello", "World")
-private var textIndex = 0
-private lateinit var textSwitcher: TextSwitcher
 
 class MainActivity : Activity(), OnMapReadyCallback {
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,62 +101,25 @@ class MainActivity : Activity(), OnMapReadyCallback {
         mapFragment?.getMapAsync(this)
 
         // Initialize UI elements
-        val settingsViewMain = findViewById<LinearLayout>(R.id.Impostazioni)
-        val showHideSettingsMain = findViewById<ImageButton>(R.id.button_menu)
-        val settingsButtonMain = findViewById<Button>(R.id.impostazioniMain)
-        val contactsButtonMain = findViewById<Button>(R.id.contattiMain)
-        val helpButtonMain = findViewById<Button>(R.id.aiutoMain)
         val filterView = findViewById<LinearLayout>(R.id.filtrilayout)
         val zoomView = findViewById<LinearLayout>(R.id.zoomview)
         val buttonShowFilter = findViewById<Button>(R.id.filtri)
         val buttonHideFilter = findViewById<Button>(R.id.chiudifiltri)
         val spinnerDate = findViewById<Spinner>(R.id.date)
-        val accountButton = findViewById<ImageButton>(R.id.button_profile)
+        val buttonMenu = findViewById<ImageButton>(R.id.bottone_menu)
+        val bottonepreferiti = findViewById<ImageButton>(R.id.bottone_preferiti)
+        val bottonemappa = findViewById<ImageButton>(R.id.bottone_mappa)
+        val bottonelista = findViewById<ImageButton>(R.id.bottone_lista)
+        val bottoneprofilo = findViewById<ImageButton>(R.id.bottone_profilo)
+        val testomenu = findViewById<TextView>(R.id.testo_menu)
+        val testopreferiti = findViewById<TextView>(R.id.testo_preferiti)
+        val testomappa = findViewById<TextView>(R.id.testo_mappa)
+        val testolista = findViewById<TextView>(R.id.testo_lista)
+        val testoprofilo = findViewById<TextView>(R.id.testo_profilo)
 
 
-        val textView1 = findViewById<TextView>(R.id.textmappa)
-        val textView2 = findViewById<TextView>(R.id.textlista)
 
-        textView1.setTextColor(Color.BLACK)
-        val lista = findViewById<LinearLayout>(R.id.listaview)
 
-        // Set click listeners
-        textView1.setOnClickListener {
-            textView1.setTextColor(Color.BLACK)
-            textView2.setTextColor(resources.getColor(android.R.color.darker_gray))
-            lista.visibility = View.GONE
-        }
-
-        textView2.setOnClickListener {
-            textView2.setTextColor(Color.BLACK)
-            textView1.setTextColor(resources.getColor(android.R.color.darker_gray))
-            lista.visibility = View.VISIBLE
-        }
-
-        // Setup for main settings view
-        settingsViewMain.visibility = View.GONE
-        showHideSettingsMain.setOnClickListener {
-            // Toggle visibility of settings view
-            if (settingsViewMain.visibility == View.VISIBLE) {
-                settingsViewMain.visibility = View.GONE
-            } else {
-                settingsViewMain.visibility = View.VISIBLE
-            }
-        }
-
-        // Click listeners for main settings, contacts, and help buttons
-        settingsButtonMain.setOnClickListener {
-            val intent = Intent(this@MainActivity, PaginaImpostazioni::class.java)
-            startActivity(intent)
-        }
-        contactsButtonMain.setOnClickListener {
-            val intent = Intent(this@MainActivity, PaginaContatti::class.java)
-            startActivity(intent)
-        }
-        helpButtonMain.setOnClickListener {
-            val intent = Intent(this@MainActivity, PaginaAiuto::class.java)
-            startActivity(intent)
-        }
 
         // Setup for filter view and its visibility
         filterView.visibility = View.GONE
@@ -181,7 +139,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
             filterView.visibility = View.GONE
             buttonShowFilter.visibility= View.VISIBLE
             val layoutParams = zoomView.layoutParams as ViewGroup.MarginLayoutParams
-            val newMarginTop = resources.getDimensionPixelSize(R.dimen.margin_top_400dp)
+            val newMarginTop = resources.getDimensionPixelSize(R.dimen.margin_top_480dp)
             layoutParams.topMargin = newMarginTop
             zoomView.layoutParams = layoutParams
         }
@@ -192,11 +150,45 @@ class MainActivity : Activity(), OnMapReadyCallback {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerDate.adapter = adapter
 
+
+
+
+
+        val baseColor = ContextCompat.getColor(this, R.color.arancio)
+        val alphaValue = 236 // Alpha di 0.925
+        val colorWithAlpha = (alphaValue shl 24) or (baseColor and 0x00FFFFFF)
+
+        val baseColorB = ContextCompat.getColor(this, R.color.grigio)
+
+        // Applica il filtro di colore con alpha al bottone ImageButton
+        val colorFilter = PorterDuffColorFilter(colorWithAlpha, PorterDuff.Mode.SRC_IN)
+        bottonemappa.colorFilter = colorFilter
+
+        // Applica il filtro di colore con alpha al bottone ImageButton B
+        val colorFilterB = PorterDuffColorFilter(baseColorB, PorterDuff.Mode.SRC_IN)
+        buttonMenu.colorFilter = colorFilterB
+        bottonepreferiti.colorFilter = colorFilterB
+        bottonelista.colorFilter = colorFilterB
+        bottoneprofilo.colorFilter = colorFilterB
+
+        // Imposta il colore del testo del TextView
+        testomenu.setTextColor(baseColorB)
+        testopreferiti.setTextColor(baseColorB)
+        testomappa.setTextColor(colorWithAlpha)
+        testolista.setTextColor(baseColorB)
+        testoprofilo.setTextColor(baseColorB)
+
+
+
+
         // Click listener for account button to navigate to login page
-        accountButton.setOnClickListener{
+        bottoneprofilo.setOnClickListener{
             val intent = Intent(this@MainActivity, PaginaLogin::class.java)
             startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
+
+
     }
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("PotentialBehaviorOverride", "DiscouragedApi")

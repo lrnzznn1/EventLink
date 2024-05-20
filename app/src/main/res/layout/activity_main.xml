@@ -1,49 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#3399FF"
-        android:gravity="center_vertical"
-        android:padding="10dp"
-        android:layout_marginTop="-5dp"
-        android:layout_marginBottom="-5dp"
-        android:orientation="horizontal">
-        <ImageButton
-            android:id="@+id/button_menu"
-            android:layout_width="58dp"
-            android:layout_height="55dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/icons8_menu_208"
-            android:scaleType="fitCenter"
-            android:contentDescription="contentDescription"
-            tools:ignore="HardcodedText"
-            android:layout_marginTop="2dp"
-            android:layout_marginStart="5dp"/>
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-           <ImageButton
-            android:id="@+id/button_profile"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            android:src="@drawable/icons8_account_96"
-            android:contentDescription="contentDescription"
-            tools:ignore="HardcodedText"
-            android:layout_marginTop="3dp"
-            android:layout_marginEnd="5dp"/>
-    </LinearLayout>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:layout_above="@+id/second_linear_layout">
         <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.MapFragment"
@@ -52,77 +18,13 @@
             tools:context="com.example.eventlink.MainActivity"
             tools:ignore="FragmentTagUsage" />
         <LinearLayout
-            android:id ="@+id/listaview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:visibility="gone">
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/rounded_edittext_background">
-            <TextView
-                android:id="@+id/textmappa"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/mappa"
-                android:textSize="24sp"
-                android:textColor="@android:color/darker_gray"
-                android:layout_marginEnd="16dp"
-                android:padding="10dp"/>
-
-            <TextView
-                android:id="@+id/textlista"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lista"
-                android:textSize="24sp"
-                android:textColor="@android:color/darker_gray"
-                android:layout_marginStart="16dp"
-                android:padding="10dp"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/Impostazioni"
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_gravity="top"
-            android:padding="7dp"
-            android:background="@color/white">
-            <Button
-                android:id="@+id/impostazioniMain"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/impostazioni"
-                tools:ignore="ButtonStyle"/>
-            <Button
-                android:id="@+id/contattiMain"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/contatti"
-                tools:ignore="ButtonStyle"
-                android:layout_marginTop="11dp"/>
-            <Button
-                android:id="@+id/aiutoMain"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/aiuto"
-                tools:ignore="ButtonStyle"
-                android:layout_marginTop="11dp"/>
-        </LinearLayout>
-        <LinearLayout
             android:id="@+id/zoomview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_gravity="right"
             android:layout_marginRight="2dp"
-            android:layout_marginTop="400dp"
+            android:layout_marginTop="480dp"
             android:background="@color/white"
             tools:ignore="RtlHardcoded">
             <Button
@@ -147,7 +49,7 @@
         <Button
             android:layout_gravity="right"
             android:layout_marginRight="2dp"
-            android:layout_marginTop="530dp"
+            android:layout_marginTop="610dp"
             android:id="@+id/filtri"
             android:layout_width="140dp"
             android:layout_height="wrap_content"
@@ -156,16 +58,16 @@
             tools:ignore="ButtonStyle,RtlHardcoded"
             android:background="@color/white"/>
         <LinearLayout
-            android:layout_width="220dp"
+            android:layout_width="260dp"
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:orientation="vertical"
             android:layout_gravity="right"
             android:layout_marginRight="2dp"
             android:layout_marginTop="240dp"
-            tools:ignore="RtlHardcoded"
             android:padding="5dp"
-            android:id="@+id/filtrilayout">
+            android:id="@+id/filtrilayout"
+            tools:ignore="RtlHardcoded">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -198,8 +100,8 @@
                     android:background="@color/white"/>
             </LinearLayout>
             <Spinner
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
                 android:id="@+id/date"
                 android:layout_marginTop="15dp">
             </Spinner>
@@ -297,7 +199,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="5dp">
                 <Button
                     android:id="@+id/resetFiltri"
                     android:layout_width="wrap_content"
@@ -316,4 +219,136 @@
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>
-</LinearLayout>
+    <LinearLayout
+        android:id ="@+id/second_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:layout_gravity="bottom"
+        android:padding="10dp"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <ImageButton
+                android:id="@+id/bottone_menu"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/icons8_menu_208"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/contentdescription"
+                android:layout_gravity="center_horizontal"/>
+            <TextView
+                android:id="@+id/testo_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/menu">
+            </TextView>
+        </LinearLayout>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+            <ImageButton
+                android:id="@+id/bottone_preferiti"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="fitCenter"
+                android:background="@android:color/transparent"
+                android:src="@drawable/icons8_preferiti_60"
+                android:contentDescription="@string/contentdescription"
+                android:layout_gravity="center_horizontal" />
+            <TextView
+                android:id="@+id/testo_preferiti"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/preferiti">
+            </TextView>
+        </LinearLayout>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <ImageButton
+                android:id="@+id/bottone_mappa"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="fitCenter"
+                android:background="@android:color/transparent"
+                android:src="@drawable/icons8_mappa_64"
+                android:contentDescription="@string/contentdescription"
+                android:layout_gravity="center_horizontal"/>
+            <TextView
+                android:id="@+id/testo_mappa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/mappa">
+            </TextView>
+        </LinearLayout>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <ImageButton
+                android:id="@+id/bottone_lista"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="fitCenter"
+                android:background="@android:color/transparent"
+                android:src="@drawable/icons8_lista_100"
+                android:contentDescription="@string/contentdescription"
+                android:layout_gravity="center_horizontal" />
+            <TextView
+                android:id="@+id/testo_lista"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/lista">
+            </TextView>
+        </LinearLayout>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <ImageButton
+                android:id="@+id/bottone_profilo"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="fitCenter"
+                android:background="@android:color/transparent"
+                android:src="@drawable/icons8_account_96"
+                android:contentDescription="@string/contentdescription"
+                android:layout_gravity="center_horizontal"/>
+            <TextView
+                android:id="@+id/testo_profilo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/profilo">
+            </TextView>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

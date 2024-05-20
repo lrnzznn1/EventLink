@@ -43,4 +43,8 @@
     <string name="applica_filtri">Applica Filtri</string>
     <string name="mappa">Mappa</string>
     <string name="lista">Lista</string>
+    <string name="contentdescription">contentDescription</string>
+    <string name="profilo">Profilo</string>
+    <string name="menu">Menu</string>
+    <string name="preferiti">Preferiti</string>
 </resources>

@@ -4,12 +4,9 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.eventlink.R
 import com.example.eventlink.db
@@ -25,12 +22,15 @@ class PaginaLogin : Activity() {
         // Initialize UI elements
         val emailField = findViewById<EditText>(R.id.editTextEmailLogin)
         val passwordField = findViewById<EditText>(R.id.editTextPasswordLogin)
+        /*
         val settingsViewLog = findViewById<LinearLayout>(R.id.ImpostazioniLoginComparsa)
         val showHideSettingsLog = findViewById<ImageButton>(R.id.button_menu_log)
         val backButton = findViewById<ImageButton>(R.id.tornaInDietroLog)
         val settingsButtonLog = findViewById<Button>(R.id.impostazioniLogin)
         val contactsButtonLog = findViewById<Button>(R.id.contattiLogin)
         val helpButtonLog = findViewById<Button>(R.id.aiutoLogin)
+
+         */
         val buttonSignUp = findViewById<TextView>(R.id.registatiTesto)
         val buttonLogin = findViewById<Button>(R.id.buttonlogin)
 
@@ -87,6 +87,7 @@ class PaginaLogin : Activity() {
                 }
             }
         }
+        /*
 
         // Set visibility of settings view
         settingsViewLog.visibility = View.GONE
@@ -118,6 +119,8 @@ class PaginaLogin : Activity() {
             val intent = Intent(this@PaginaLogin, PaginaAiuto::class.java)
             startActivity(intent)
         }
+
+         */
     }
 
     //Suspended function to check if the provided password matches the one stored in the database for the given document ID.
