@@ -22,15 +22,6 @@ class PaginaLogin : Activity() {
         // Initialize UI elements
         val emailField = findViewById<EditText>(R.id.editTextEmailLogin)
         val passwordField = findViewById<EditText>(R.id.editTextPasswordLogin)
-        /*
-        val settingsViewLog = findViewById<LinearLayout>(R.id.ImpostazioniLoginComparsa)
-        val showHideSettingsLog = findViewById<ImageButton>(R.id.button_menu_log)
-        val backButton = findViewById<ImageButton>(R.id.tornaInDietroLog)
-        val settingsButtonLog = findViewById<Button>(R.id.impostazioniLogin)
-        val contactsButtonLog = findViewById<Button>(R.id.contattiLogin)
-        val helpButtonLog = findViewById<Button>(R.id.aiutoLogin)
-
-         */
         val buttonSignUp = findViewById<TextView>(R.id.registatiTesto)
         val buttonLogin = findViewById<Button>(R.id.buttonlogin)
 
