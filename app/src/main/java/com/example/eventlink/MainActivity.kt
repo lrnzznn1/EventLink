@@ -57,7 +57,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
-import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
@@ -90,6 +90,7 @@ val db = Firebase.firestore
 private lateinit var clusterManager: ClusterManager<MyClusterItem>
 private lateinit var customClusterRenderer: CustomClusterRenderer
 var filtriApplicati = mutableListOf<Boolean>()
+private lateinit var viewAttuale : String
 
 class MainActivity : Activity(), OnMapReadyCallback {
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,11 +107,11 @@ class MainActivity : Activity(), OnMapReadyCallback {
         val buttonShowFilter = findViewById<Button>(R.id.filtri)
         val buttonHideFilter = findViewById<Button>(R.id.chiudifiltri)
         val spinnerDate = findViewById<Spinner>(R.id.date)
-        val buttonMenu = findViewById<ImageButton>(R.id.bottone_menu)
-        val bottonepreferiti = findViewById<ImageButton>(R.id.bottone_preferiti)
-        val bottonemappa = findViewById<ImageButton>(R.id.bottone_mappa)
-        val bottonelista = findViewById<ImageButton>(R.id.bottone_lista)
-        val bottoneprofilo = findViewById<ImageButton>(R.id.bottone_profilo)
+        val buttonMenu = findViewById<ImageView>(R.id.bottone_menu)
+        val bottonepreferiti = findViewById<ImageView>(R.id.bottone_preferiti)
+        val bottonemappa = findViewById<ImageView>(R.id.bottone_mappa)
+        val bottonelista = findViewById<ImageView>(R.id.bottone_lista)
+        val bottoneprofilo = findViewById<ImageView>(R.id.bottone_profilo)
         val testomenu = findViewById<TextView>(R.id.testo_menu)
         val testopreferiti = findViewById<TextView>(R.id.testo_preferiti)
         val testomappa = findViewById<TextView>(R.id.testo_mappa)
@@ -155,7 +156,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
 
         val baseColor = ContextCompat.getColor(this, R.color.arancio)
-        val alphaValue = 236 // Alpha di 0.925
+        val alphaValue = 200 // Alpha di 0.925
         val colorWithAlpha = (alphaValue shl 24) or (baseColor and 0x00FFFFFF)
 
         val baseColorB = ContextCompat.getColor(this, R.color.grigio)
@@ -178,16 +179,30 @@ class MainActivity : Activity(), OnMapReadyCallback {
         testolista.setTextColor(baseColorB)
         testoprofilo.setTextColor(baseColorB)
 
+        val linearMenu = findViewById<LinearLayout>(R.id.linear_menu)
+        val linearPreferiti = findViewById<LinearLayout>(R.id.linear_preferiti)
+        val linearMappa = findViewById<LinearLayout>(R.id.linear_mappa)
+        val linearLista = findViewById<LinearLayout>(R.id.linear_lista)
+        val linearProfilo = findViewById<LinearLayout>(R.id.linear_profilo)
+
 
 
 
         // Click listener for account button to navigate to login page
-        bottoneprofilo.setOnClickListener{
+        linearProfilo.setOnClickListener{
             val intent = Intent(this@MainActivity, PaginaLogin::class.java)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
+        linearMenu.setOnClickListener{
 
+        }
+        linearPreferiti.setOnClickListener{
+
+        }
+        linearLista.setOnClickListener{
+
+        }
 
     }
     @RequiresApi(Build.VERSION_CODES.O)

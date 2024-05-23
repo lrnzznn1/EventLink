@@ -32,15 +32,6 @@
             android:name=".pages.PaginaLogin">
         </activity>
         <activity
-            android:name=".pages.PaginaImpostazioni">
-        </activity>
-        <activity
-            android:name=".pages.PaginaContatti">
-        </activity>
-        <activity
-            android:name=".pages.PaginaAiuto">
-        </activity>
-        <activity
             android:name=".pages.PaginaProfilo">
         </activity>
         <meta-data
