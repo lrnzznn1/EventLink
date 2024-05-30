@@ -69,6 +69,7 @@ class PaginaLogin : Activity() {
                     auth=true;
                     global_email=email
                     startActivity(intent)
+                    finish()
                 }
                 else {
                     val builder = AlertDialog.Builder(this)
