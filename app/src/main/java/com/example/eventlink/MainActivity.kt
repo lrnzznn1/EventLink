@@ -90,10 +90,10 @@ val db = Firebase.firestore
 private lateinit var clusterManager: ClusterManager<MyClusterItem>
 private lateinit var customClusterRenderer: CustomClusterRenderer
 var filtriApplicati = mutableListOf<Boolean>()
-private lateinit var viewAttuale : String
 var global_email : String = ""
 
 class MainActivity : Activity(), OnMapReadyCallback {
+    @SuppressLint("InflateParams")
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -430,8 +430,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     checkbox.isChecked = false
                 }
                 var items: MutableList<MyClusterItem>
-                val spinnerDate = findViewById<Spinner>(R.id.date)
-                val selectedDate = spinnerDate.selectedItem.toString()
                 runBlocking {
                     items = droppaItem("null")
                 }

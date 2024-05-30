@@ -66,7 +66,7 @@ class PaginaLogin : Activity() {
                 if(auth) {
                     val intent = Intent(this@PaginaLogin, PaginaProfilo::class.java)
                     intent.putExtra("email", email)
-                    auth=true;
+                    auth=true
                     global_email=email
                     startActivity(intent)
                     finish()
@@ -81,40 +81,6 @@ class PaginaLogin : Activity() {
                 }
             }
         }
-        /*
-
-        // Set visibility of settings view
-        settingsViewLog.visibility = View.GONE
-
-        // Set click listener for showing/hiding settings
-        showHideSettingsLog.setOnClickListener {
-            if (settingsViewLog.visibility == View.VISIBLE) {
-                settingsViewLog.visibility = View.GONE
-            } else {
-                settingsViewLog.visibility = View.VISIBLE
-            }
-        }
-
-        // Set click listener for back button
-        backButton.setOnClickListener{
-            finish()
-        }
-
-        // Set click listeners for settings, contacts, and help buttons
-        settingsButtonLog.setOnClickListener {
-            val intent = Intent(this@PaginaLogin, PaginaImpostazioni::class.java)
-            startActivity(intent)
-        }
-        contactsButtonLog.setOnClickListener {
-            val intent = Intent(this@PaginaLogin, PaginaContatti::class.java)
-            startActivity(intent)
-        }
-        helpButtonLog.setOnClickListener {
-            val intent = Intent(this@PaginaLogin, PaginaAiuto::class.java)
-            startActivity(intent)
-        }
-
-         */
     }
 
     //Suspended function to check if the provided password matches the one stored in the database for the given document ID.
