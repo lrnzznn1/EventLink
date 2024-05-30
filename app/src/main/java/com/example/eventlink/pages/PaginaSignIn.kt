@@ -3,7 +3,6 @@ package com.example.eventlink.pages
 import android.app.Activity
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.animation.AnimationUtils
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -12,19 +11,11 @@ import android.widget.Spinner
 import com.example.eventlink.R
 import com.example.eventlink.db
 import com.example.eventlink.other.hashString
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
-import kotlinx.coroutines.DelicateCoroutinesApi
+import com.example.eventlink.other.rawJSON
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
-import java.io.OutputStreamWriter
-import java.net.URL
-import javax.net.ssl.HttpsURLConnection
 
 class PaginaSignIn : Activity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -192,58 +183,6 @@ class PaginaSignIn : Activity() {
         return withContext(Dispatchers.IO) {
             val document= db.collection(collectionName).document(documentId).get().await()
             document!=null && document.exists()
-        }
-    }
-
-    //Sends a raw JSON payload to a specified URL using a POST request.
-    @OptIn(DelicateCoroutinesApi::class)
-    fun rawJSON(email : String, subject : String ,text : String) {
-        // Create a JSON object with email and text properties
-        val jsonObject = JSONObject()
-        jsonObject.put("email", email)
-        jsonObject.put("subject", subject)
-        jsonObject.put("text", text)
-
-        // Convert the JSON object to a string
-        val jsonObjectString = jsonObject.toString()
-
-        // Perform network operation in a background thread
-        GlobalScope.launch(Dispatchers.IO) {
-            // Define the URL to send the POST request
-            val url = URL("https://us-central1-eventlinkv2.cloudfunctions.net/handlePostRequest")
-
-            // Open a connection to the URL
-            val httpsURLConnection = url.openConnection() as HttpsURLConnection
-
-            // Set the request method to POST
-            httpsURLConnection.requestMethod = "POST"
-
-            // Set request headers
-            httpsURLConnection.setRequestProperty("Content-Type", "application/json")
-            httpsURLConnection.setRequestProperty("Accept", "application/json")
-
-            // Allow input and output streams
-            httpsURLConnection.doInput = true
-            httpsURLConnection.doOutput = true
-
-            // Write the JSON payload to the output stream
-            val outputStreamWriter = OutputStreamWriter(httpsURLConnection.outputStream)
-            outputStreamWriter.write(jsonObjectString)
-            outputStreamWriter.flush()
-
-            // Print the JSON response to logcat
-            val responseCode = httpsURLConnection.responseCode
-            if (responseCode == HttpsURLConnection.HTTP_OK) {
-                val response = httpsURLConnection.inputStream.bufferedReader()
-                    .use { it.readText() }
-                withContext(Dispatchers.Main) {
-                    val gson = GsonBuilder().setPrettyPrinting().create()
-                    val prettyJson = gson.toJson(JsonParser.parseString(response))
-                    Log.d("Pretty Printed JSON :", prettyJson)
-                }
-            } else {
-                Log.e("HTTPSURLCONNECTION_ERROR", responseCode.toString())
-            }
         }
     }
 }

@@ -51,15 +51,16 @@ import android.graphics.PorterDuffColorFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.annotation.RequiresApi
@@ -82,10 +83,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatterBuilder
-import java.time.format.TextStyle
-import java.time.temporal.ChronoField
-import java.util.Locale
 
 
 @SuppressLint("StaticFieldLeak")
@@ -167,10 +164,12 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
         // Applica il filtro di colore con alpha al bottone ImageButton
         val colorFilter = PorterDuffColorFilter(colorWithAlpha, PorterDuff.Mode.SRC_IN)
-        bottonemappa.colorFilter = colorFilter
+
 
         // Applica il filtro di colore con alpha al bottone ImageButton B
         val colorFilterB = PorterDuffColorFilter(baseColorB, PorterDuff.Mode.SRC_IN)
+
+        bottonemappa.colorFilter = colorFilter
         buttonMenu.colorFilter = colorFilterB
         bottonepreferiti.colorFilter = colorFilterB
         bottonelista.colorFilter = colorFilterB
@@ -189,7 +188,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
         val linearLista = findViewById<LinearLayout>(R.id.linear_lista)
         val linearProfilo = findViewById<LinearLayout>(R.id.linear_profilo)
 
-
+        val granderelativo = findViewById<RelativeLayout>(R.id.granderelativo)
 
 
         // Click listener for account button to navigate to login page
@@ -202,18 +201,96 @@ class MainActivity : Activity(), OnMapReadyCallback {
             else{
                 val intent = Intent(this@MainActivity, PaginaLogin::class.java)
                 startActivity(intent)
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
             }
 
         }
+        val mappaview = findViewById<FrameLayout>(R.id.mappa_view)
+        var newview  :  View = layoutInflater.inflate(R.layout.menuview, null)
+
+
         linearMenu.setOnClickListener{
+            mappaview.visibility = View.GONE
+            granderelativo.removeView(newview)
+
+
+            bottonemappa.colorFilter = colorFilterB
+            buttonMenu.colorFilter = colorFilter
+            bottonepreferiti.colorFilter = colorFilterB
+            bottonelista.colorFilter = colorFilterB
+            bottoneprofilo.colorFilter = colorFilterB
+
+            // Imposta il colore del testo del TextView
+            testomenu.setTextColor(colorWithAlpha)
+            testopreferiti.setTextColor(baseColorB)
+            testomappa.setTextColor(baseColorB)
+            testolista.setTextColor(baseColorB)
+            testoprofilo.setTextColor(baseColorB)
+
+
+
+            newview = layoutInflater.inflate(R.layout.menuview, null)
+            granderelativo.addView(newview)
+
 
         }
         linearPreferiti.setOnClickListener{
+            mappaview.visibility = View.GONE
+            granderelativo.removeView(newview)
 
+            bottonemappa.colorFilter = colorFilterB
+            buttonMenu.colorFilter = colorFilterB
+            bottonepreferiti.colorFilter = colorFilter
+            bottonelista.colorFilter = colorFilterB
+            bottoneprofilo.colorFilter = colorFilterB
+
+            // Imposta il colore del testo del TextView
+            testomenu.setTextColor(baseColorB)
+            testopreferiti.setTextColor(colorWithAlpha)
+            testomappa.setTextColor(baseColorB)
+            testolista.setTextColor(baseColorB)
+            testoprofilo.setTextColor(baseColorB)
+
+            newview = layoutInflater.inflate(R.layout.preferitiview ,null)
+            granderelativo.addView(newview)
         }
         linearLista.setOnClickListener{
+            mappaview.visibility = View.GONE
+            granderelativo.removeView(newview)
 
+            bottonemappa.colorFilter = colorFilterB
+            buttonMenu.colorFilter = colorFilterB
+            bottonepreferiti.colorFilter = colorFilterB
+            bottonelista.colorFilter = colorFilter
+            bottoneprofilo.colorFilter = colorFilterB
+
+            // Imposta il colore del testo del TextView
+            testomenu.setTextColor(baseColorB)
+            testopreferiti.setTextColor(baseColorB)
+            testomappa.setTextColor(baseColorB)
+            testolista.setTextColor(colorWithAlpha)
+            testoprofilo.setTextColor(baseColorB)
+
+            newview = layoutInflater.inflate(R.layout.listaview ,null)
+            granderelativo.addView(newview)
+
+        }
+        linearMappa.setOnClickListener{
+            granderelativo.removeView(newview)
+            mappaview.visibility = View.VISIBLE
+
+
+            bottonemappa.colorFilter = colorFilter
+            buttonMenu.colorFilter = colorFilterB
+            bottonepreferiti.colorFilter = colorFilterB
+            bottonelista.colorFilter = colorFilterB
+            bottoneprofilo.colorFilter = colorFilterB
+
+            // Imposta il colore del testo del TextView
+            testomenu.setTextColor(baseColorB)
+            testopreferiti.setTextColor(baseColorB)
+            testomappa.setTextColor(colorWithAlpha)
+            testolista.setTextColor(baseColorB)
+            testoprofilo.setTextColor(baseColorB)
         }
 
     }
