@@ -32,7 +32,6 @@ class PaginaEvento : Activity(){
         val descView = findViewById<TextView>(R.id.DescrizioneEvento)
         val btn = findViewById<Button>(R.id.PrenotaEvento1)
         var posti : Int = 0
-        var prenotato = false
         // Retrieve event details from Firestore based on the marker ID
         runBlocking {
             db.collection("Eventi")

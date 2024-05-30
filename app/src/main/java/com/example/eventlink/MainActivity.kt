@@ -68,6 +68,7 @@ import com.example.eventlink.other.CustomClusterRenderer
 import com.example.eventlink.other.MyClusterItem
 import com.example.eventlink.pages.PaginaEvento
 import com.example.eventlink.pages.PaginaLogin
+import com.example.eventlink.pages.PaginaProfilo
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
@@ -193,9 +194,17 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
         // Click listener for account button to navigate to login page
         linearProfilo.setOnClickListener{
-            val intent = Intent(this@MainActivity, PaginaLogin::class.java)
-            startActivity(intent)
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+            if(global_email!="") {
+                val intent = Intent(this@MainActivity, PaginaProfilo::class.java)
+                intent.putExtra("email", global_email)
+                startActivity(intent)
+            }
+            else{
+                val intent = Intent(this@MainActivity, PaginaLogin::class.java)
+                startActivity(intent)
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+            }
+
         }
         linearMenu.setOnClickListener{
 
