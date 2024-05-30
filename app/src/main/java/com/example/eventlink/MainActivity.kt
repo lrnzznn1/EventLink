@@ -51,6 +51,7 @@ import android.graphics.PorterDuffColorFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -79,6 +80,7 @@ import com.google.maps.android.clustering.ClusterManager
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.format.TextStyle
 import java.time.temporal.ChronoField
@@ -91,6 +93,7 @@ private lateinit var clusterManager: ClusterManager<MyClusterItem>
 private lateinit var customClusterRenderer: CustomClusterRenderer
 var filtriApplicati = mutableListOf<Boolean>()
 private lateinit var viewAttuale : String
+var global_email : String = ""
 
 class MainActivity : Activity(), OnMapReadyCallback {
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -344,7 +347,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 val spinnerDate = findViewById<Spinner>(R.id.date)
                 val selectedDate = spinnerDate.selectedItem.toString()
                 runBlocking {
-                    items = droppaItem(selectedDate)
+                    items = droppaItem("null")
                 }
                 clusterManager.clearItems()
                 clusterManager.addItems(items)
@@ -457,8 +460,9 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 }
             }
             val dataDb = convertiData(document.data.getValue("Data").toString())
-            val isWithinRange = (dataDb.isEqual(giornominimo) || dataDb.isAfter(giornominimo)) &&
+            var isWithinRange = (dataDb.isEqual(giornominimo) || dataDb.isAfter(giornominimo)) &&
                     (dataDb.isEqual(giornomassimo) || dataDb.isBefore(giornomassimo))
+            if(data=="null")isWithinRange=true
             if ((filtriApplicati[tipi.indexOf(ico)] && isWithinRange) || (isWithinRange  && !filtriApplicati.contains(true) )        ) {
                 val clusterItem = MyClusterItem(position, title, description, immagine, tag)
                 items.add(clusterItem)
@@ -468,11 +472,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun convertiData(data: String): LocalDate {
-        val formatter = DateTimeFormatterBuilder()
-            .appendPattern("d ")
-            .appendText(ChronoField.MONTH_OF_YEAR, TextStyle.FULL)
-            .appendPattern(" yyyy")
-            .toFormatter(Locale.getDefault())
+        val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
 
         return LocalDate.parse(data, formatter)
     }

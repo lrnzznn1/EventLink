@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.TextView
 import com.example.eventlink.R
 import com.example.eventlink.db
+import com.example.eventlink.global_email
 import com.example.eventlink.other.hashString
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
@@ -65,8 +66,9 @@ class PaginaLogin : Activity() {
                 if(auth) {
                     val intent = Intent(this@PaginaLogin, PaginaProfilo::class.java)
                     intent.putExtra("email", email)
+                    auth=true;
+                    global_email=email
                     startActivity(intent)
-
                 }
                 else {
                     val builder = AlertDialog.Builder(this)
