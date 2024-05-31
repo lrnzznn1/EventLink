@@ -98,7 +98,7 @@ var lista = mutableListOf<Evento>()
 var currentLatLng : LatLng = LatLng(0.0, 0.0)
 
 class MainActivity : Activity(), OnMapReadyCallback {
-    @SuppressLint("InflateParams")
+    @SuppressLint("InflateParams", "CutPasteId")
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -113,13 +113,9 @@ class MainActivity : Activity(), OnMapReadyCallback {
             ActivityCompat.requestPermissions(this,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE)
-        }
-
-        fusedLocationClient.lastLocation.addOnSuccessListener {
-            location ->
-            if(location!=null) {
-                currentLatLng = LatLng(location.latitude, location.longitude)
-            }
+        }else{
+            // I permessi di localizzazione sono già stati concessi, quindi procedi con l'operazione
+            getLastKnownLocation()
         }
 
 
@@ -652,5 +648,62 @@ class MainActivity : Activity(), OnMapReadyCallback {
         strada = end.distanceTo(approx)
         return strada/1000
     }
+
+    // Callback per la risposta della richiesta dei permessi
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                // Permesso di localizzazione concesso, procedi con l'operazione
+                getLastKnownLocation()
+            } else {
+                // Permesso di localizzazione negato, gestisci di conseguenza
+                // Qui puoi mostrare un messaggio o eseguire un'altra azione appropriata
+                currentLatLng = LatLng(42.0, 11.53)
+                val caricamneto = findViewById<RelativeLayout>(R.id.caricamento)
+                caricamneto.visibility = View.GONE
+                val bordoview = findViewById<View>(R.id.bordoview)
+                bordoview.visibility = View.VISIBLE
+                val secondlinearlayout = findViewById<LinearLayout>(R.id.second_linear_layout)
+                secondlinearlayout.visibility = View.VISIBLE
+                val mappaview = findViewById<FrameLayout>(R.id.mappa_view)
+                mappaview.visibility= View.VISIBLE
+            }
+        }
+    }
+    // Funzione per ottenere l'ultima posizione nota
+    @SuppressLint("MissingPermission")
+    private fun getLastKnownLocation() {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    currentLatLng = LatLng(location.latitude, location.longitude)
+                    val caricamneto = findViewById<RelativeLayout>(R.id.caricamento)
+                    caricamneto.visibility = View.GONE
+                    val bordoview = findViewById<View>(R.id.bordoview)
+                    bordoview.visibility = View.VISIBLE
+                    val secondlinearlayout = findViewById<LinearLayout>(R.id.second_linear_layout)
+                    secondlinearlayout.visibility = View.VISIBLE
+                    val mappaview = findViewById<FrameLayout>(R.id.mappa_view)
+                    mappaview.visibility= View.VISIBLE
+                } else {
+                    currentLatLng = LatLng(42.0, 11.53)
+                    val caricamneto = findViewById<RelativeLayout>(R.id.caricamento)
+                    caricamneto.visibility = View.GONE
+                    val bordoview = findViewById<View>(R.id.bordoview)
+                    bordoview.visibility = View.VISIBLE
+                    val secondlinearlayout = findViewById<LinearLayout>(R.id.second_linear_layout)
+                    secondlinearlayout.visibility = View.VISIBLE
+                    val mappaview = findViewById<FrameLayout>(R.id.mappa_view)
+                    mappaview.visibility= View.VISIBLE
+                }
+
+            }
+    }
+
 }
 

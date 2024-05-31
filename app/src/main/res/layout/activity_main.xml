@@ -5,12 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/granderelativo">
+
     <FrameLayout
         android:id="@+id/mappa_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:orientation="horizontal"
+        android:visibility="gone"
         android:layout_above="@+id/second_linear_layout">
         <fragment
             android:id="@+id/map"
@@ -241,6 +243,7 @@
         android:background="#FFFFFF"
         android:layout_gravity="bottom"
         android:orientation="horizontal"
+        android:visibility="gone"
         android:layout_alignParentBottom="true">
         <View
             android:layout_width="0dp"
@@ -279,36 +282,36 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1" />
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/linear_preferiti"
-        android:padding="10dp">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            tools:ignore="UselessParent">
-            <ImageView
-                android:id="@+id/bottone_preferiti"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:scaleType="fitCenter"
-                android:background="@android:color/transparent"
-                android:src="@drawable/icons8_preferiti_60"
-                android:contentDescription="@string/contentdescription"
-                android:layout_gravity="center_horizontal">
-
-            </ImageView>
-            <TextView
-                android:id="@+id/testo_preferiti"
+            android:id="@+id/linear_preferiti"
+            android:padding="10dp">
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/preferiti">
-            </TextView>
+                android:orientation="vertical"
+                tools:ignore="UselessParent">
+                <ImageView
+                    android:id="@+id/bottone_preferiti"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:scaleType="fitCenter"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/icons8_preferiti_60"
+                    android:contentDescription="@string/contentdescription"
+                    android:layout_gravity="center_horizontal">
+
+                </ImageView>
+                <TextView
+                    android:id="@+id/testo_preferiti"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/preferiti">
+                </TextView>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -418,5 +421,32 @@
         android:layout_above="@+id/second_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:visibility="gone"
         android:background="@android:color/black"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:id="@+id/caricamento"
+        android:orientation="vertical">
+        <ImageView
+            android:padding="40dp"
+            android:id="@+id/logo"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:src="@drawable/logoprova2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="100dp"
+            android:layout_alignParentTop="true"/>
+
+        <!-- Rotella che gira al centro -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:layout_centerInParent="true"
+            style="?android:attr/progressBarStyle"
+            android:indeterminateTint="@color/arancio" />
+    </RelativeLayout>
 </RelativeLayout>
