@@ -13,23 +13,15 @@
 
     TODO:
         - MainActivity
-            - I filtri funzionano ma vorrei che sia applicassero anche al loadMap non solo quando si attiavano quando apri
-                e vedi tutti gli eventi di oggi di default
             - Alleggerire loadMap() impossibile credo..
             - Implementare bottone Preferiti al indicatore_info_contents + logica
-            - Implementare geolocalizzazione
-        - PaginaEvento
-            - Implementare menu e profilo
-        - PaginaSignIn
-            - Implementare menu e back
-        - PaginaProfilo
-            - Implementare Preferiti, Impostazioni Profilo ed eventuali bottoni(torna alla mappa, ecc..)
-        - PaginaImpostazioni
             - Implementare cambio lingua e cambio tema app
-        - PaginaContatti
             - Aggiungere info
-        - PaginaAiuto
             - Aggiungere FAQ
+        - PaginaEvento
+        - PaginaSignIn
+        - PaginaProfilo
+            - Impostazioni Profilo ed eventuali bottoni(torna alla mappa, ecc..)
 */
 
 @file:Suppress("DEPRECATION")

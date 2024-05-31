@@ -4,46 +4,11 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#3399FF"
-        android:gravity="center_vertical"
-        android:padding="10dp"
-        android:layout_marginTop="-5dp"
-        android:layout_marginBottom="-5dp"
-        android:orientation="horizontal">
-        <ImageButton
-            android:id="@+id/button_menu"
-            android:layout_width="58dp"
-            android:layout_height="55dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/icons8_menu_208"
-            android:scaleType="fitCenter"
-            android:contentDescription="contentDescription"
-            tools:ignore="HardcodedText"
-            android:layout_marginTop="2dp"
-            android:layout_marginStart="5dp"/>
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-        <ImageButton
-            android:id="@+id/button_3_profile"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            android:src="@drawable/icons8_account_96"
-            android:contentDescription="contentDescription"
-            tools:ignore="HardcodedText"
-            android:layout_marginTop="3dp"
-            android:layout_marginEnd="5dp"/>
-    </LinearLayout>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:padding="5dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
