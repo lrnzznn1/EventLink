@@ -113,9 +113,31 @@ class MainActivity : Activity(), OnMapReadyCallback {
             ActivityCompat.requestPermissions(this,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE)
-        }else{
-            // I permessi di localizzazione sono già stati concessi, quindi procedi con l'operazione
-            getLastKnownLocation()
+        }
+
+        fusedLocationClient.lastLocation.addOnSuccessListener {
+            location ->
+            if(location!=null) {
+                currentLatLng = LatLng(location.latitude, location.longitude)
+                val caricamneto = findViewById<RelativeLayout>(R.id.caricamento)
+                caricamneto.visibility = View.GONE
+                val bordoview = findViewById<View>(R.id.bordoview)
+                bordoview.visibility = View.VISIBLE
+                val secondlinearlayout = findViewById<LinearLayout>(R.id.second_linear_layout)
+                secondlinearlayout.visibility = View.VISIBLE
+                val mappaview = findViewById<FrameLayout>(R.id.mappa_view)
+                mappaview.visibility = View.VISIBLE
+            }else{
+                currentLatLng = LatLng(42.0, 11.53)
+                val caricamneto = findViewById<RelativeLayout>(R.id.caricamento)
+                caricamneto.visibility = View.GONE
+                val bordoview = findViewById<View>(R.id.bordoview)
+                bordoview.visibility = View.VISIBLE
+                val secondlinearlayout = findViewById<LinearLayout>(R.id.second_linear_layout)
+                secondlinearlayout.visibility = View.VISIBLE
+                val mappaview = findViewById<FrameLayout>(R.id.mappa_view)
+                mappaview.visibility = View.VISIBLE
+            }
         }
 
 
@@ -280,10 +302,10 @@ class MainActivity : Activity(), OnMapReadyCallback {
             testomappa.setTextColor(baseColorB)
             testolista.setTextColor(colorWithAlpha)
             testoprofilo.setTextColor(baseColorB)
-            var strada = 0.0F
+            var strada : Float
             for(document in lista){
                 runBlocking {
-                    strada = calcolaLoc(this@MainActivity, document.Posizione_Mappa)
+                    strada = calcolaLoc(document.Posizione_Mappa)
                 }
                 document.distanza = strada
             }
@@ -450,12 +472,10 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     val checkbox = findViewById<CheckBox>(checkboxId)
                     filtriApplicati.add(checkbox.isChecked)
                 }
-                var items: MutableList<MyClusterItem>
                 val spinnerDate = findViewById<Spinner>(R.id.date)
                 val selectedDate = spinnerDate.selectedItem.toString()
-                items = droppaItem(selectedDate)
                 clusterManager.clearItems()
-                clusterManager.addItems(items)
+                clusterManager.addItems(droppaItem(selectedDate))
                 clusterManager.cluster()
                 filtriApplicati.clear()
             }
@@ -518,7 +538,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
             // Create BitmapDescriptor for marker icon
             val immagine = BitmapDescriptorFactory.fromBitmap(resizedBitmap)
             val tag = document.id
-            var strada : Float = 0.0F
 
             lista.add(Evento(
                 tag,
@@ -537,7 +556,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 description,
                 immagine,
                 position,
-                strada
+                0.0F
             ))
 
             // Create cluster item
@@ -589,7 +608,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 }
                 val ico = document.Tipo
                 val dataDb = convertiData(document.Data)
-                var isWithinRange = (dataDb.isEqual(giornominimo) || dataDb.isAfter(giornominimo)) &&
+                val isWithinRange = (dataDb.isEqual(giornominimo) || dataDb.isAfter(giornominimo)) &&
                         (dataDb.isEqual(giornomassimo) || dataDb.isBefore(giornomassimo))
                 if ((filtriApplicati[tipi.indexOf(ico)] && isWithinRange) || (isWithinRange  && !filtriApplicati.contains(true) )) {
                     val clusterItem = MyClusterItem(document.Posizione_Mappa, document.Titolo, document.Descrizione_Mappa, document.Immagine_Mappa, document.ID_Evento)
@@ -634,9 +653,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
         }
     }
-    suspend fun calcolaLoc(context : Context, position : LatLng): Float{
-        var strada = 0.0F
-
+    private fun calcolaLoc(position : LatLng): Float{
         val approx = Location("position").apply {
             latitude = position.latitude
             longitude = position.longitude
@@ -645,65 +662,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
             latitude = currentLatLng.latitude
             longitude = currentLatLng.longitude
         }
-        strada = end.distanceTo(approx)
-        return strada/1000
+        return end.distanceTo(approx)/1000
     }
-
-    // Callback per la risposta della richiesta dei permessi
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                // Permesso di localizzazione concesso, procedi con l'operazione
-                getLastKnownLocation()
-            } else {
-                // Permesso di localizzazione negato, gestisci di conseguenza
-                // Qui puoi mostrare un messaggio o eseguire un'altra azione appropriata
-                currentLatLng = LatLng(42.0, 11.53)
-                val caricamneto = findViewById<RelativeLayout>(R.id.caricamento)
-                caricamneto.visibility = View.GONE
-                val bordoview = findViewById<View>(R.id.bordoview)
-                bordoview.visibility = View.VISIBLE
-                val secondlinearlayout = findViewById<LinearLayout>(R.id.second_linear_layout)
-                secondlinearlayout.visibility = View.VISIBLE
-                val mappaview = findViewById<FrameLayout>(R.id.mappa_view)
-                mappaview.visibility= View.VISIBLE
-            }
-        }
-    }
-    // Funzione per ottenere l'ultima posizione nota
-    @SuppressLint("MissingPermission")
-    private fun getLastKnownLocation() {
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                if (location != null) {
-                    currentLatLng = LatLng(location.latitude, location.longitude)
-                    val caricamneto = findViewById<RelativeLayout>(R.id.caricamento)
-                    caricamneto.visibility = View.GONE
-                    val bordoview = findViewById<View>(R.id.bordoview)
-                    bordoview.visibility = View.VISIBLE
-                    val secondlinearlayout = findViewById<LinearLayout>(R.id.second_linear_layout)
-                    secondlinearlayout.visibility = View.VISIBLE
-                    val mappaview = findViewById<FrameLayout>(R.id.mappa_view)
-                    mappaview.visibility= View.VISIBLE
-                } else {
-                    currentLatLng = LatLng(42.0, 11.53)
-                    val caricamneto = findViewById<RelativeLayout>(R.id.caricamento)
-                    caricamneto.visibility = View.GONE
-                    val bordoview = findViewById<View>(R.id.bordoview)
-                    bordoview.visibility = View.VISIBLE
-                    val secondlinearlayout = findViewById<LinearLayout>(R.id.second_linear_layout)
-                    secondlinearlayout.visibility = View.VISIBLE
-                    val mappaview = findViewById<FrameLayout>(R.id.mappa_view)
-                    mappaview.visibility= View.VISIBLE
-                }
-
-            }
-    }
-
 }
 
