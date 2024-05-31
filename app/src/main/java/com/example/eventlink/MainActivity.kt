@@ -36,6 +36,7 @@
 
 package com.example.eventlink
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
@@ -56,6 +57,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
@@ -69,6 +71,8 @@ import com.example.eventlink.other.MyClusterItem
 import com.example.eventlink.pages.PaginaEvento
 import com.example.eventlink.pages.PaginaLogin
 import com.example.eventlink.pages.PaginaProfilo
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
@@ -83,21 +87,14 @@ import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-/*
-import android.location.Location
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.Task
- */
-
 @SuppressLint("StaticFieldLeak")
 val db = Firebase.firestore
 private lateinit var clusterManager: ClusterManager<MyClusterItem>
 private lateinit var customClusterRenderer: CustomClusterRenderer
 var filtriApplicati = mutableListOf<Boolean>()
 var global_email : String = ""
-
-//private lateinit var fusedLocationClient: FusedLocationProviderClient
+private lateinit var fusedLocationClient: FusedLocationProviderClient
+private const val LOCATION_PERMISSION_REQUEST_CODE = 1
 
 class MainActivity : Activity(), OnMapReadyCallback {
     @SuppressLint("InflateParams")
@@ -107,6 +104,16 @@ class MainActivity : Activity(), OnMapReadyCallback {
         // Initialize the map fragment
         val mapFragment: MapFragment? = fragmentManager.findFragmentById(R.id.map) as? MapFragment
         mapFragment?.getMapAsync(this)
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        // Check and request location permission
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE)
+        }
+
 
         // Initialize UI elements
         val filterView = findViewById<LinearLayout>(R.id.filtrilayout)
@@ -126,11 +133,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
         val testoprofilo = findViewById<TextView>(R.id.testo_profilo)
 
 
-        //Calcolo della geolocalizzazione
-
-        /*var LOCATION_PERMISSION_REQUEST_CODE = 1
-        geoloc(this, 1)
-        */
 
         // Setup for filter view and its visibility
         filterView.visibility = View.GONE
@@ -329,6 +331,26 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 val newZoomLevel = currentZoomLevel - 1
                 val cameraUpdate = CameraUpdateFactory.zoomTo(newZoomLevel)
                 googleMap.animateCamera(cameraUpdate)
+            }
+
+            val dovesonobtn = findViewById<ImageButton>(R.id.dovesonobtn)
+            dovesonobtn.setOnClickListener{
+                if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                    fusedLocationClient.lastLocation
+                        .addOnSuccessListener { location ->
+                            if (location != null) {
+                                val currentLatLng = LatLng(location.latitude, location.longitude)
+                                val updateCamera = CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f)
+                                googleMap.animateCamera(updateCamera)
+                            }
+                        }
+                } else {
+                    ActivityCompat.requestPermissions(this@MainActivity,
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                        LOCATION_PERMISSION_REQUEST_CODE)
+                }
+
             }
 
             // Load map markers asynchronously
@@ -571,27 +593,3 @@ class MainActivity : Activity(), OnMapReadyCallback {
     }
 
 }
-
-/*
-@SuppressLint("MissingPermission")
-private fun getRecentLocation() {
-    fusedLocationClient.lastLocation
-        .addOnSuccessListener { location: Location? ->
-            // Ottieni la posizione qui
-            if (location != null) {
-                val latitude = location.latitude
-                val longitude = location.longitude
-                // Usa i dati di latitudine e longitudine
-            }
-        }
-}
-private fun geoloc(context : Activity, LOCATION_PERMISSION_REQUEST_CODE: Int){
-    if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION)
-        != PackageManager.PERMISSION_GRANTED) {
-        ActivityCompat.requestPermissions(context, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-            LOCATION_PERMISSION_REQUEST_CODE)
-    } else {
-        getRecentLocation()
-    }
-}
-*/

@@ -19,6 +19,19 @@
             android:layout_height="match_parent"
             tools:context="com.example.eventlink.MainActivity"
             tools:ignore="FragmentTagUsage" />
+        <ImageButton
+            android:id="@+id/dovesonobtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:scaleType="fitCenter"
+            android:layout_gravity="right"
+            android:layout_marginEnd="2dp"
+            android:layout_marginTop="180dp"
+            android:contentDescription="@string/contentdescription"
+            android:src="@drawable/icons8_geo_recinto_96"
+            tools:ignore="RtlHardcoded">
+        </ImageButton>
         <LinearLayout
             android:id="@+id/zoomview"
             android:layout_width="wrap_content"

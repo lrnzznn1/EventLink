@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.material)
     implementation(libs.androidx.monitor)
+    implementation(libs.play.services.location)
     //implementation(libs.firebase.common.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
