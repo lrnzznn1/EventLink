@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET"/> <!--This line-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/> <!--This line-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- permessi per geolocalizzazione-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"

@@ -20,11 +20,8 @@
             - Implementare geolocalizzazione
         - PaginaEvento
             - Implementare menu e profilo
-            - Implementare prenota
         - PaginaSignIn
             - Implementare menu e back
-        - PaginaLogin
-            - Aggiungere variabile globale con id utente se loggato
         - PaginaProfilo
             - Implementare Preferiti, Impostazioni Profilo ed eventuali bottoni(torna alla mappa, ecc..)
         - PaginaImpostazioni
@@ -44,6 +41,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.PorterDuff
@@ -64,6 +62,7 @@ import android.widget.RelativeLayout
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.eventlink.other.CustomClusterRenderer
 import com.example.eventlink.other.MyClusterItem
@@ -83,7 +82,12 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
+/*
+import android.location.Location
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.Task
+ */
 
 @SuppressLint("StaticFieldLeak")
 val db = Firebase.firestore
@@ -91,6 +95,9 @@ private lateinit var clusterManager: ClusterManager<MyClusterItem>
 private lateinit var customClusterRenderer: CustomClusterRenderer
 var filtriApplicati = mutableListOf<Boolean>()
 var global_email : String = ""
+
+//private lateinit var fusedLocationClient: FusedLocationProviderClient
+
 
 class MainActivity : Activity(), OnMapReadyCallback {
     @SuppressLint("InflateParams")
@@ -120,8 +127,11 @@ class MainActivity : Activity(), OnMapReadyCallback {
         val testoprofilo = findViewById<TextView>(R.id.testo_profilo)
 
 
-
-
+        //Calcolo della geolocalizzazione
+        
+        /*var LOCATION_PERMISSION_REQUEST_CODE = 1
+        geoloc(this, 1)
+        */
 
         // Setup for filter view and its visibility
         filterView.visibility = View.GONE
@@ -563,3 +573,26 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
 }
 
+/*
+@SuppressLint("MissingPermission")
+private fun getRecentLocation() {
+    fusedLocationClient.lastLocation
+        .addOnSuccessListener { location: Location? ->
+            // Ottieni la posizione qui
+            if (location != null) {
+                val latitude = location.latitude
+                val longitude = location.longitude
+                // Usa i dati di latitudine e longitudine
+            }
+        }
+}
+private fun geoloc(context : Activity, LOCATION_PERMISSION_REQUEST_CODE: Int){
+    if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION)
+        != PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(context, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+            LOCATION_PERMISSION_REQUEST_CODE)
+    } else {
+        getRecentLocation()
+    }
+}
+*/
