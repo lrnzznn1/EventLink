@@ -1,20 +1,23 @@
 [versions]
 agp = "8.3.2"
 kotlin = "1.9.0"
+#noinspection GradleDependency
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
+#noinspection GradleDependency
 lifecycleRuntimeKtx = "2.6.1"
+#noinspection GradleDependency
 activityCompose = "1.7.0"
+#noinspection GradleDependency
 composeBom = "2023.08.00"
+#noinspection GradleDependency
 appcompat = "1.6.1"
-firebaseCommonKtx = "21.0.0"
 firebaseAuthKtx = "23.0.0"
 firebaseFirestoreKtx = "25.0.0"
 material = "1.12.0"
 monitor = "1.6.1"
-transportApi = "3.2.0"
 playServicesLocation = "21.3.0"
 
 [libraries]
@@ -33,12 +36,10 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx", version.ref = "firebaseCommonKtx" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-monitor = { group = "androidx.test", name = "monitor", version.ref = "monitor" }
-transport-api = { group = "com.google.android.datatransport", name = "transport-api", version.ref = "transportApi" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
