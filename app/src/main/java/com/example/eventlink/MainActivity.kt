@@ -635,6 +635,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
             img.contentDescription = "Image"
             // Add the duplicate view to the parent layout
             parent.addView(duplicateView)
+
         }
     }
     suspend fun calcolaLoc(context : Context, position : LatLng): Float{
