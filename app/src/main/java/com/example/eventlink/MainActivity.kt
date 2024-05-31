@@ -39,9 +39,11 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -81,6 +83,8 @@ import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.example.eventlink.other.Evento
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @SuppressLint("StaticFieldLeak")
 val db = Firebase.firestore
@@ -91,6 +95,8 @@ var global_email : String = ""
 private lateinit var fusedLocationClient: FusedLocationProviderClient
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1
 var lista = mutableListOf<Evento>()
+var currentLatLng : LatLng = LatLng(0.0, 0.0)
+
 class MainActivity : Activity(), OnMapReadyCallback {
     @SuppressLint("InflateParams")
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,6 +114,14 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE)
         }
+
+        fusedLocationClient.lastLocation.addOnSuccessListener {
+            location ->
+            if(location!=null) {
+                currentLatLng = LatLng(location.latitude, location.longitude)
+            }
+        }
+
 
 
         // Initialize UI elements
@@ -155,9 +169,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerDate.adapter = adapter
-
-
-
 
 
         val baseColor = ContextCompat.getColor(this, R.color.arancio)
@@ -273,11 +284,21 @@ class MainActivity : Activity(), OnMapReadyCallback {
             testomappa.setTextColor(baseColorB)
             testolista.setTextColor(colorWithAlpha)
             testoprofilo.setTextColor(baseColorB)
-
+            var strada = 0.0F
+            for(document in lista){
+                runBlocking {
+                    strada = calcolaLoc(this@MainActivity, document.Posizione_Mappa)
+                }
+                document.distanza = strada
+            }
+            lista.sortBy {
+                it.distanza
+            }
             newview = layoutInflater.inflate(R.layout.listaview ,null)
             granderelativo.addView(newview)
             val parent = this.findViewById<LinearLayout>(R.id.parente_nascosto1)
             setPre(this@MainActivity, parent)
+
         }
 
         linearMappa.setOnClickListener{
@@ -335,7 +356,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     fusedLocationClient.lastLocation
                         .addOnSuccessListener { location ->
                             if (location != null) {
-                                val currentLatLng = LatLng(location.latitude, location.longitude)
+                                currentLatLng = LatLng(location.latitude, location.longitude)
                                 val updateCamera = CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f)
                                 googleMap.animateCamera(updateCamera)
                             }
@@ -474,7 +495,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
         // Initialize list for map markers
         val items = mutableListOf<MyClusterItem>()
-
+        Log.d("longleng", currentLatLng.toString())
         // Fetch event data from Firestore
         val result = db.collection("Eventi")
             .get()
@@ -501,6 +522,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
             // Create BitmapDescriptor for marker icon
             val immagine = BitmapDescriptorFactory.fromBitmap(resizedBitmap)
             val tag = document.id
+            var strada : Float = 0.0F
 
             lista.add(Evento(
                 tag,
@@ -518,9 +540,9 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 title,
                 description,
                 immagine,
-                position
+                position,
+                strada
             ))
-
 
             // Create cluster item
             val clusterItem = MyClusterItem(position, title, description, immagine, tag)
@@ -600,20 +622,34 @@ class MainActivity : Activity(), OnMapReadyCallback {
             val title = document.Titolo
             val time = document.Ora
             val date = document.Data
-
+            val distance = BigDecimal(document.distanza.toDouble()).setScale(2,RoundingMode.HALF_EVEN)
             // Inflate the base event layout
             val inflater = LayoutInflater.from(context)
             val duplicateView = inflater.inflate(R.layout.visionelista, null)
 
             // Set the event details in the duplicate view
             val text = duplicateView.findViewById<TextView>(R.id.pUtente_DescrizioneEvento1)
-            text.text = "$title\n\n$date $time"
+            text.text = "$title\n$time $date\n $distance KM"
             val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento1)
             Glide.with(context).load(image).into(img)
             img.contentDescription = "Image"
             // Add the duplicate view to the parent layout
             parent.addView(duplicateView)
         }
+    }
+    suspend fun calcolaLoc(context : Context, position : LatLng): Float{
+        var strada = 0.0F
+
+        val approx = Location("position").apply {
+            latitude = position.latitude
+            longitude = position.longitude
+        }
+        val end = Location("currentLatLng").apply {
+            latitude = currentLatLng.latitude
+            longitude = currentLatLng.longitude
+        }
+        strada = end.distanceTo(approx)
+        return strada/1000
     }
 }
 
