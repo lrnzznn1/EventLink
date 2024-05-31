@@ -82,6 +82,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+
 /*
 import android.location.Location
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -98,13 +99,11 @@ var global_email : String = ""
 
 //private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-
 class MainActivity : Activity(), OnMapReadyCallback {
     @SuppressLint("InflateParams")
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         // Initialize the map fragment
         val mapFragment: MapFragment? = fragmentManager.findFragmentById(R.id.map) as? MapFragment
         mapFragment?.getMapAsync(this)
@@ -128,7 +127,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
 
         //Calcolo della geolocalizzazione
-        
+
         /*var LOCATION_PERMISSION_REQUEST_CODE = 1
         geoloc(this, 1)
         */
