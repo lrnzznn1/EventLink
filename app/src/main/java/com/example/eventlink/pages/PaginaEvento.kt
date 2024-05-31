@@ -91,7 +91,7 @@ class PaginaEvento : Activity(){
                                     val prezzo = documentSnapshot.get("Prezzo")
 
                                     val testoEmail = """
-                                        Hai prenotato l'evento "$nome"!
+                                        Hai prenotato l'evento $nome!
                                     
                                         Data: $data
                                         Ora: $ora
@@ -106,7 +106,7 @@ class PaginaEvento : Activity(){
                         }
                         val builder = AlertDialog.Builder(this@PaginaEvento)
                         builder.setTitle("Prenotazione Completata")
-                        builder.setMessage("La tua prenotazione è stata completata con successo.\\nControlla la tua email per ulteriori dettagli.")
+                        builder.setMessage("La tua prenotazione è stata completata con successo.\nControlla la tua email per ulteriori dettagli.")
                         builder.setPositiveButton("OK"){_, _ ->
                             finish()
                         }
@@ -116,7 +116,7 @@ class PaginaEvento : Activity(){
                     else if(posti==0) {
                         val builder = AlertDialog.Builder(this@PaginaEvento)
                         builder.setTitle("Posti Esauriti")
-                        builder.setMessage("Ci dispiace!\\nAl momento tutti i posti sono esauriti. Controlla più tardi, potrebbero liberarsi posti disponibili!")
+                        builder.setMessage("Ci dispiace!\nAl momento tutti i posti sono esauriti. Controlla più tardi, potrebbero liberarsi posti disponibili!")
                         builder.setPositiveButton("OK"){_, _ ->
                             finish()
                         }

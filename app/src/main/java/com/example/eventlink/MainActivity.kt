@@ -43,6 +43,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -58,6 +59,7 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.example.eventlink.other.CustomClusterRenderer
 import com.example.eventlink.other.MyClusterItem
 import com.example.eventlink.pages.PaginaEvento
@@ -78,6 +80,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import com.example.eventlink.other.Evento
 
 @SuppressLint("StaticFieldLeak")
 val db = Firebase.firestore
@@ -87,7 +90,7 @@ var filtriApplicati = mutableListOf<Boolean>()
 var global_email : String = ""
 private lateinit var fusedLocationClient: FusedLocationProviderClient
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1
-
+var lista = mutableListOf<Evento>()
 class MainActivity : Activity(), OnMapReadyCallback {
     @SuppressLint("InflateParams")
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -123,8 +126,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
         val testomappa = findViewById<TextView>(R.id.testo_mappa)
         val testolista = findViewById<TextView>(R.id.testo_lista)
         val testoprofilo = findViewById<TextView>(R.id.testo_profilo)
-
-
 
         // Setup for filter view and its visibility
         filterView.visibility = View.GONE
@@ -275,8 +276,10 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
             newview = layoutInflater.inflate(R.layout.listaview ,null)
             granderelativo.addView(newview)
-
+            val parent = this.findViewById<LinearLayout>(R.id.parente_nascosto1)
+            setPre(this@MainActivity, parent)
         }
+
         linearMappa.setOnClickListener{
             granderelativo.removeView(newview)
             mappaview.visibility = View.VISIBLE
@@ -433,9 +436,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 var items: MutableList<MyClusterItem>
                 val spinnerDate = findViewById<Spinner>(R.id.date)
                 val selectedDate = spinnerDate.selectedItem.toString()
-                runBlocking {
-                    items = droppaItem(selectedDate)
-                }
+                items = droppaItem(selectedDate)
                 clusterManager.clearItems()
                 clusterManager.addItems(items)
                 clusterManager.cluster()
@@ -501,6 +502,26 @@ class MainActivity : Activity(), OnMapReadyCallback {
             val immagine = BitmapDescriptorFactory.fromBitmap(resizedBitmap)
             val tag = document.id
 
+            lista.add(Evento(
+                tag,
+                document.data.getValue("Data").toString(),
+                document.data.getValue("Descrizione").toString(),
+                document.data.getValue("ID_Azienda").toString(),
+                document.data.getValue("Immagine").toString(),
+                document.data.getValue("Indirizzo").toString(),
+                document.data.getValue("Max_Prenotazioni").toString(),
+                document.data.getValue("Ora").toString(),
+                locString,
+                document.data.getValue("Prenotazione").toString(),
+                document.data.getValue("Prezzo").toString(),
+                ico,
+                title,
+                description,
+                immagine,
+                position
+            ))
+
+
             // Create cluster item
             val clusterItem = MyClusterItem(position, title, description, immagine, tag)
             items.add(clusterItem)
@@ -513,68 +534,52 @@ class MainActivity : Activity(), OnMapReadyCallback {
     }
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("DiscouragedApi")
-    suspend fun droppaItem(data : String): MutableList<MyClusterItem> {
-        val tipi = listOf("concerto", "sport", "gastronomia", "convegno", "mostra", "spettacolo", "outdoor", "escursione", "networking", "educazione")
-
+    fun droppaItem(data : String): MutableList<MyClusterItem> {
         // Initialize list for map markers
         val items = mutableListOf<MyClusterItem>()
-
-        // Fetch event data from Firestore
-        val result = db.collection("Eventi")
-            .get()
-            .await()
-
-        // Process each event document
-        for (document in result) {
-            // Extract data from document
-            val ico = document.data.getValue("Tipo").toString()
-            val resourceId = resources.getIdentifier(ico, "drawable", packageName)
-            val bitmap = BitmapFactory.decodeResource(resources, resourceId)
-            val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, false)
-            val locString =  document.data.getValue("Posizione").toString()
-            val delimiter ="&"
-            val location = locString.split(delimiter)
-            val position = LatLng(location[0].toDouble(), location[1].toDouble())
-            val title = document.data.getValue("Titolo").toString()
-            val description =
-                "Indirizzo: " + document.data.getValue("Indirizzo").toString() + "\n" +
-                        "Data: " + document.data.getValue("Data").toString() + "\n" +
-                        "Ora: " + document.data.getValue("Ora").toString() + "\n" +
-                        "Prezzo: " + document.data.getValue("Prezzo").toString()
-            val immagine = BitmapDescriptorFactory.fromBitmap(resizedBitmap)
-            val tag = document.id
-            val oggi = LocalDate.now()
-            var giornomassimo = oggi
-            var giornominimo = oggi
-            when(data){
-                "Domani"->{
-                    giornominimo = oggi.plusDays(1)
-                    giornomassimo = giornominimo
-                }
-                "Weekend"->{
-                    giornominimo = oggi.plusDays((6 - oggi.dayOfWeek.value).toLong())
-                    giornomassimo = giornominimo.plusDays(1)
-                }
-                "Questa settimana"->{
-                    giornomassimo = oggi.plusDays((7 - oggi.dayOfWeek.value).toLong())
-                }
-                "Prossima settimana"->{
-                    giornominimo = oggi.plusDays((8 - oggi.dayOfWeek.value).toLong())
-                    giornomassimo = giornominimo.plusDays(6)
-                }
-                "Questo mese"->{
-                    giornomassimo = oggi.plusMonths(1)
-                }
-            }
-            val dataDb = convertiData(document.data.getValue("Data").toString())
-            var isWithinRange = (dataDb.isEqual(giornominimo) || dataDb.isAfter(giornominimo)) &&
-                    (dataDb.isEqual(giornomassimo) || dataDb.isBefore(giornomassimo))
-            if(data=="null")isWithinRange=true
-            if ((filtriApplicati[tipi.indexOf(ico)] && isWithinRange) || (isWithinRange  && !filtriApplicati.contains(true) )        ) {
-                val clusterItem = MyClusterItem(position, title, description, immagine, tag)
+        if(data=="null"){
+            for(eventi in lista){
+                val clusterItem = MyClusterItem(eventi.Posizione_Mappa, eventi.Titolo, eventi.Descrizione_Mappa, eventi.Immagine_Mappa, eventi.ID_Evento)
                 items.add(clusterItem)
             }
         }
+        else{
+            val tipi = listOf("concerto", "sport", "gastronomia", "convegno", "mostra", "spettacolo", "outdoor", "escursione", "networking", "educazione")
+            for (document in lista) {
+                val oggi = LocalDate.now()
+                var giornomassimo = oggi
+                var giornominimo = oggi
+                when(data) {
+                    "Domani" -> {
+                        giornominimo = oggi.plusDays(1)
+                        giornomassimo = giornominimo
+                    }
+                    "Weekend" -> {
+                        giornominimo = oggi.plusDays((6 - oggi.dayOfWeek.value).toLong())
+                        giornomassimo = giornominimo.plusDays(1)
+                    }
+                    "Questa settimana" -> {
+                        giornomassimo = oggi.plusDays((7 - oggi.dayOfWeek.value).toLong())
+                    }
+                    "Prossima settimana" -> {
+                        giornominimo = oggi.plusDays((8 - oggi.dayOfWeek.value).toLong())
+                        giornomassimo = giornominimo.plusDays(6)
+                    }
+                    "Questo mese" -> {
+                        giornomassimo = oggi.plusMonths(1)
+                    }
+                }
+                val ico = document.Tipo
+                val dataDb = convertiData(document.Data)
+                var isWithinRange = (dataDb.isEqual(giornominimo) || dataDb.isAfter(giornominimo)) &&
+                        (dataDb.isEqual(giornomassimo) || dataDb.isBefore(giornomassimo))
+                if ((filtriApplicati[tipi.indexOf(ico)] && isWithinRange) || (isWithinRange  && !filtriApplicati.contains(true) )) {
+                    val clusterItem = MyClusterItem(document.Posizione_Mappa, document.Titolo, document.Descrizione_Mappa, document.Immagine_Mappa, document.ID_Evento)
+                    items.add(clusterItem)
+                }
+            }
+        }
+        // Process each event document
         return items
     }
     @RequiresApi(Build.VERSION_CODES.O)
@@ -584,4 +589,31 @@ class MainActivity : Activity(), OnMapReadyCallback {
         return LocalDate.parse(data, formatter)
     }
 
+
+
+    @SuppressLint("SetTextI18n", "InflateParams")
+    fun setPre(context: Context, parent: LinearLayout){
+        // Iterate over each event document
+        for(document in lista ){
+            // Retrieve event details from the database
+            val image = document.Immagine
+            val title = document.Titolo
+            val time = document.Ora
+            val date = document.Data
+
+            // Inflate the base event layout
+            val inflater = LayoutInflater.from(context)
+            val duplicateView = inflater.inflate(R.layout.visionelista, null)
+
+            // Set the event details in the duplicate view
+            val text = duplicateView.findViewById<TextView>(R.id.pUtente_DescrizioneEvento1)
+            text.text = "$title\n\n$date $time"
+            val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento1)
+            Glide.with(context).load(image).into(img)
+            img.contentDescription = "Image"
+            // Add the duplicate view to the parent layout
+            parent.addView(duplicateView)
+        }
+    }
 }
+

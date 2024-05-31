@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        tools:ignore="UselessParent">
+        <ImageView
+            android:id="@+id/immagine_Evento1"
+            android:layout_width="130dp"
+            android:layout_height="110dp"
+            android:src="@drawable/ic_launcher_background"
+            android:contentDescription="@string/niente"
+            android:scaleType="fitCenter" >
+        </ImageView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/pUtente_DescrizioneEvento1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/visita_guidata_colosseo_n_n5_maggio_14_00"
+                android:textSize="17sp">
+            </TextView>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

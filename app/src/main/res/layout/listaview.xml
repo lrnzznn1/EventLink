@@ -1,18 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/lista_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_alignParentTop="true"
-    android:orientation="horizontal"
-    android:layout_above="@+id/second_linear_layout">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="LISTA"
-        android:layout_gravity="center"
-        android:gravity="center">
-    </TextView>
-</FrameLayout>
+    android:layout_height="match_parent">
+    <FrameLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/lista_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="68dp"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:layout_above="@+id/second_linear_layout">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="10dp"
+            android:layout_above="@+id/second_linear_layout">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/parente_nascosto1">
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
+</RelativeLayout>

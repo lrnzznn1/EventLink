@@ -120,6 +120,4 @@ class PaginaProfilo : Activity(){
             parent.addView(duplicateView)
         }
     }
-
-
 }
