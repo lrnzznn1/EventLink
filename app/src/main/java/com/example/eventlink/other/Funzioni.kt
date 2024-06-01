@@ -1,12 +1,14 @@
 package com.example.eventlink.other
 
 import android.util.Log
+import com.example.eventlink.db
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.io.OutputStreamWriter
@@ -77,5 +79,22 @@ fun rawJSON(email : String, subject : String ,text : String) {
         } else {
             Log.e("HTTPSURLCONNECTION_ERROR", responseCode.toString())
         }
+    }
+}
+
+// Generates a random password consisting of uppercase letters, lowercase letters, and digits.
+fun generateRandomPassword(): String {
+    val length  = 12
+    val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    return (1..length)
+        .map { allowedChars.random() }
+        .joinToString("")
+}
+
+// Checks if a document exists in the specified Firestore collection.
+suspend fun existsInDB(collectionName: String, documentId: String): Boolean {
+    return withContext(Dispatchers.IO) {
+        val document= db.collection(collectionName).document(documentId).get().await()
+        document!=null && document.exists()
     }
 }

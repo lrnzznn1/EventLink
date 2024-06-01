@@ -131,18 +131,28 @@ class PaginaEvento : Activity(){
                                     val indirizzo = documentSnapshot.get("Indirizzo")
                                     val prezzo = documentSnapshot.get("Prezzo")
 
-                                    val testoEmail = """
-                                        Hai prenotato l'evento $nome!
+                                    val subject = "Conferma Prenotazione Evento: $nome"
+                                    val body = """
+                                        Gentile Utente,
                                     
+                                        Grazie per aver prenotato l'evento "$nome"!
+                                    
+                                        Di seguito i dettagli dell'evento:
+                                        
                                         Data: $data
                                         Ora: $ora
                                         Descrizione: $descrizione
                                         Indirizzo: $indirizzo
                                         Prezzo: $prezzo
                                     
-                                        Grazie per aver prenotato! Ti aspettiamo all'evento.
+                                        Siamo lieti di averti con noi e ti aspettiamo all'evento.
+                                    
+                                        Cordiali Saluti,
+                                        EventLink
                                     """.trimIndent()
-                                    rawJSON(global_email,"Prenotazione Evento",testoEmail)
+
+                                    rawJSON(global_email, subject, body)
+
                                 }
                         }
                         val builder = AlertDialog.Builder(this@PaginaEvento)

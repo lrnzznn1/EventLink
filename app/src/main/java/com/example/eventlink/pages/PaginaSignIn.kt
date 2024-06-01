@@ -10,12 +10,11 @@ import android.widget.EditText
 import android.widget.Spinner
 import com.example.eventlink.R
 import com.example.eventlink.db
+import com.example.eventlink.other.existsInDB
+import com.example.eventlink.other.generateRandomPassword
 import com.example.eventlink.other.hashString
 import com.example.eventlink.other.rawJSON
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 class PaginaSignIn : Activity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -166,23 +165,6 @@ class PaginaSignIn : Activity() {
                     }
                 }
             }
-        }
-    }
-
-    // Generates a random password consisting of uppercase letters, lowercase letters, and digits.
-    private fun generateRandomPassword(): String {
-        val length  = 12
-        val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-        return (1..length)
-            .map { allowedChars.random() }
-            .joinToString("")
-    }
-
-    // Checks if a document exists in the specified Firestore collection.
-    private suspend fun existsInDB(collectionName: String, documentId: String): Boolean {
-        return withContext(Dispatchers.IO) {
-            val document= db.collection(collectionName).document(documentId).get().await()
-            document!=null && document.exists()
         }
     }
 }
