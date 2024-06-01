@@ -30,7 +30,6 @@
      TODO:
         -Lista dei bug che non risolveremo
             - Al primo avvio dell'app non viene caricata la mappa
-            - Se aggiungi dalla pagina Evento l'evento ai preferiti, quando esci non si riaggiorna la info_contents
 
 */
 
@@ -446,12 +445,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 titleTextView.text = item.title
                 snippetTextView.text = item.snippet
 
-                // Click listener for event button
-                buttonEvent.setOnClickListener {
-                    val intent = Intent(this@MainActivity, PaginaEvento::class.java)
-                    intent.putExtra("markerId", id)
-                    startActivity(intent)
-                }
+
 
                 // Click listener for navigation button
                 buttonNavigator.setOnClickListener {
@@ -524,6 +518,14 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     window?.attributes = params
                 }
                 dialog.show()
+
+                // Click listener for event button
+                buttonEvent.setOnClickListener {
+                    val intent = Intent(this@MainActivity, PaginaEvento::class.java)
+                    intent.putExtra("markerId", id)
+                    dialog.dismiss()
+                    startActivity(intent)
+                }
                 true
             }
 
