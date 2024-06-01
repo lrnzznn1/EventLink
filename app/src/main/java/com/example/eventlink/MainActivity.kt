@@ -734,12 +734,12 @@ class MainActivity : Activity(), OnMapReadyCallback {
     @SuppressLint("SetTextI18n", "InflateParams")
     fun setPre2(context: Context, parent: LinearLayout){
 
-        var EventiLocali : List<EventoLocale>
+        var eEventiLocali : List<EventoLocale>
         runBlocking {
-            EventiLocali=eventilocaAll()
+            eEventiLocali=eventilocaAll()
         }
 
-        for(eventinilocali in EventiLocali){
+        for(eventinilocali in eEventiLocali){
             val rispettivo = lista.filter { it.ID_Evento == eventinilocali.ID_Evento }
             rispettivo.forEach{
                 val image = it.Immagine
@@ -775,7 +775,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
         return end.distanceTo(approx)/1000
     }
 
-    suspend fun eventilocaAll(): List<EventoLocale> {
+    private suspend fun eventilocaAll(): List<EventoLocale> {
         return databaseLoc.DAOEventoLocale().getAllEvent()
     }
 }
