@@ -12,20 +12,23 @@
    - educazione
 
     TODO:
+        - Generale
+            - Pulire il codice
+            - Migliorare grafica
         - MainActivity
-            - Alleggerire loadMap() impossibile credo..
-            - Preferiti quasi funzionanti
-            - Implementare cambio lingua e cambio tema app
-            - Aggiungere info
-            - Aggiungere FAQ
+            - Menu
+                - Cambio tema e lingua
+                - Aggiungere info
+                - Aggiungere FAQ
         - PaginaEvento
             - Usare la lista per evitare di una firebase
-            - Preferiti quasi funzionanti
-        - PaginaSignIn
         - PaginaProfilo
-            - Impostazioni Profilo ed eventuali bottoni(torna alla mappa, ecc..)
-        - PaginaLogin
-            - Password dimenticata
+            - Impostazioni
+                - Cambio password
+                - Elimina account
+            - Prenotazioni
+                - Apri evento
+                - Annulla prenotazione
 
      TODO:
         -Lista dei bug che non risolveremo
@@ -96,7 +99,6 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import com.example.eventlink.pages.PaginaDimenticata
 
 @SuppressLint("StaticFieldLeak")
 val db = Firebase.firestore
