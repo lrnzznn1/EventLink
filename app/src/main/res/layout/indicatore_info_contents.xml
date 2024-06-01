@@ -6,16 +6,38 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="10dp">
-    <TextView
-        android:id="@+id/title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="prova"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        tools:ignore="HardcodedText" />
+        android:orientation="horizontal">
+        <TextView
+            android:layout_gravity="left"
+            android:id="@+id/title"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="prova"
+            android:textColor="@android:color/black"
+
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText,RtlHardcoded" />
+        <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="fitCenter"
+            android:layout_gravity="right"
+            android:background="@color/white"
+            android:src="@drawable/icons8_preferiti_100"
+            tools:ignore="RtlHardcoded">
+
+        </ImageButton>
+    </LinearLayout>
+
     <TextView
         android:id="@+id/description"
         android:layout_width="match_parent"

@@ -22,6 +22,30 @@
         - PaginaSignIn
         - PaginaProfilo
             - Impostazioni Profilo ed eventuali bottoni(torna alla mappa, ecc..)
+
+
+
+                        databaseLoc.DAOEventoLocale().insert(
+                EventoLocale(
+                    tag,
+                    document.data.getValue("Data").toString(),
+                    document.data.getValue("Descrizione").toString(),
+                    document.data.getValue("ID_Azienda").toString(),
+                    document.data.getValue("Immagine").toString(),
+                    document.data.getValue("Indirizzo").toString(),
+                    document.data.getValue("Max_Prenotazioni").toString(),
+                    document.data.getValue("Ora").toString(),
+                    locString,
+                    document.data.getValue("Prenotazione").toString(),
+                    document.data.getValue("Prezzo").toString(),
+                    ico,
+                    title,
+                    0.0F
+                )
+            )
+
+
+
 */
 
 @file:Suppress("DEPRECATION")
@@ -63,6 +87,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.example.eventlink.other.CustomClusterRenderer
+import com.example.eventlink.other.DatabaseLocale
+import com.example.eventlink.other.Evento
+import com.example.eventlink.other.EventoLocale
 import com.example.eventlink.other.MyClusterItem
 import com.example.eventlink.pages.PaginaEvento
 import com.example.eventlink.pages.PaginaLogin
@@ -80,11 +107,10 @@ import com.google.firebase.ktx.Firebase
 import com.google.maps.android.clustering.ClusterManager
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import com.example.eventlink.other.Evento
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @SuppressLint("StaticFieldLeak")
 val db = Firebase.firestore
@@ -96,6 +122,8 @@ private lateinit var fusedLocationClient: FusedLocationProviderClient
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1
 var lista = mutableListOf<Evento>()
 var currentLatLng : LatLng = LatLng(0.0, 0.0)
+private lateinit var databaseLoc: DatabaseLocale
+
 
 class MainActivity : Activity(), OnMapReadyCallback {
     @SuppressLint("InflateParams", "CutPasteId")
@@ -105,6 +133,9 @@ class MainActivity : Activity(), OnMapReadyCallback {
         // Initialize the map fragment
         val mapFragment: MapFragment? = fragmentManager.findFragmentById(R.id.map) as? MapFragment
         mapFragment?.getMapAsync(this)
+
+        databaseLoc = DatabaseLocale.getInstance(applicationContext)
+
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         // Check and request location permission
@@ -283,8 +314,23 @@ class MainActivity : Activity(), OnMapReadyCallback {
             testolista.setTextColor(baseColorB)
             testoprofilo.setTextColor(baseColorB)
 
+            var strada : Float
+            for(document in lista){
+                runBlocking {
+                    strada = calcolaLoc(document.Posizione_Mappa)
+                }
+                document.distanza = strada
+            }
+            lista.sortBy {
+                it.distanza
+            }
             newview = layoutInflater.inflate(R.layout.preferitiview ,null)
             granderelativo.addView(newview)
+
+
+            val parent = this.findViewById<LinearLayout>(R.id.parente_nascosto2)
+            setPre2(this@MainActivity, parent)
+
         }
         linearLista.setOnClickListener{
             mappaview.visibility = View.GONE
@@ -509,6 +555,9 @@ class MainActivity : Activity(), OnMapReadyCallback {
         clusterManager.renderer = customClusterRenderer
         googleMap.setOnCameraIdleListener(clusterManager)
 
+
+        databaseLoc.clearAllTables()
+
         // Initialize list for map markers
         val items = mutableListOf<MyClusterItem>()
         Log.d("longleng", currentLatLng.toString())
@@ -516,6 +565,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
         val result = db.collection("Eventi")
             .get()
             .await()
+
 
         // Process each event document
         for (document in result) {
@@ -559,10 +609,18 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 0.0F
             ))
 
+
+
+
+
+
             // Create cluster item
             val clusterItem = MyClusterItem(position, title, description, immagine, tag)
             items.add(clusterItem)
         }
+
+
+
 
         // Add markers to ClusterManager
         clusterManager.addItems(items)
@@ -653,6 +711,38 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
         }
     }
+    @SuppressLint("SetTextI18n", "InflateParams")
+    fun setPre2(context: Context, parent: LinearLayout){
+
+        var EventiLocali : List<EventoLocale>
+        runBlocking {
+            EventiLocali=eventilocaAll()
+        }
+
+        for(eventinilocali in EventiLocali){
+            val rispettivo = lista.filter { it.ID_Evento == eventinilocali.ID_Evento }
+            rispettivo.forEach{
+                val image = it.Immagine
+                val title = it.Titolo
+                val time = it.Ora
+                val date = it.Data
+                val distance = BigDecimal(it.distanza.toDouble()).setScale(2,RoundingMode.HALF_EVEN)
+                // Inflate the base event layout
+                val inflater = LayoutInflater.from(context)
+                val duplicateView = inflater.inflate(R.layout.visionelista, null)
+
+                // Set the event details in the duplicate view
+                val text = duplicateView.findViewById<TextView>(R.id.pUtente_DescrizioneEvento1)
+                text.text = "$title\n$time $date\n $distance KM"
+                val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento1)
+                Glide.with(context).load(image).into(img)
+                img.contentDescription = "Image"
+                // Add the duplicate view to the parent layout
+                parent.addView(duplicateView)
+            }
+        }
+
+    }
     private fun calcolaLoc(position : LatLng): Float{
         val approx = Location("position").apply {
             latitude = position.latitude
@@ -663,6 +753,10 @@ class MainActivity : Activity(), OnMapReadyCallback {
             longitude = currentLatLng.longitude
         }
         return end.distanceTo(approx)/1000
+    }
+
+    suspend fun eventilocaAll(): List<EventoLocale> {
+        return databaseLoc.DAOEventoLocale().getAllEvent()
     }
 }
 

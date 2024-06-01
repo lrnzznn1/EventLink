@@ -3,7 +3,9 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id("com.google.gms.google-services")
+    id("kotlin-kapt")
 }
+
 
 android {
     namespace = "com.example.eventlink"
@@ -54,6 +56,7 @@ android {
     }
 }
 
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -70,7 +73,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.monitor)
     implementation(libs.play.services.location)
-    //implementation(libs.firebase.common.ktx)
+    implementation(libs.androidx.room.common)
+    implementation(libs.androidx.room.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -81,10 +85,29 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.maps.android:android-maps-utils:2.2.0")
-    implementation("com.github.bumptech.glide:glide:4.12.0")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
+    implementation("com.github.bumptech.glide:glide:4.12.0") {
+        exclude(group = "com.intellij", module = "annotations")
+    }
+    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0") {
+        exclude(group = "com.intellij", module = "annotations")
+    }
     implementation("com.google.firebase:firebase-auth:21.0.1")
     implementation ("com.google.android.gms:play-services-auth:19.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1")
     implementation("com.google.code.gson:gson:2.8.6")
+    val room_version = "2.6.1"
+
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+
+    // To use Kotlin annotation processing tool (kapt)
+    kapt("androidx.room:room-compiler:$room_version")
+
+}
+configurations.all{
+    resolutionStrategy{
+        resolutionStrategy {
+            force("org.jetbrains:annotations:23.0.0")
+        }
+    }
 }
