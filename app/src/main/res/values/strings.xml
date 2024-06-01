@@ -47,4 +47,7 @@
     <string name="profilo">Profilo</string>
     <string name="menu">Menu</string>
     <string name="preferiti">Preferiti</string>
+    <string name="hai_dimenticato_la_passowrd_premi_qui">Hai dimenticato la Passowrd? Premi qui</string>
+    <string name="invia">Invia</string>
+    <string name="passowrd_dimenticata">Passowrd Dimenticata</string>
 </resources>

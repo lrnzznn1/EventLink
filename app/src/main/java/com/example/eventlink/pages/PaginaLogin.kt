@@ -25,10 +25,16 @@ class PaginaLogin : Activity() {
         val passwordField = findViewById<EditText>(R.id.editTextPasswordLogin)
         val buttonSignUp = findViewById<TextView>(R.id.registatiTesto)
         val buttonLogin = findViewById<Button>(R.id.buttonlogin)
+        val buttonDimenticata = findViewById<TextView>(R.id.dimenticataTesto)
 
         // Set click listeners
         buttonSignUp.setOnClickListener {
             val intent = Intent(this@PaginaLogin, PaginaSignIn::class.java)
+            startActivity(intent)
+        }
+
+        buttonDimenticata.setOnClickListener {
+            val intent = Intent(this@PaginaLogin, PaginaDimenticata::class.java)
             startActivity(intent)
         }
 

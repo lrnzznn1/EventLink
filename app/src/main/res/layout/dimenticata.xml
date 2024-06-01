@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="-100dp">
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="45dp"
+            android:text="@string/passowrd_dimenticata"
+            android:textColor="@color/black"
+            android:textSize="45sp"
+            android:textStyle="bold"
+            android:gravity="center_vertical" />
+        <EditText
+            android:id="@+id/editTextEmailDimenticata"
+            android:layout_width="280dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="60dp"
+            android:background="@drawable/rounded_edittext_background"
+            android:hint="@string/inserisci_email"
+            android:inputType="textEmailAddress"
+            android:padding="1dp"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:importantForAutofill="no"
+            tools:ignore="RtlSymmetry" />
+        <Button
+            android:id="@+id/buttonInviaPassword"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="@string/invia"
+            android:layout_marginTop="35dp"
+            style="@style/CustomButtonStyle"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:background="@drawable/rounded_bottom_background"/>
+    </LinearLayout>
+</LinearLayout>

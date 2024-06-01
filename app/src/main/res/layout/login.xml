@@ -65,4 +65,16 @@
         android:layout_marginEnd="20dp"
         android:textStyle="bold">
     </TextView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hai_dimenticato_la_passowrd_premi_qui"
+        android:id="@+id/dimenticataTesto"
+        android:focusable="true"
+        android:clickable="true"
+        android:layout_marginTop="30dp"
+        android:textColor="#0000FF"
+        android:layout_marginEnd="4dp"
+        android:textStyle="bold">
+    </TextView>
 </LinearLayout>

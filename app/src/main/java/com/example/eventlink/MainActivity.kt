@@ -96,6 +96,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import com.example.eventlink.pages.PaginaDimenticata
 
 @SuppressLint("StaticFieldLeak")
 val db = Firebase.firestore
@@ -726,6 +727,13 @@ class MainActivity : Activity(), OnMapReadyCallback {
             val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento1)
             Glide.with(context).load(image).into(img)
             img.contentDescription = "Image"
+
+            val btnvisionelista = duplicateView.findViewById<LinearLayout>(R.id.linearEventoLista)
+            btnvisionelista.setOnClickListener{
+                val intent = Intent(this@MainActivity, PaginaEvento::class.java)
+                intent.putExtra("markerId", document.ID_Evento)
+                startActivity(intent)
+            }
             // Add the duplicate view to the parent layout
             parent.addView(duplicateView)
 
@@ -757,6 +765,14 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento1)
                 Glide.with(context).load(image).into(img)
                 img.contentDescription = "Image"
+
+                val idEventoBHOMISONOPERSOn = it.ID_Evento
+                val btnvisionelista = duplicateView.findViewById<LinearLayout>(R.id.linearEventoLista)
+                btnvisionelista.setOnClickListener{
+                    val intent = Intent(this@MainActivity, PaginaEvento::class.java)
+                    intent.putExtra("markerId",idEventoBHOMISONOPERSOn)
+                    startActivity(intent)
+                }
                 // Add the duplicate view to the parent layout
                 parent.addView(duplicateView)
             }
