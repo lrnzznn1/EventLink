@@ -27,13 +27,15 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
         <ImageButton
+            android:id="@+id/preferitiindicatore"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:scaleType="fitCenter"
             android:layout_gravity="right"
             android:background="@color/white"
             android:src="@drawable/icons8_preferiti_100"
-            tools:ignore="RtlHardcoded">
+            tools:ignore="RtlHardcoded"
+            android:contentDescription="@string/contentdescription">
 
         </ImageButton>
     </LinearLayout>

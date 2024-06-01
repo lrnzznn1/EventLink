@@ -454,6 +454,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 val snippetTextView = view.findViewById<TextView>(R.id.description)
                 val buttonEvent = view.findViewById<Button>(R.id.button1)
                 val buttonNavigator = view.findViewById<Button>(R.id.button2)
+                val btnPreferitiIndicatore = view.findViewById<ImageButton>(R.id.preferitiindicatore)
 
                 // Set marker title and snippet to views
                 titleTextView.text = item.title
@@ -473,6 +474,38 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     val uri = "http://maps.google.com/maps?q=loc:$latitude,$longitude"
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
                     startActivity(intent)
+                }
+                var bho : Boolean
+                runBlocking {
+                    bho = id?.let { it1 -> databaseLoc.DAOEventoLocale().doesEventExist(it1) } == true
+                }
+
+                if (bho) btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_1002)
+
+
+                btnPreferitiIndicatore.setOnClickListener{
+
+                    Log.d("BGO",bho.toString())
+                    if (!bho) {
+                        btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_1002)
+
+
+                        Log.d("BGO","if")
+                        runBlocking {
+                            id?.let { it1 -> EventoLocale(it1) }
+                                ?.let { it2 -> databaseLoc.DAOEventoLocale().insert(it2) }
+                        }
+
+
+                    } else {
+                        Log.d("BGO","else")
+                        btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_100)
+                        runBlocking {
+                            id?.let { it1 -> EventoLocale(it1) }
+                                ?.let { it2 -> databaseLoc.DAOEventoLocale().delete(it2) }
+                        }
+
+                    }
                 }
 
                 // Adjust camera position to show info window
@@ -554,9 +587,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
         customClusterRenderer = CustomClusterRenderer(context1, googleMap, clusterManager)
         clusterManager.renderer = customClusterRenderer
         googleMap.setOnCameraIdleListener(clusterManager)
-
-
-        databaseLoc.clearAllTables()
 
         // Initialize list for map markers
         val items = mutableListOf<MyClusterItem>()

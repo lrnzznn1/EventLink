@@ -13,15 +13,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/ImmagineEvento"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:adjustViewBounds="true"
-                android:contentDescription="contentDescription"
-                android:scaleType="centerCrop"
-                tools:ignore="HardcodedText" />
+                android:layout_height="200dp">
+                <ImageView
+                    android:id="@+id/ImmagineEvento"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="contentDescription"
+                    android:scaleType="centerCrop"
+                    tools:ignore="HardcodedText" />
+                <ImageButton
+                    android:id="@+id/preferitievento"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="right"
+                    android:background="@color/white"
+                    android:src="@drawable/icons8_preferiti_100"
+                    tools:ignore="RtlHardcoded"
+                    android:contentDescription="@string/contentdescription">
+
+                </ImageButton>
+            </FrameLayout>
+
             <TextView
                 android:id="@+id/TitoloEvento"
                 android:layout_width="fill_parent"
