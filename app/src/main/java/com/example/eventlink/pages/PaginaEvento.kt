@@ -4,14 +4,18 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.example.eventlink.R
+import com.example.eventlink.databaseLoc
 import com.example.eventlink.db
 import com.example.eventlink.global_email
+import com.example.eventlink.other.EventoLocale
 import com.example.eventlink.other.rawJSON
 import kotlinx.coroutines.runBlocking
 
@@ -20,9 +24,46 @@ class PaginaEvento : Activity(){
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_evento)
-
-        // Get the marker ID passed from the Main Activity
         val markerId = intent.getStringExtra("markerId")
+
+
+        val btnPreferitiIndicatore = findViewById<ImageButton>(R.id.preferitievento)
+
+
+        var bho : Boolean
+        runBlocking {
+            bho = markerId?.let { it1 -> databaseLoc.DAOEventoLocale().doesEventExist(it1) } == true
+        }
+
+        if (bho) btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_1002)
+
+
+        btnPreferitiIndicatore.setOnClickListener{
+            runBlocking {
+                bho = markerId?.let { it1 -> databaseLoc.DAOEventoLocale().doesEventExist(it1) } == true
+            }
+            Log.d("BGO",bho.toString())
+            if (!bho) {
+                btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_1002)
+
+
+                Log.d("BGO","if")
+                runBlocking {
+                    markerId?.let { it1 -> EventoLocale(it1) }
+                        ?.let { it2 -> databaseLoc.DAOEventoLocale().insert(it2) }
+                }
+
+
+            } else {
+                Log.d("BGO","else")
+                btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_100)
+                runBlocking {
+                    markerId?.let { it1 -> EventoLocale(it1) }
+                        ?.let { it2 -> databaseLoc.DAOEventoLocale().delete(it2) }
+                }
+
+            }
+        }
 
         // Initialize UI elements
         val srcImage = findViewById<ImageView>(R.id.ImmagineEvento)

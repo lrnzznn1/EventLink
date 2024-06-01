@@ -14,37 +14,23 @@
     TODO:
         - MainActivity
             - Alleggerire loadMap() impossibile credo..
-            - Implementare bottone Preferiti al indicatore_info_contents + logica
+            - Preferiti quasi funzionanti
             - Implementare cambio lingua e cambio tema app
             - Aggiungere info
             - Aggiungere FAQ
         - PaginaEvento
+            - Usare la lista per evitare di una firebase
+            - Preferiti quasi funzionanti
         - PaginaSignIn
         - PaginaProfilo
             - Impostazioni Profilo ed eventuali bottoni(torna alla mappa, ecc..)
+        - PaginaLogin
+            - Password dimenticata
 
-
-
-                        databaseLoc.DAOEventoLocale().insert(
-                EventoLocale(
-                    tag,
-                    document.data.getValue("Data").toString(),
-                    document.data.getValue("Descrizione").toString(),
-                    document.data.getValue("ID_Azienda").toString(),
-                    document.data.getValue("Immagine").toString(),
-                    document.data.getValue("Indirizzo").toString(),
-                    document.data.getValue("Max_Prenotazioni").toString(),
-                    document.data.getValue("Ora").toString(),
-                    locString,
-                    document.data.getValue("Prenotazione").toString(),
-                    document.data.getValue("Prezzo").toString(),
-                    ico,
-                    title,
-                    0.0F
-                )
-            )
-
-
+     TODO:
+        -Lista dei bug che non risolveremo
+            - Al primo avvio dell'app non viene caricata la mappa
+            - Se aggiungi dalla pagina Evento l'evento ai preferiti, quando esci non si riaggiorna la info_contents
 
 */
 
@@ -122,7 +108,7 @@ private lateinit var fusedLocationClient: FusedLocationProviderClient
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1
 var lista = mutableListOf<Evento>()
 var currentLatLng : LatLng = LatLng(0.0, 0.0)
-private lateinit var databaseLoc: DatabaseLocale
+lateinit var databaseLoc: DatabaseLocale
 
 
 class MainActivity : Activity(), OnMapReadyCallback {
@@ -484,7 +470,9 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
 
                 btnPreferitiIndicatore.setOnClickListener{
-
+                    runBlocking {
+                        bho = id?.let { it1 -> databaseLoc.DAOEventoLocale().doesEventExist(it1) } == true
+                    }
                     Log.d("BGO",bho.toString())
                     if (!bho) {
                         btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_1002)
