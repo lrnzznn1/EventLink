@@ -3,23 +3,37 @@ package com.example.eventlink.pages
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.example.eventlink.R
 import com.example.eventlink.databaseLoc
 import com.example.eventlink.db
 import com.example.eventlink.global_email
+import com.example.eventlink.global_parent
 import com.example.eventlink.other.EventoLocale
 import com.example.eventlink.other.rawJSON
 import kotlinx.coroutines.runBlocking
+import com.example.eventlink.lista
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 class PaginaEvento : Activity(){
+    override fun finish() {
+        val return_intent : Intent? = null
+        return_intent?.putExtra("result", 1)
+        setResult(Activity.RESULT_OK, return_intent)
+        super.finish()
+    }
     @SuppressLint("SetTextI18n")
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,42 +87,33 @@ class PaginaEvento : Activity(){
         val btn = findViewById<Button>(R.id.PrenotaEvento1)
         var posti = 0
         // Retrieve event details from Firestore based on the marker ID
-        runBlocking {
-            db.collection("Eventi")
-                .get()
-                .addOnSuccessListener { result ->
-                    // Find the document associated with the marker ID
-                    val document = result.documents.find { it.id == markerId }
-                    if (document != null) {
-                        posti = document.data?.getValue("Max_Prenotazioni").toString().toInt()
-                        // Load event image using Glide library
-                        val urlImmagine = document.data?.getValue("Immagine").toString()
-                        try {
-                            Glide.with(this@PaginaEvento).load(urlImmagine).into(srcImage)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                        if(document.data?.getValue("Prenotazione").toString()=="0") {
-                            btn.visibility= View.GONE
-                        }
-                        // Set text for title, info, and description views
-                        titleView.text = document.data?.getValue("Titolo").toString()
-                        infoView.text =
-                            "Indirizzo: ${document.data?.getValue("Indirizzo").toString()}\n" +
-                                    "Quando: ${document.data?.getValue("Data").toString()}" +
-                                    " ore ${document.data?.getValue("Ora").toString()}\n" +
-                                    "Prezzo: ${document.data?.getValue("Prezzo").toString()}"
-                        descView.text = document.data?.getValue("Descrizione").toString()
-                    }
-                }
-                .addOnFailureListener {}
+        val document = lista.find { it.ID_Evento == markerId }
+        if (document != null) {
+            posti = document.Max_Prenotazioni.toInt()
+        // Load event image using Glide library
+            val urlImmagine = document.Immagine
+            try {
+                Glide.with(this@PaginaEvento).load(urlImmagine).into(srcImage)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            if(document.Prenotazione=="0") {
+                btn.visibility= View.GONE
+            }
+            // Set text for title, info, and description views
+            titleView.text = document.Titolo
+            infoView.text = "Indirizzo: ${document.Indirizzo}\n" +
+                                        "Quando: ${document.Data}" +
+                                        " ore ${document.Ora}\n" +
+                                        "Prezzo: ${document.Prezzo}"
+            descView.text = document.Descrizione
         }
         btn.setOnClickListener {
             runBlocking {
                 db.collection("Prenotazioni").get().addOnSuccessListener { result ->
                     val risultato = result.documents.find{it.data?.getValue("ID_Utente")== global_email&&it.data?.getValue("ID_Evento")==markerId}
                     if(global_email!=""&&posti>0&&risultato==null) {
-
+                        val evento = lista.find{it.ID_Evento==markerId}
                         db.collection("Prenotazioni").add(
                             mapOf
                                 (
@@ -116,23 +121,25 @@ class PaginaEvento : Activity(){
                                 "ID_Evento" to markerId
                             )
                         )
+                        //Aggiornamento lista e db della prenotazione effettuata
+                        if(evento!=null) evento.Max_Prenotazioni.toInt()-1;
                         val eventminusone = db.collection("Eventi").document(markerId.toString())
                         eventminusone.update(
                             mapOf(
                                 "Max_Prenotazioni" to (posti-1)
+
                             )
                         ).addOnSuccessListener {
-                            eventminusone.get()
-                                .addOnSuccessListener { documentSnapshot ->
-                                    val nome = documentSnapshot.get("Titolo")
-                                    val data = documentSnapshot.get("Data")
-                                    val ora = documentSnapshot.get("Ora")
-                                    val descrizione = documentSnapshot.get("Descrizione")
-                                    val indirizzo = documentSnapshot.get("Indirizzo")
-                                    val prezzo = documentSnapshot.get("Prezzo")
+                            if(evento!=null){
+                                val nome = evento.Titolo
+                                val data = evento.Data
+                                val ora = evento.Ora
+                                val descrizione = evento.Descrizione
+                                val indirizzo = evento.Indirizzo
+                                val prezzo = evento.Prezzo
 
-                                    val subject = "Conferma Prenotazione Evento: $nome"
-                                    val body = """
+                                val subject = "Conferma Prenotazione Evento: $nome"
+                                val body = """
                                         Gentile Utente,
                                     
                                         Grazie per aver prenotato l'evento "$nome"!
@@ -150,10 +157,9 @@ class PaginaEvento : Activity(){
                                         Cordiali Saluti,
                                         EventLink
                                     """.trimIndent()
+                                rawJSON(global_email, subject, body)
+                            }
 
-                                    rawJSON(global_email, subject, body)
-
-                                }
                         }
                         val builder = AlertDialog.Builder(this@PaginaEvento)
                         builder.setTitle("Prenotazione Completata")

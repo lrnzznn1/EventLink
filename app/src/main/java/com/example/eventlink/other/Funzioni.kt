@@ -1,20 +1,37 @@
 package com.example.eventlink.other
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.util.Log
+import android.view.LayoutInflater
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import com.bumptech.glide.Glide
+import com.example.eventlink.R
 import com.example.eventlink.db
+import com.example.eventlink.lista
+import com.example.eventlink.pages.PaginaEvento
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.io.OutputStreamWriter
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.net.URL
 import java.security.MessageDigest
 import javax.net.ssl.HttpsURLConnection
+import com.example.eventlink.databaseLoc
+import android.app.Activity
+
 
 // Function to hash a string using SHA-256 algorithm
 fun hashString(input: String): String {
@@ -98,3 +115,4 @@ suspend fun existsInDB(collectionName: String, documentId: String): Boolean {
         document!=null && document.exists()
     }
 }
+

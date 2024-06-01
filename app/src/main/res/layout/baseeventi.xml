@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:padding="10dp">
     <LinearLayout
+        android:id="@+id/FinestraEvento"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -34,6 +35,7 @@
                 android:textSize="17sp">
             </TextView>
             <Button
+                android:id="@+id/BottoneAnnulla"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/annulla">

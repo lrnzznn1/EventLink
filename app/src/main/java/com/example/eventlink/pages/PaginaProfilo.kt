@@ -3,11 +3,14 @@ package com.example.eventlink.pages
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -17,6 +20,9 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.example.eventlink.R
 import com.example.eventlink.db
+import com.example.eventlink.global_email
+import com.example.eventlink.lista
+import kotlinx.coroutines.processNextEventInCurrentThread
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 
@@ -90,7 +96,7 @@ class PaginaProfilo : Activity(){
     }
 
     //Sets up the user profile asynchronously.
-    @SuppressLint("SetTextI18n", "InflateParams")
+    @SuppressLint("SetTextI18n", "InflateParams", "MissingInflatedId")
     suspend fun setPre(email: String?, context: Context, parent: LinearLayout){
         // Retrieve the events associated with the user from the database
         val events = db.collection("Prenotazioni").whereEqualTo("ID_Utente", email).get().await()
@@ -99,25 +105,48 @@ class PaginaProfilo : Activity(){
         for(document in events ){
             // Retrieve event details from the database
             val eventId = document.data["ID_Evento"]
-            val event = db.collection("Eventi").document(eventId!!.toString()).get().await()
-            val image = event.data?.get("Immagine")
-            val title = event.data?.get("Titolo")
-            val time = event.data?.get("Ora")
-            val date = event.data?.get("Data")
+            val event = lista.find{it.ID_Evento==eventId}
+            if(event!=null){
+                val image = event.Immagine
+                val title = event.Titolo
+                val time = event.Ora
+                val date = event.Data
 
-            // Inflate the base event layout
-            val inflater = LayoutInflater.from(context)
-            val duplicateView = inflater.inflate(R.layout.baseeventi, null)
+                // Inflate the base event layout
+                val inflater = LayoutInflater.from(context)
+                val duplicateView = inflater.inflate(R.layout.baseeventi, null)
 
-            // Set the event details in the duplicate view
-            val text = duplicateView.findViewById<TextView>(R.id.pUtente_DescrizioneEvento)
-            text.text = "$title\n\n$date $time"
-            val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento)
-            Glide.with(context).load(image).into(img)
-            img.contentDescription = "Image"
+                // Set the event details in the duplicate view
+                val text = duplicateView.findViewById<TextView>(R.id.pUtente_DescrizioneEvento)
+                text.text = "$title\n\n$date $time"
+                val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento)
+                Glide.with(context).load(image).into(img)
+                img.contentDescription = "Image"
 
-            // Add the duplicate view to the parent layout
-            parent.addView(duplicateView)
+                val annulla = duplicateView.findViewById<Button>(R.id.BottoneAnnulla)
+                val finestra = duplicateView.findViewById<LinearLayout>(R.id.FinestraEvento)
+
+                finestra.setOnClickListener{
+                    val intent = Intent(this@PaginaProfilo, PaginaEvento::class.java)
+                    intent.putExtra("markerId", event.ID_Evento)
+                    startActivity(intent)
+                }
+
+                annulla.setOnClickListener{
+                    runBlocking {
+                        val document = db.collection("Prenotazioni").whereEqualTo("ID_Utente", global_email).whereEqualTo("ID_Evento", event.ID_Evento).get().await()
+                        for(eventi in document){
+                            db.collection("Prenotazioni").document(eventi.id).delete()
+                        }
+                        finish()
+                        val intent = Intent(this@PaginaProfilo, PaginaProfilo::class.java)
+                        intent.putExtra("email", global_email)
+                        startActivity(intent)
+                    }
+                }
+                // Add the duplicate view to the parent layout
+                parent.addView(duplicateView)
+            }
         }
     }
 }

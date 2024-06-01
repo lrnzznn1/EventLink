@@ -20,8 +20,6 @@
                 - Cambio tema e lingua
                 - Aggiungere info
                 - Aggiungere FAQ
-        - PaginaEvento
-            - Usare la lista per evitare di una firebase
         - PaginaProfilo
             - Impostazioni
                 - Cambio password
@@ -111,8 +109,7 @@ private const val LOCATION_PERMISSION_REQUEST_CODE = 1
 var lista = mutableListOf<Evento>()
 var currentLatLng : LatLng = LatLng(0.0, 0.0)
 lateinit var databaseLoc: DatabaseLocale
-
-
+lateinit var global_parent:LinearLayout
 class MainActivity : Activity(), OnMapReadyCallback {
     @SuppressLint("InflateParams", "CutPasteId")
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -301,7 +298,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
             testomappa.setTextColor(baseColorB)
             testolista.setTextColor(baseColorB)
             testoprofilo.setTextColor(baseColorB)
-
             var strada : Float
             for(document in lista){
                 runBlocking {
@@ -315,10 +311,8 @@ class MainActivity : Activity(), OnMapReadyCallback {
             newview = layoutInflater.inflate(R.layout.preferitiview ,null)
             granderelativo.addView(newview)
 
-
-            val parent = this.findViewById<LinearLayout>(R.id.parente_nascosto2)
-            setPre2(this@MainActivity, parent)
-
+            global_parent = this.findViewById<LinearLayout>(R.id.parente_nascosto2)
+            setPre2(this@MainActivity, global_parent)
         }
         linearLista.setOnClickListener{
             mappaview.visibility = View.GONE
@@ -462,10 +456,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 runBlocking {
                     bho = id?.let { it1 -> databaseLoc.DAOEventoLocale().doesEventExist(it1) } == true
                 }
-
                 if (bho) btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_1002)
-
-
                 btnPreferitiIndicatore.setOnClickListener{
                     runBlocking {
                         bho = id?.let { it1 -> databaseLoc.DAOEventoLocale().doesEventExist(it1) } == true
@@ -473,8 +464,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     Log.d("BGO",bho.toString())
                     if (!bho) {
                         btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_1002)
-
-
                         Log.d("BGO","if")
                         runBlocking {
                             id?.let { it1 -> EventoLocale(it1) }
@@ -489,7 +478,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
                             id?.let { it1 -> EventoLocale(it1) }
                                 ?.let { it2 -> databaseLoc.DAOEventoLocale().delete(it2) }
                         }
-
                     }
                 }
 
@@ -531,8 +519,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 }
                 true
             }
-
-
 
             val applicaFiltriBottone = findViewById<Button>(R.id.applicaFiltri)
             val resetFiltriBottone = findViewById<Button>(R.id.resetFiltri)
@@ -741,9 +727,22 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
         }
     }
+
+    private fun calcolaLoc(position : LatLng): Float{
+        val approx = Location("position").apply {
+            latitude = position.latitude
+            longitude = position.longitude
+        }
+        val end = Location("currentLatLng").apply {
+            latitude = currentLatLng.latitude
+            longitude = currentLatLng.longitude
+        }
+        return end.distanceTo(approx)/1000
+    }
+
     @SuppressLint("SetTextI18n", "InflateParams")
     fun setPre2(context: Context, parent: LinearLayout){
-
+        parent.removeAllViews()
         var eEventiLocali : List<EventoLocale>
         runBlocking {
             eEventiLocali=eventilocaAll()
@@ -756,7 +755,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 val title = it.Titolo
                 val time = it.Ora
                 val date = it.Data
-                val distance = BigDecimal(it.distanza.toDouble()).setScale(2,RoundingMode.HALF_EVEN)
+                val distance = BigDecimal(it.distanza.toDouble()).setScale(2, RoundingMode.HALF_EVEN)
                 // Inflate the base event layout
                 val inflater = LayoutInflater.from(context)
                 val duplicateView = inflater.inflate(R.layout.visionelista, null)
@@ -771,30 +770,29 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 val idEventoBHOMISONOPERSOn = it.ID_Evento
                 val btnvisionelista = duplicateView.findViewById<LinearLayout>(R.id.linearEventoLista)
                 btnvisionelista.setOnClickListener{
-                    val intent = Intent(this@MainActivity, PaginaEvento::class.java)
+                    val intent = Intent(context, PaginaEvento::class.java)
                     intent.putExtra("markerId",idEventoBHOMISONOPERSOn)
-                    startActivity(intent)
+                    startActivityForResult(intent, 1)
                 }
                 // Add the duplicate view to the parent layout
                 parent.addView(duplicateView)
             }
         }
-
     }
-    private fun calcolaLoc(position : LatLng): Float{
-        val approx = Location("position").apply {
-            latitude = position.latitude
-            longitude = position.longitude
-        }
-        val end = Location("currentLatLng").apply {
-            latitude = currentLatLng.latitude
-            longitude = currentLatLng.longitude
-        }
-        return end.distanceTo(approx)/1000
-    }
-
-    private suspend fun eventilocaAll(): List<EventoLocale> {
+    suspend fun eventilocaAll(): List<EventoLocale> {
         return databaseLoc.DAOEventoLocale().getAllEvent()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Log.d("qweoqiwenionq", "prova")
+        if(requestCode==1){
+            Log.d("qweoqiwenionq", requestCode.toString())
+            if(resultCode==Activity.RESULT_OK){
+                Log.d("qweoqiwenionq", resultCode.toString())
+                setPre2(this@MainActivity, global_parent)
+            }
+        }
     }
 }
 

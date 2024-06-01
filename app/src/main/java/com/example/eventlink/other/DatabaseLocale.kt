@@ -18,6 +18,7 @@ abstract class DatabaseLocale : RoomDatabase(){
         @Volatile
         private var INSTANCE : DatabaseLocale? = null
 
+        @OptIn(InternalCoroutinesApi::class)
         fun getInstance(context: Context): DatabaseLocale{
             return INSTANCE ?: synchronized(this){
                 val instance = Room.databaseBuilder(
@@ -30,10 +31,8 @@ abstract class DatabaseLocale : RoomDatabase(){
             }
         }
 
-
         fun clearAllTables(){
             INSTANCE?.clearAllTables()
         }
-
     }
 }
