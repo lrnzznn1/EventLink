@@ -5,7 +5,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -30,22 +29,26 @@ class PaginaEvento : Activity(){
     }
     @SuppressLint("SetTextI18n")
     public override fun onCreate(savedInstanceState: Bundle?) {
+        // Sovrascrivo il metodo finish() per restituire un risultato
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_evento)
+
+        // Recupero l'ID del marker dall'intent
         val markerId = intent.getStringExtra("markerId")
 
-
+        // Recupero il pulsante per i preferiti
         val btnPreferitiIndicatore = findViewById<ImageButton>(R.id.preferitievento)
 
-
+        // Verifico se l'evento è già nei preferiti
         var bho : Boolean
         runBlocking {
             bho = markerId?.let { it1 -> databaseLoc.DAOEventoLocale().doesEventExist(it1) } == true
         }
 
+        // Imposto l'icona dei preferiti se l'evento è già nei preferiti
         if (bho) btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_1002)
 
-
+        // Gestisco il click sul pulsante dei preferiti
         btnPreferitiIndicatore.setOnClickListener{
             runBlocking {
                 bho = markerId?.let { it1 -> databaseLoc.DAOEventoLocale().doesEventExist(it1) } == true
@@ -66,28 +69,33 @@ class PaginaEvento : Activity(){
             }
         }
 
-        // Initialize UI elements
+        // Recupero gli elementi della UI
         val srcImage = findViewById<ImageView>(R.id.ImmagineEvento)
         val titleView = findViewById<TextView>(R.id.TitoloEvento)
         val infoView = findViewById<TextView>(R.id.InfoEvento)
         val descView = findViewById<TextView>(R.id.DescrizioneEvento)
         val btn = findViewById<Button>(R.id.PrenotaEvento1)
         var posti = 0
-        // Retrieve event details from Firestore based on the marker ID
+
+        // Trovo l'evento nella lista
         val document = lista.find { it.ID_Evento == markerId }
         if (document != null) {
             posti = document.Max_Prenotazioni.toInt()
-        // Load event image using Glide library
+
             val urlImmagine = document.Immagine
             try {
+                // Carico l'immagine dell'evento
                 Glide.with(this@PaginaEvento).load(urlImmagine).into(srcImage)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+
+            // Nascondo il pulsante di prenotazione se non è richiesto
             if(document.Prenotazione=="0") {
                 btn.visibility= View.GONE
             }
-            // Set text for title, info, and description views
+
+            // Imposto i dettagli dell'evento nella UI
             titleView.text = document.Titolo
             infoView.text = "Indirizzo: ${document.Indirizzo}\n" +
                                         "Quando: ${document.Data}" +
@@ -95,6 +103,8 @@ class PaginaEvento : Activity(){
                                         "Prezzo: ${document.Prezzo}"
             descView.text = document.Descrizione
         }
+
+        // Gestisco il click sul pulsante di prenotazione
         btn.setOnClickListener {
             runBlocking {
                 db.collection("Prenotazioni").get().addOnSuccessListener { result ->
@@ -108,13 +118,12 @@ class PaginaEvento : Activity(){
                                 "ID_Evento" to markerId
                             )
                         )
-                        //Aggiornamento lista e db della prenotazione effettuata
+
                         if(evento!=null) evento.Max_Prenotazioni.toInt()-1
                         val eventminusone = db.collection("Eventi").document(markerId.toString())
                         eventminusone.update(
                             mapOf(
                                 "Max_Prenotazioni" to (posti-1)
-
                             )
                         ).addOnSuccessListener {
                             if(evento!=null){
@@ -146,8 +155,9 @@ class PaginaEvento : Activity(){
                                     """.trimIndent()
                                 rawJSON(global_email, subject, body)
                             }
-
                         }
+
+                        // Mostro un dialogo di conferma prenotazione
                         val builder = AlertDialog.Builder(this@PaginaEvento)
                         builder.setTitle("Prenotazione Completata")
                         builder.setMessage("La tua prenotazione è stata completata con successo.\nControlla la tua email per ulteriori dettagli.")
@@ -158,6 +168,7 @@ class PaginaEvento : Activity(){
                         dialog.show()
                     }
                     else if(posti==0) {
+                        // Mostro un dialogo di posti esauriti
                         val builder = AlertDialog.Builder(this@PaginaEvento)
                         builder.setTitle("Posti Esauriti")
                         builder.setMessage("Ci dispiace!\nAl momento tutti i posti sono esauriti. Controlla più tardi, potrebbero liberarsi posti disponibili!")
@@ -168,6 +179,7 @@ class PaginaEvento : Activity(){
                         dialog.show()
                     }
                     else if(global_email=="") {
+                        // Mostro un dialogo di accesso richiesto
                         val builder = AlertDialog.Builder(this@PaginaEvento)
                         builder.setTitle("Accesso Richiesto")
                         builder.setMessage("Devi eseguire l'accesso per poter effettuare una prenotazione.")
@@ -178,6 +190,7 @@ class PaginaEvento : Activity(){
                         dialog.show()
                     }
                     else {
+                        // Mostro un dialogo di prenotazione duplicata
                         val builder = AlertDialog.Builder(this@PaginaEvento)
                         builder.setTitle("Prenotazione Duplicata")
                         builder.setMessage("Hai già prenotato questo evento. Non puoi prenotarlo più di una volta.")
