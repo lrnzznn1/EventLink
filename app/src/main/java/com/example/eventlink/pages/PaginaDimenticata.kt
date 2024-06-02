@@ -19,16 +19,20 @@ class PaginaDimenticata : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dimenticata)
 
+        // Recupero il campo email e il pulsante dal layout
         val emailField = findViewById<EditText>(R.id.editTextEmailDimenticata)
         val btnInvia = findViewById<Button>(R.id.buttonInviaPassword)
 
+        // Carico l'animazione per il pulsante
+        val animation = AnimationUtils.loadAnimation(this, R.anim.button_click_animation)
+
+        // Imposto il click listener per il pulsante
         btnInvia.setOnClickListener {
-            val animation = AnimationUtils.loadAnimation(this, R.anim.button_click_animation)
-            btnInvia.startAnimation(animation)
+            btnInvia.startAnimation(animation) // Avvio l'animazione
 
-            val email = emailField.text.toString()
+            val email = emailField.text.toString() // Recupero l'email inserita
 
-
+            // Controllo se il campo email è vuoto
             if (email.isEmpty()) {
                 AlertDialog.Builder(this)
                     .setTitle("Campo Vuoto")
@@ -37,17 +41,22 @@ class PaginaDimenticata : Activity() {
                     .show()
             }else{
                 var esiste : Boolean
+                // Verifico se l'email esiste nel database
                 runBlocking {
                     esiste = existsInDB("Utenti", email)
                 }
                 if(esiste){
+                    // Genero una nuova password
                     val password = generateRandomPassword()
                     val utentedacambiare = db.collection("Utenti").document(email)
+
+                    // Aggiorno la password nel database
                     utentedacambiare.update(
                         mapOf(
                             "Password" to hashString(password)
                         )
                     ).addOnSuccessListener{
+                        // Preparo l'email con la nuova password
                         val subject = "Ripristino della Password - Nuove Credenziali"
                         val body = """
                             Gentile Utente,
@@ -65,10 +74,10 @@ class PaginaDimenticata : Activity() {
                             EventLink
                         """.trimIndent()
 
+                        // Invio l'email
                         rawJSON(email, subject, body)
 
-
-                        // Showing success dialog
+                        // Mostro un dialog di successo
                         val builder = AlertDialog.Builder(this)
                         builder.setTitle("Password Cambiata")
                         builder.setMessage("Ti è stata inviata la nuova password tramite Email.")
@@ -79,18 +88,14 @@ class PaginaDimenticata : Activity() {
                         dialog.show()
                     }
                 }else{
+                    // Mostro un messaggio di errore se l'email non esiste
                     AlertDialog.Builder(this)
                         .setTitle("Email non valida")
                         .setMessage("Questa email non è presente nella piattaforma.")
                         .setPositiveButton("OK", null)
                         .show()
                 }
-
             }
-
         }
-
     }
 }
-
-
