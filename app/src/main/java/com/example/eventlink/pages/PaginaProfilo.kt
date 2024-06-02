@@ -165,8 +165,7 @@ class PaginaProfilo : Activity(){
                 }
 
                 val passText = password.text.toString()
-                if(vecchia&&passText=="")
-                {
+                if(vecchia&&passText=="") {
                     nuova=false
                     val builder = AlertDialog.Builder(this@PaginaProfilo)
                     builder.setTitle("Errore")
