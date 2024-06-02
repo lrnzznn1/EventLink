@@ -36,57 +36,47 @@ class PaginaProfilo : Activity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.profilo)
 
-
+        // Recupero delle viste dall'interfaccia utente
         val bottoneprenotazioni = findViewById<ImageView>(R.id.bottone_prenotazioni)
         val bottoneimpostazioni = findViewById<ImageView>(R.id.bottone_setting)
         val testoprenotazioni = findViewById<TextView>(R.id.testo_prenotazioni)
         val testoimpostazioni = findViewById<TextView>(R.id.testo_setting)
-
         val linearprenotazioni = findViewById<LinearLayout>(R.id.linear_prenotazioni)
         val linearimpostazioni = findViewById<LinearLayout>(R.id.linear_setting)
-
-
-        val baseColor = ContextCompat.getColor(this, R.color.arancio)
-        val alphaValue = 200 // Alpha di 0.925
-        val colorWithAlpha = (alphaValue shl 24) or (baseColor and 0x00FFFFFF)
-        val baseColorB = ContextCompat.getColor(this, R.color.grigio)
-
-        val colorFilter = PorterDuffColorFilter(colorWithAlpha, PorterDuff.Mode.SRC_IN)
-        val colorFilterB = PorterDuffColorFilter(baseColorB, PorterDuff.Mode.SRC_IN)
-
-
-        bottoneprenotazioni.colorFilter = colorFilter
-        bottoneimpostazioni.colorFilter = colorFilterB
-
-        testoprenotazioni.setTextColor(colorWithAlpha)
-        testoimpostazioni.setTextColor(baseColorB)
-
         val granderelativo = findViewById<RelativeLayout>(R.id.granderelativo1)
         val prenotazioniview = findViewById<FrameLayout>(R.id.prenotazioniview)
         val newview  : View = layoutInflater.inflate(R.layout.setting, null)
 
+        // Impostazione dei colori per gli elementi dell'interfaccia utente
+        val baseColor = ContextCompat.getColor(this, R.color.arancio)
+        val alphaValue = 200
+        val colorWithAlpha = (alphaValue shl 24) or (baseColor and 0x00FFFFFF)
+        val baseColorB = ContextCompat.getColor(this, R.color.grigio)
+        val colorFilter = PorterDuffColorFilter(colorWithAlpha, PorterDuff.Mode.SRC_IN)
+        val colorFilterB = PorterDuffColorFilter(baseColorB, PorterDuff.Mode.SRC_IN)
+        bottoneprenotazioni.colorFilter = colorFilter
+        bottoneimpostazioni.colorFilter = colorFilterB
+        testoprenotazioni.setTextColor(colorWithAlpha)
+        testoimpostazioni.setTextColor(baseColorB)
+
+
         linearprenotazioni.setOnClickListener {
             bottoneprenotazioni.colorFilter = colorFilter
             bottoneimpostazioni.colorFilter = colorFilterB
-
             testoprenotazioni.setTextColor(colorWithAlpha)
             testoimpostazioni.setTextColor(baseColorB)
-
             granderelativo.removeView(newview)
             prenotazioniview.visibility = View.VISIBLE
-
-
         }
         linearimpostazioni.setOnClickListener {
-
             bottoneprenotazioni.colorFilter = colorFilterB
             bottoneimpostazioni.colorFilter = colorFilter
-
             testoprenotazioni.setTextColor(baseColorB)
             testoimpostazioni.setTextColor(colorWithAlpha)
             prenotazioniview.visibility = View.GONE
             granderelativo.addView(newview)
 
+            // Recupero delle viste dall'interfaccia utente per la sezione delle impostazioni
             val newPass = findViewById<Button>(R.id.cambiaPassword)
             val password = findViewById<EditText>(R.id.NewPassword)
             val oldpass = findViewById<EditText>(R.id.oldPassword)
@@ -94,6 +84,7 @@ class PaginaProfilo : Activity(){
             val delText = findViewById<EditText>(R.id.delAcc)
             val logout = findViewById<Button>(R.id.LogOutBtn)
 
+            // Impostazione del listener per il pulsante "Elimina Account"
             delAcc.setOnClickListener{
                 var piena = true
                 val text = delText.text.toString()
@@ -118,15 +109,16 @@ class PaginaProfilo : Activity(){
                                 builder.setTitle("Message")
                                 builder.setMessage("Sicuro di voler eliminare l'account?\nL'azione è irriversibile")
                                 builder.setPositiveButton("Si") { _, _ ->
-                                    //Eliminazione account
+                                    // Eliminazione dell'account dalla collezione Utenti
                                     db.collection("Utenti").document(utenti.id).delete()
                                     runBlocking {
-                                        //Eliminazioni prenotazioni account eliminato
+                                        // Eliminazione di tutte le prenotazioni associate all'account
                                         val prenotazioni = db.collection("Prenotazioni").whereEqualTo("ID_Utente", utenti.id).get().await()
                                         for(pre in prenotazioni){
                                             db.collection("Prenotazioni").document(pre.id).delete()
                                         }
                                     }
+                                    // Visualizzazione del messaggio di successo dopo l'eliminazione dell'account
                                     val builderd = AlertDialog.Builder(this@PaginaProfilo)
                                     builderd.setTitle("Eliminazione Account")
                                     builderd.setMessage("Account eliminato.")
@@ -156,7 +148,7 @@ class PaginaProfilo : Activity(){
                 }
             }
 
-
+            // Impostazione del listener per il pulsante "Cambia Password"
             newPass.setOnClickListener{
                 val oldText = oldpass.text.toString()
                 var vecchia = true
@@ -186,17 +178,22 @@ class PaginaProfilo : Activity(){
                 }
 
                 if(nuova&&vecchia){
+                    // Calcolo dell'hash della nuova password
                     val pcrypt = hashString(passText)
                     runBlocking {
+                        // Recupero dell'utente corrente dal database
                         val query = db.collection("Utenti").whereEqualTo(FieldPath.documentId(), global_email).get().await()
                         for(utenti in query){
                             val utente = db.collection("Utenti").document(utenti.id).get().await()
+                            // Verifica se la vecchia password è corretta
                             if(hashString(oldText)==utente.data?.get("Password")){
+                                // Aggiornamento della password nel database
                                 db.collection("Utenti").document(utenti.id).update(
                                     mapOf(
                                         "Password" to pcrypt
                                     )
                                 ).addOnSuccessListener {
+                                    // Visualizzazione di un messaggio di successo
                                     val builder = AlertDialog.Builder(this@PaginaProfilo)
                                     builder.setTitle("Cambio password")
                                     builder.setMessage("Il cambio password è avvenuto con successo!\nTi arriverà una mail di conferma con le nuove credenziali.")
@@ -206,6 +203,7 @@ class PaginaProfilo : Activity(){
                                     }
                                     val dialog = builder.create()
                                     dialog.show()
+                                    // Invio di una email di conferma del cambio password
                                     rawJSON(
                                         global_email,"Cambio password EventLink", "" +
                                                 "Gentile Cliente, \n\n" +
@@ -219,6 +217,7 @@ class PaginaProfilo : Activity(){
                                     )
                                 }
                             }else{
+                                // Visualizzazione di un messaggio di errore se la vecchia password è errata
                                 val builder = AlertDialog.Builder(this@PaginaProfilo)
                                 builder.setTitle("Errore")
                                 builder.setMessage("Password vecchia errata!")
@@ -232,11 +231,13 @@ class PaginaProfilo : Activity(){
                 }
             }
 
+            // Gestione dell'evento di clic sul pulsante "Logout"
             logout.setOnClickListener{
                 val builder = AlertDialog.Builder(this@PaginaProfilo)
                 builder.setTitle("Message")
                 builder.setMessage("Sicuro di voler uscire?")
                 builder.setPositiveButton("Si") { _, _ ->
+                    // Effettua il logout, cancellando l'email globale e chiudendo l'activity
                     global_email=""
                     finish()
                 }
@@ -249,46 +250,44 @@ class PaginaProfilo : Activity(){
 
 
 
-        // Retrieve the email from the intent
         val email = intent.getStringExtra("email")
 
-        // Find the parent LinearLayout
         val parent = this.findViewById<LinearLayout>(R.id.parente_nascosto)
 
-        // Run the suspended function to set up the profile asynchronously
         runBlocking {
             setPre(email, this@PaginaProfilo, parent)
         }
     }
 
-    //Sets up the user profile asynchronously.
+    // Impostazione dei dati relativi alle prenotazioni dell'utente nell'interfaccia grafica
     @SuppressLint("SetTextI18n", "InflateParams", "MissingInflatedId")
     suspend fun setPre(email: String?, context: Context, parent: LinearLayout){
-        // Retrieve the events associated with the user from the database
+        // Recupero delle prenotazioni dall'utente dal database
         val events = db.collection("Prenotazioni").whereEqualTo("ID_Utente", email).get().await()
 
-        // Iterate over each event document
+        // Iterazione su tutte le prenotazioni dell'utente
         for(document in events ){
-            // Retrieve event details from the database
             val eventId = document.data["ID_Evento"]
             val event = lista.find{it.ID_Evento==eventId}
             if(event!=null){
+                // Recupero delle informazioni sull'evento
                 val image = event.Immagine
                 val title = event.Titolo
                 val time = event.Ora
                 val date = event.Data
 
-                // Inflate the base event layout
+                // Creazione di una vista per l'evento
                 val inflater = LayoutInflater.from(context)
                 val duplicateView = inflater.inflate(R.layout.baseeventi, null)
 
-                // Set the event details in the duplicate view
+                // Impostazione delle informazioni sull'evento nella vista
                 val text = duplicateView.findViewById<TextView>(R.id.pUtente_DescrizioneEvento)
                 text.text = "$title\n\n$date $time"
                 val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento)
                 Glide.with(context).load(image).into(img)
                 img.contentDescription = "Image"
 
+                // Impostazione dei listener per la visualizzazione dettagli evento e per l'annullamento della prenotazione
                 val annulla = duplicateView.findViewById<Button>(R.id.BottoneAnnulla)
                 val finestra = duplicateView.findViewById<LinearLayout>(R.id.FinestraEvento)
 
@@ -319,7 +318,7 @@ class PaginaProfilo : Activity(){
 
                     }
                 }
-                // Add the duplicate view to the parent layout
+                // Aggiunta della vista dell'evento al layout principale
                 parent.addView(duplicateView)
             }
         }
