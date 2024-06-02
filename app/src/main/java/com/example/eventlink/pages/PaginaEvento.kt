@@ -50,20 +50,13 @@ class PaginaEvento : Activity(){
             runBlocking {
                 bho = markerId?.let { it1 -> databaseLoc.DAOEventoLocale().doesEventExist(it1) } == true
             }
-            Log.d("BGO",bho.toString())
             if (!bho) {
                 btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_1002)
-
-
-                Log.d("BGO","if")
                 runBlocking {
                     markerId?.let { it1 -> EventoLocale(it1) }
                         ?.let { it2 -> databaseLoc.DAOEventoLocale().insert(it2) }
                 }
-
-
             } else {
-                Log.d("BGO","else")
                 btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_100)
                 runBlocking {
                     markerId?.let { it1 -> EventoLocale(it1) }

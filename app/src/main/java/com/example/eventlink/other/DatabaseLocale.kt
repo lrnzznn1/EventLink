@@ -9,28 +9,36 @@ import androidx.room.RoomDatabase
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.internal.synchronized
 
-
+// Definisce il database Room con la tabella EventoLocale e la versione del database
 @Database(entities = [EventoLocale::class], version = 3)
 abstract class DatabaseLocale : RoomDatabase(){
+
+    // Definisce il DAO per accedere ai dati di EventoLocale
     abstract  fun DAOEventoLocale():DAOEventoLocale
 
     companion object{
+        // Istanza volatile del database, garantisce visibilità delle modifiche tra thread
         @Volatile
         private var INSTANCE : DatabaseLocale? = null
 
+        // Ottiene l'istanza del database, creando il database se non esiste già
         @OptIn(InternalCoroutinesApi::class)
         fun getInstance(context: Context): DatabaseLocale{
             return INSTANCE ?: synchronized(this){
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     DatabaseLocale::class.java,
-                    "app_database"
-                ).fallbackToDestructiveMigration().allowMainThreadQueries().build()
+                    "app_database")
+                    // Permette migrazioni distruttive (i dati esistenti verranno persi)
+                    .fallbackToDestructiveMigration()
+                    // Permette query nel thread principale (non raccomandato per grandi operazioni)
+                    .allowMainThreadQueries().build()
                 INSTANCE= instance
                 instance
             }
         }
 
+        // Cancella tutte le tabelle nel database
         fun clearAllTables(){
             INSTANCE?.clearAllTables()
         }

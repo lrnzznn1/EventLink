@@ -36,7 +36,6 @@ import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -438,16 +437,13 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     runBlocking {
                         bho = id?.let { it1 -> databaseLoc.DAOEventoLocale().doesEventExist(it1) } == true
                     }
-                    Log.d("BGO",bho.toString())
                     if (!bho) {
                         btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_1002)
-                        Log.d("BGO","if")
                         runBlocking {
                             id?.let { it1 -> EventoLocale(it1) }
                                 ?.let { it2 -> databaseLoc.DAOEventoLocale().insert(it2) }
                         }
                     } else {
-                        Log.d("BGO","else")
                         btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_100)
                         runBlocking {
                             id?.let { it1 -> EventoLocale(it1) }
@@ -544,7 +540,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
         // Initialize list for map markers
         val items = mutableListOf<MyClusterItem>()
-        Log.d("longleng", currentLatLng.toString())
         // Fetch event data from Firestore
         val result = db.collection("Eventi")
             .get()

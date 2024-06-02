@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
 
+// Classe che rappresenta un evento
 class Evento(
     var ID_Evento: String = "null",
     var Data : String = "null",
@@ -23,6 +24,7 @@ class Evento(
     var Posizione_Mappa : LatLng,
     var distanza : Float
 ) {
+    // Metodo per inizializzare l'evento con una descrizione mappa e un'immagine mappa
     @SuppressLint("NotConstructor")
     fun Evento( ID_Evento: String, Data : String, Descrizione : String, ID_Azienda : String, Immagine : String, Indirizzo : String, Max_Prenotazioni : String, Ora : String, Posizione : String, Prenotazione : String, Prezzo : String, Tipo : String, Titolo : String, Descrizione_Mappa: String, Immagine_Mappa: BitmapDescriptor, Posizione_Mappa: LatLng, distanza: Float){
         this.ID_Evento = ID_Evento
@@ -43,6 +45,7 @@ class Evento(
         this.Posizione_Mappa = Posizione_Mappa
         this.distanza = distanza
     }
+    // Metodo per inizializzare l'evento senza una descrizione mappa e un'immagine mappa
     @SuppressLint("NotConstructor")
     fun Evento(ID_Evento: String, Data : String, Descrizione : String, ID_Azienda : String, Immagine : String, Indirizzo : String, Max_Prenotazioni : String, Ora : String, Posizione : String, Prenotazione : String, Prezzo : String, Tipo : String, Titolo : String, distanza: Float){
         this.ID_Evento = ID_Evento
