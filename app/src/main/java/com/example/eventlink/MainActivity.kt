@@ -22,16 +22,7 @@
                 - Aggiungere FAQ
         - PaginaProfilo
             - Impostazioni
-                - Cambio password
-                - Elimina account
-            - Prenotazioni
-                - Apri evento
-                - Annulla prenotazione
-
-     TODO:
-        -Lista dei bug che non risolveremo
-            - Al primo avvio dell'app non viene caricata la mappa
-
+                -PERCHè STA TUTTO A SINISRA=!=!??!??!??!???!?!?!?!??!?!"??"!£=!)"£")!=£ ZANNNAAAA!")£)!"£!?"£)
 */
 
 @file:Suppress("DEPRECATION")
@@ -120,8 +111,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
         mapFragment?.getMapAsync(this)
 
         databaseLoc = DatabaseLocale.getInstance(applicationContext)
-
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         // Check and request location permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -204,17 +193,12 @@ class MainActivity : Activity(), OnMapReadyCallback {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerDate.adapter = adapter
 
-
         val baseColor = ContextCompat.getColor(this, R.color.arancio)
         val alphaValue = 200 // Alpha di 0.925
         val colorWithAlpha = (alphaValue shl 24) or (baseColor and 0x00FFFFFF)
-
         val baseColorB = ContextCompat.getColor(this, R.color.grigio)
-
         // Applica il filtro di colore con alpha al bottone ImageButton
         val colorFilter = PorterDuffColorFilter(colorWithAlpha, PorterDuff.Mode.SRC_IN)
-
-
         // Applica il filtro di colore con alpha al bottone ImageButton B
         val colorFilterB = PorterDuffColorFilter(baseColorB, PorterDuff.Mode.SRC_IN)
 
@@ -236,9 +220,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
         val linearMappa = findViewById<LinearLayout>(R.id.linear_mappa)
         val linearLista = findViewById<LinearLayout>(R.id.linear_lista)
         val linearProfilo = findViewById<LinearLayout>(R.id.linear_profilo)
-
         val granderelativo = findViewById<RelativeLayout>(R.id.granderelativo)
-
 
         // Click listener for account button to navigate to login page
         linearProfilo.setOnClickListener{
@@ -251,17 +233,12 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 val intent = Intent(this@MainActivity, PaginaLogin::class.java)
                 startActivity(intent)
             }
-
         }
         val mappaview = findViewById<FrameLayout>(R.id.mappa_view)
         var newview  :  View = layoutInflater.inflate(R.layout.menuview, null)
-
-
         linearMenu.setOnClickListener{
             mappaview.visibility = View.GONE
             granderelativo.removeView(newview)
-
-
             bottonemappa.colorFilter = colorFilterB
             buttonMenu.colorFilter = colorFilter
             bottonepreferiti.colorFilter = colorFilterB
@@ -274,13 +251,8 @@ class MainActivity : Activity(), OnMapReadyCallback {
             testomappa.setTextColor(baseColorB)
             testolista.setTextColor(baseColorB)
             testoprofilo.setTextColor(baseColorB)
-
-
-
             newview = layoutInflater.inflate(R.layout.menuview, null)
             granderelativo.addView(newview)
-
-
         }
         linearPreferiti.setOnClickListener{
             mappaview.visibility = View.GONE
@@ -441,9 +413,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 // Set marker title and snippet to views
                 titleTextView.text = item.title
                 snippetTextView.text = item.snippet
-
-
-
                 // Click listener for navigation button
                 buttonNavigator.setOnClickListener {
                     val latitude = item.position.latitude
@@ -469,8 +438,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
                             id?.let { it1 -> EventoLocale(it1) }
                                 ?.let { it2 -> databaseLoc.DAOEventoLocale().insert(it2) }
                         }
-
-
                     } else {
                         Log.d("BGO","else")
                         btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_100)
@@ -575,7 +542,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
             .get()
             .await()
 
-
         // Process each event document
         for (document in result) {
             // Extract data from document
@@ -617,20 +583,10 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 position,
                 0.0F
             ))
-
-
-
-
-
-
             // Create cluster item
             val clusterItem = MyClusterItem(position, title, description, immagine, tag)
             items.add(clusterItem)
         }
-
-
-
-
         // Add markers to ClusterManager
         clusterManager.addItems(items)
         clusterManager.setAnimation(false)
@@ -785,11 +741,8 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.d("qweoqiwenionq", "prova")
         if(requestCode==1){
-            Log.d("qweoqiwenionq", requestCode.toString())
             if(resultCode==Activity.RESULT_OK){
-                Log.d("qweoqiwenionq", resultCode.toString())
                 setPre2(this@MainActivity, global_parent)
             }
         }

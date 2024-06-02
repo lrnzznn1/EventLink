@@ -2,6 +2,7 @@ package com.example.eventlink.pages
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
@@ -11,6 +12,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -22,6 +24,9 @@ import com.example.eventlink.R
 import com.example.eventlink.db
 import com.example.eventlink.global_email
 import com.example.eventlink.lista
+import com.example.eventlink.other.hashString
+import com.example.eventlink.other.rawJSON
+import com.google.firebase.firestore.FieldPath
 import kotlinx.coroutines.processNextEventInCurrentThread
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
@@ -71,8 +76,10 @@ class PaginaProfilo : Activity(){
             granderelativo.removeView(newview)
             prenotazioniview.visibility = View.VISIBLE
 
+
         }
         linearimpostazioni.setOnClickListener {
+
             bottoneprenotazioni.colorFilter = colorFilterB
             bottoneimpostazioni.colorFilter = colorFilter
 
@@ -81,7 +88,160 @@ class PaginaProfilo : Activity(){
             prenotazioniview.visibility = View.GONE
             granderelativo.addView(newview)
 
+            val newPass = findViewById<Button>(R.id.cambiaPassword)
+            val password = findViewById<EditText>(R.id.NewPassword)
+            val oldpass = findViewById<EditText>(R.id.oldPassword)
+            val delAcc = findViewById<Button>(R.id.EliminaAccountBtn)
+            val delText = findViewById<EditText>(R.id.delAcc)
+            val logout = findViewById<Button>(R.id.LogOutBtn)
+
+            delAcc.setOnClickListener{
+                var piena = true
+                var scelta = true
+                val text = delText.text.toString()
+                if(text==""){
+                    piena = false
+                    val builder = AlertDialog.Builder(this@PaginaProfilo)
+                    builder.setTitle("Campo Vuoto")
+                    builder.setMessage("Campo password vuoto!")
+                    builder.setPositiveButton("OK") { _, _ ->
+                    }
+                    val dialog = builder.create()
+                    dialog.show()
+                }
+
+                if(piena){
+                    runBlocking {
+                        val query = db.collection("Utenti")
+                            .whereEqualTo(FieldPath.documentId(), global_email).get().await()
+                        for(utenti in query){
+                            if(utenti.data.get("Password")== hashString(text)){
+                                val builder = AlertDialog.Builder(this@PaginaProfilo)
+                                builder.setTitle("Message")
+                                builder.setMessage("Sicuro di voler eliminare l'account?\nL'azione è irriversibile")
+                                builder.setPositiveButton("Si") { _, _ ->
+                                    db.collection("Utenti").document(utenti.id).delete()
+                                    val builder = AlertDialog.Builder(this@PaginaProfilo)
+                                    builder.setTitle("Eliminazione Account")
+                                    builder.setMessage("Account eliminato.")
+                                    builder.setPositiveButton("OK") { _, _ ->
+                                        finish()
+                                        global_email=""
+                                    }
+                                    val dialog = builder.create()
+                                    dialog.show()
+                                }
+                                builder.setNegativeButton("No"){_, _ ->
+                                }
+                                val dialog = builder.create()
+                                dialog.show()
+                            }
+                            else{
+                                val builder = AlertDialog.Builder(this@PaginaProfilo)
+                                builder.setTitle("Errore")
+                                builder.setMessage("Password errata!")
+                                builder.setPositiveButton("OK") { _, _ ->
+                                }
+                                val dialog = builder.create()
+                                dialog.show()
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            newPass.setOnClickListener{
+                val oldText = oldpass.text.toString()
+                var vecchia = true
+                var nuova = true
+                if(oldText==""){
+                    vecchia = false
+                    val builder = AlertDialog.Builder(this@PaginaProfilo)
+                    builder.setTitle("Errore")
+                    builder.setMessage("Campo vecchia password vuoto!")
+                    builder.setPositiveButton("OK") { _, _ ->
+                    }
+                    val dialog = builder.create()
+                    dialog.show()
+                }
+
+                val passText = password.text.toString()
+                if(vecchia&&passText=="")
+                {
+                    nuova=false
+                    val builder = AlertDialog.Builder(this@PaginaProfilo)
+                    builder.setTitle("Errore")
+                    builder.setMessage("Campo nuova password vuoto!")
+                    builder.setPositiveButton("OK") { _, _ ->
+                    }
+                    val dialog = builder.create()
+                    dialog.show()
+                }
+
+                if(nuova&&vecchia){
+                    val pcrypt = hashString(passText)
+                    runBlocking {
+                        val query = db.collection("Utenti").whereEqualTo(FieldPath.documentId(), global_email).get().await()
+                        for(utenti in query){
+                            val utente = db.collection("Utenti").document(utenti.id).get().await()
+                            if(hashString(oldText)==utente.data?.get("Password")){
+                                db.collection("Utenti").document(utenti.id).update(
+                                    mapOf(
+                                        "Password" to pcrypt
+                                    )
+                                ).addOnSuccessListener {
+                                    val builder = AlertDialog.Builder(this@PaginaProfilo)
+                                    builder.setTitle("Cambio password")
+                                    builder.setMessage("Il cambio password è avvenuto con successo!\nTi arriverà una mail di conferma con le nuove credenziali.")
+                                    builder.setPositiveButton("OK") { _, _ ->
+                                        global_email=""
+                                        finish()
+                                    }
+                                    val dialog = builder.create()
+                                    dialog.show()
+                                    rawJSON(
+                                        global_email,"Cambio password EventLink", "" +
+                                                "Gentile Cliente, \n\n" +
+                                                "Abbiamo ricevuto la sua richiesta di cambio password. \n\n" +
+                                                "Di seguito troverà le nuove credenziali necessarie per accedere al suo account:\n\n" +
+                                                "Email: $global_email \n" +
+                                                "Password: $passText \n\n" +
+                                                "Grazie per continuare ad usare il nostro servizio. Per qualsiasi domanda o assistenza, non esiti a contattarci. \n\n" +
+                                                "Cordiali saluti, \n\n" +
+                                                "EventLink"
+                                    )
+                                }
+                            }else{
+                                val builder = AlertDialog.Builder(this@PaginaProfilo)
+                                builder.setTitle("Errore")
+                                builder.setMessage("Password vecchia errata!")
+                                builder.setPositiveButton("OK") { _, _ ->
+                                }
+                                val dialog = builder.create()
+                                dialog.show()
+                            }
+                        }
+                    }
+                }
+            }
+
+            logout.setOnClickListener{
+                val builder = AlertDialog.Builder(this@PaginaProfilo)
+                builder.setTitle("Message")
+                builder.setMessage("Sicuro di voler uscire?")
+                builder.setPositiveButton("Si") { _, _ ->
+                    global_email=""
+                    finish()
+                }
+                builder.setNegativeButton("No"){_, _ ->
+                }
+                val dialog = builder.create()
+                dialog.show()
+            }
         }
+
+
 
         // Retrieve the email from the intent
         val email = intent.getStringExtra("email")

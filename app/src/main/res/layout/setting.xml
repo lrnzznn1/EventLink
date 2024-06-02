@@ -1,18 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/settingview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_alignParentTop="true"
-    android:orientation="horizontal"
-    android:layout_above="@+id/second_linear_layout">
+    android:orientation="vertical">
+
+    <!-- Cambia Password Section -->
     <TextView
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SETTINGS"
-        android:layout_gravity="center"
-        android:gravity="center">
-    </TextView>
-</FrameLayout>
+        android:text="@string/changePass"
+        android:textSize="18sp"
+        android:layout_marginTop="24dp" />
+
+    <EditText
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/oldPassword"
+        android:background="@drawable/rounded_edittext_background"
+        android:gravity="center"
+        android:layout_width="280dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="20dp"
+        android:hint="@string/oldPass"
+        android:inputType="textPassword"
+        android:importantForAutofill="no"/>
+
+    <EditText
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/NewPassword"
+        android:gravity="center"
+        android:layout_width="280dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/rounded_edittext_background"
+        android:hint="@string/nuovaPassword"
+        android:inputType="textPassword"
+        android:importantForAutofill="no"/>
+
+    <Button
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/cambiaPassword"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="@string/changePass"
+        android:layout_marginTop="10dp"/>
+
+    <!-- Elimina Account Section -->
+    <TextView
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/delAccount"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="32dp" />
+
+    <EditText
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/delAcc"
+        android:gravity="center"
+        android:layout_width="280dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/rounded_edittext_background"
+        android:hint="@string/eliminaAcc"
+        android:inputType="textPassword"
+        android:importantForAutofill="no" />
+
+    <Button
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/EliminaAccountBtn"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/delAccount"
+        android:textColor="#FF0000"/>
+
+    <Button
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/LogOutBtn"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/logout"
+        android:textColor="@color/black" />
+</LinearLayout>

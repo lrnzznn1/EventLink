@@ -50,4 +50,10 @@
     <string name="hai_dimenticato_la_passowrd_premi_qui">Hai dimenticato la Passowrd? Premi qui</string>
     <string name="invia">Invia</string>
     <string name="passowrd_dimenticata">Passowrd Dimenticata</string>
+    <string name="nuovaPassword">Nuova password</string>
+    <string name="eliminaAcc">Password</string>
+    <string name="oldPass">Vecchia password</string>
+    <string name="logout">Logout</string>
+    <string name="delAccount">Elimina Account</string>
+    <string name="changePass">Cambia Password</string>
 </resources>
