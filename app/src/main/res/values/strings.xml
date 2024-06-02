@@ -56,4 +56,5 @@
     <string name="logout">Logout</string>
     <string name="delAccount">Elimina Account</string>
     <string name="changePass">Cambia Password</string>
+    <string name="logoutaaa">Logout</string>
 </resources>

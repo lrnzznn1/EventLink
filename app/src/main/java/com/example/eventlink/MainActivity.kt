@@ -164,6 +164,8 @@ class MainActivity : Activity(), OnMapReadyCallback {
         val testolista = findViewById<TextView>(R.id.testo_lista)
         val testoprofilo = findViewById<TextView>(R.id.testo_profilo)
 
+        val geobtn = findViewById<ImageButton>(R.id.dovesonobtn)
+
         // Setup for filter view and its visibility
         filterView.visibility = View.GONE
 
@@ -176,6 +178,14 @@ class MainActivity : Activity(), OnMapReadyCallback {
             val newMarginTop = resources.getDimensionPixelSize(R.dimen.margin_top_120dp)
             layoutParams.topMargin = newMarginTop
             zoomView.layoutParams = layoutParams
+
+            val layoutParams2 = geobtn.layoutParams as ViewGroup.MarginLayoutParams
+            val newMarginTop2 = resources.getDimensionPixelSize(R.dimen.margin_top_45dp)
+            layoutParams2.topMargin = newMarginTop2
+            geobtn.layoutParams = layoutParams2
+
+
+
         }
         buttonHideFilter.setOnClickListener{
             // Hide filter view and adjust top margin of zoom view
@@ -185,6 +195,11 @@ class MainActivity : Activity(), OnMapReadyCallback {
             val newMarginTop = resources.getDimensionPixelSize(R.dimen.margin_top_480dp)
             layoutParams.topMargin = newMarginTop
             zoomView.layoutParams = layoutParams
+
+            val layoutParams2 = geobtn.layoutParams as ViewGroup.MarginLayoutParams
+            val newMarginTop2 = resources.getDimensionPixelSize(R.dimen.margin_top_180dp)
+            layoutParams2.topMargin = newMarginTop2
+            geobtn.layoutParams = layoutParams2
         }
 
         // Setup spinner for selecting dates

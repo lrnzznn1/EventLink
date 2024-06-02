@@ -298,10 +298,20 @@ class PaginaProfilo : Activity(){
                         for(eventi in document){
                             db.collection("Prenotazioni").document(eventi.id).delete()
                         }
+                        event.Max_Prenotazioni = (event.Max_Prenotazioni.toInt() +1).toString()
+                        val eventplusone = db.collection("Eventi").document(event.ID_Evento)
+                        eventplusone.update(
+                            mapOf(
+                                "Max_Prenotazioni" to event.Max_Prenotazioni
+
+                            )
+                        )
                         finish()
                         val intent = Intent(this@PaginaProfilo, PaginaProfilo::class.java)
                         intent.putExtra("email", global_email)
                         startActivity(intent)
+                        overridePendingTransition(0, 0) // Rimuove l'animazione
+
                     }
                 }
                 // Add the duplicate view to the parent layout

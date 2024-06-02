@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="margin_top_120dp">120dp</dimen>
+    <dimen name="margin_top_45dp">45dp</dimen>
     <dimen name="margin_top_480dp">480dp</dimen>
+    <dimen name="margin_top_180dp">180dp</dimen>
 </resources>
