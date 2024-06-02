@@ -3,35 +3,29 @@ package com.example.eventlink.pages
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.example.eventlink.R
 import com.example.eventlink.databaseLoc
 import com.example.eventlink.db
 import com.example.eventlink.global_email
-import com.example.eventlink.global_parent
 import com.example.eventlink.other.EventoLocale
 import com.example.eventlink.other.rawJSON
 import kotlinx.coroutines.runBlocking
 import com.example.eventlink.lista
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 class PaginaEvento : Activity(){
     override fun finish() {
-        val return_intent : Intent? = null
-        return_intent?.putExtra("result", 1)
-        setResult(Activity.RESULT_OK, return_intent)
+        val returnintent : Intent? = null
+        returnintent?.putExtra("result", 1)
+        setResult(RESULT_OK, returnintent)
         super.finish()
     }
     @SuppressLint("SetTextI18n")
@@ -122,7 +116,7 @@ class PaginaEvento : Activity(){
                             )
                         )
                         //Aggiornamento lista e db della prenotazione effettuata
-                        if(evento!=null) evento.Max_Prenotazioni.toInt()-1;
+                        if(evento!=null) evento.Max_Prenotazioni.toInt()-1
                         val eventminusone = db.collection("Eventi").document(markerId.toString())
                         eventminusone.update(
                             mapOf(

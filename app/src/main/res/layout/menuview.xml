@@ -1,18 +1,201 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/menu_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_alignParentTop="true"
-    android:orientation="horizontal"
-    android:layout_above="@+id/second_linear_layout">
-    <TextView
-        android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="MENU"
-        android:layout_gravity="center"
-        android:gravity="center">
-    </TextView>
-</FrameLayout>
+        android:layout_marginBottom="68dp">
+        <LinearLayout
+            android:padding="15dp"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/menu_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+            <ImageView
+                android:padding="40dp"
+                android:id="@+id/logo"
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:src="@drawable/logoprova2"
+                android:layout_marginVertical="10dp"
+                android:layout_marginTop="100dp" />
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="5dp">
+
+            </View>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="La Nostra App"
+                android:textSize="30dp"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused">
+            </TextView>
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="10dp">
+
+            </View>
+            <TextView
+                android:textSize="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EventLink è un'applicazione che consente di scoprire eventi in tutta Italia.\nQuesta app è stata sviluppata come progetto per l'esame di Programmazione Mobile presso l'Università di Trento.\nGli sviluppatori:\n - Lorenzo Zanini\n - Lorenzo Masè">
+            </TextView>
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="30dp">
+
+            </View>
+            <TextView
+                android:textSize="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FAQ"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused">
+
+            </TextView>
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="10dp">
+
+            </View>
+            <TextView
+                android:textSize="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text ="- EventLink è gratuito?"
+                android:textStyle="italic">
+            </TextView>
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="10dp">
+
+            </View>
+            <TextView
+                android:textSize="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text ="Sì, EventLink è completamente gratuito per gli utenti. È possibile scaricarlo e utilizzarlo senza alcun costo.">
+            </TextView>
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="30dp">
+
+            </View>
+            <TextView
+                android:textSize="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text ="- Quali tipi di eventi posso trovare su EventLink?"
+                android:textStyle="italic">
+            </TextView>
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="10dp">
+
+            </View>
+            <TextView
+                android:textSize="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text ="EventLink offre una vasta gamma di eventi, tra cui concerti, spettacoli teatrali, mostre d'arte, festival, conferenze e molto altro ancora.">
+            </TextView>
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="30dp">
+
+            </View>
+            <TextView
+                android:textSize="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text ="- Posso filtrare gli eventi per categoria o data?"
+                android:textStyle="italic">
+            </TextView>
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="10dp">
+
+            </View>
+            <TextView
+                android:textSize="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sì, su EventLink è possibile utilizzare i filtri per cercare eventi in base alla categoria (ad esempio, musica, concerti, sport) e alla data.">
+            </TextView>
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="30dp">
+
+            </View>
+            <TextView
+                android:textSize="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text ="- EventLink è disponibile solo in Italia?"
+                android:textStyle="italic">
+            </TextView>
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="10dp">
+
+            </View>
+            <TextView
+                android:textSize="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text ="Attualmente, EventLink è focalizzato sugli eventi in Italia, ma stiamo lavorando per espandere la copertura ad altri paesi in futuro.">
+            </TextView>
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="30dp">
+
+            </View>
+            <TextView
+                android:textSize="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text ="- È necessario iscriversi o effettuare l'accesso per salvare gli eventi nella sezione Preferiti?"
+                android:textStyle="italic">
+            </TextView>
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="10dp">
+
+            </View>
+            <TextView
+                android:textSize="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text ="No, non è necessario iscriversi o effettuare l'accesso per salvare gli eventi nei Preferiti. Basta cliccare sull'icona Preferiti per salvare un evento per un rapido accesso futuro.">
+            </TextView>
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="30dp">
+
+            </View>
+            <TextView
+                android:textSize="25sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Contatti"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused"/>
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text ="Per qualsiasi domanda o assistenza, non esitare a contattarci tramite le email agli indirizzi:\n-eventlinkauth@gmail.com\n-lrnzznn@gmail.com\n-lorenzomaseit@gmail.com"/>
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
+

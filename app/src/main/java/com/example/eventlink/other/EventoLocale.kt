@@ -4,5 +4,5 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName="EventoLocale")
 data class EventoLocale(
-    @PrimaryKey()var ID_Evento: String = "null"
+    @PrimaryKey var ID_Evento: String = "null"
 )

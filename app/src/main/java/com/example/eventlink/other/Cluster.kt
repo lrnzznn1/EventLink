@@ -11,15 +11,14 @@ import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 
-// Custom cluster item class implementing ClusterItem interface
+// Classe per rappresentare un elemento del cluster
 class MyClusterItem(
-    @JvmField val pos: LatLng,
-    @JvmField val title: String,
-    @JvmField val desc: String,
-    val icon: BitmapDescriptor,
-    val tag: String
+    @JvmField val pos: LatLng, // Posizione dell'elemento
+    @JvmField val title: String, // Titolo dell'elemento
+    @JvmField val desc: String, // Descrizione dell'elemento
+    val icon: BitmapDescriptor, // Icona dell'elemento
+    val tag: String // Tag dell'elemento
 ) : ClusterItem {
-    // Override methods from ClusterItem interface
     override fun getPosition(): LatLng {
         return pos
     }
@@ -32,25 +31,25 @@ class MyClusterItem(
 }
 
 
-// Custom cluster renderer extending DefaultClusterRenderer
+// Classe per personalizzare il rendering dei cluster
 class CustomClusterRenderer(
     context: Context,
     map: GoogleMap,
     clusterManager: ClusterManager<MyClusterItem>
 ) : DefaultClusterRenderer<MyClusterItem>(context,map,clusterManager){
-    // Override method to customize cluster item rendering
+    // Prima del rendering dell'elemento del cluster
     override fun onBeforeClusterItemRendered(item: MyClusterItem, markerOptions: MarkerOptions) {
         super.onBeforeClusterItemRendered(item, markerOptions)
-        // Set custom icon for cluster item marker
-        markerOptions.icon(item.icon)
+        markerOptions.icon(item.icon) // Imposta l'icona dell'elemento
     }
 
-    // Override method to handle cluster item after rendering
+    // Dopo il rendering dell'elemento del cluster
     override fun onClusterItemRendered(clusterItem: MyClusterItem, marker: Marker) {
         super.onClusterItemRendered(clusterItem, marker)
-        // Attach tag to cluster item marker
-        marker.tag = clusterItem.tag
+        marker.tag = clusterItem.tag // Imposta il tag dell'elemento come tag del marker
     }
+
+    // Determina se rendere il cluster come un cluster o come un singolo marker
     override fun shouldRenderAsCluster(cluster: Cluster<MyClusterItem>): Boolean {
         return cluster.size > 1
     }

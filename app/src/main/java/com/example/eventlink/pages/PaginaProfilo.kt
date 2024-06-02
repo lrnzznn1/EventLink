@@ -8,7 +8,6 @@ import android.content.Intent
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -27,10 +26,10 @@ import com.example.eventlink.lista
 import com.example.eventlink.other.hashString
 import com.example.eventlink.other.rawJSON
 import com.google.firebase.firestore.FieldPath
-import kotlinx.coroutines.processNextEventInCurrentThread
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 
+@Suppress("DEPRECATION")
 class PaginaProfilo : Activity(){
     @SuppressLint("InflateParams")
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +63,7 @@ class PaginaProfilo : Activity(){
 
         val granderelativo = findViewById<RelativeLayout>(R.id.granderelativo1)
         val prenotazioniview = findViewById<FrameLayout>(R.id.prenotazioniview)
-        var newview  : View = layoutInflater.inflate(R.layout.setting, null)
+        val newview  : View = layoutInflater.inflate(R.layout.setting, null)
 
         linearprenotazioni.setOnClickListener {
             bottoneprenotazioni.colorFilter = colorFilter
@@ -97,7 +96,6 @@ class PaginaProfilo : Activity(){
 
             delAcc.setOnClickListener{
                 var piena = true
-                var scelta = true
                 val text = delText.text.toString()
                 if(text==""){
                     piena = false
@@ -115,7 +113,7 @@ class PaginaProfilo : Activity(){
                         val query = db.collection("Utenti")
                             .whereEqualTo(FieldPath.documentId(), global_email).get().await()
                         for(utenti in query){
-                            if(utenti.data.get("Password")== hashString(text)){
+                            if(utenti.data["Password"] == hashString(text)){
                                 val builder = AlertDialog.Builder(this@PaginaProfilo)
                                 builder.setTitle("Message")
                                 builder.setMessage("Sicuro di voler eliminare l'account?\nL'azione è irriversibile")
@@ -129,14 +127,14 @@ class PaginaProfilo : Activity(){
                                             db.collection("Prenotazioni").document(pre.id).delete()
                                         }
                                     }
-                                    val builder = AlertDialog.Builder(this@PaginaProfilo)
-                                    builder.setTitle("Eliminazione Account")
-                                    builder.setMessage("Account eliminato.")
-                                    builder.setPositiveButton("OK") { _, _ ->
+                                    val builderd = AlertDialog.Builder(this@PaginaProfilo)
+                                    builderd.setTitle("Eliminazione Account")
+                                    builderd.setMessage("Account eliminato.")
+                                    builderd.setPositiveButton("OK") { _, _ ->
                                         finish()
                                         global_email=""
                                     }
-                                    val dialog = builder.create()
+                                    val dialog = builderd.create()
                                     dialog.show()
                                 }
                                 builder.setNegativeButton("No"){_, _ ->
@@ -302,8 +300,8 @@ class PaginaProfilo : Activity(){
 
                 annulla.setOnClickListener{
                     runBlocking {
-                        val document = db.collection("Prenotazioni").whereEqualTo("ID_Utente", global_email).whereEqualTo("ID_Evento", event.ID_Evento).get().await()
-                        for(eventi in document){
+                        val documentz = db.collection("Prenotazioni").whereEqualTo("ID_Utente", global_email).whereEqualTo("ID_Evento", event.ID_Evento).get().await()
+                        for(eventi in documentz){
                             db.collection("Prenotazioni").document(eventi.id).delete()
                         }
                         event.Max_Prenotazioni = (event.Max_Prenotazioni.toInt() +1).toString()
@@ -317,7 +315,7 @@ class PaginaProfilo : Activity(){
                         val intent = Intent(this@PaginaProfilo, PaginaProfilo::class.java)
                         intent.putExtra("email", global_email)
                         startActivity(intent)
-                        overridePendingTransition(0, 0) // Rimuove l'animazione
+                        overridePendingTransition(0, 0)
 
                     }
                 }

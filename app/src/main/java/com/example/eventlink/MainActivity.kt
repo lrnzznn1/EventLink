@@ -15,11 +15,6 @@
         - Generale
             - Pulire il codice
             - Migliorare grafica
-        - MainActivity
-            - Menu
-                - Cambio tema e lingua
-                - Aggiungere info
-                - Aggiungere FAQ
 */
 
 @file:Suppress("DEPRECATION")
@@ -97,6 +92,7 @@ private const val LOCATION_PERMISSION_REQUEST_CODE = 1
 var lista = mutableListOf<Evento>()
 var currentLatLng : LatLng = LatLng(0.0, 0.0)
 lateinit var databaseLoc: DatabaseLocale
+@SuppressLint("StaticFieldLeak")
 lateinit var global_parent:LinearLayout
 class MainActivity : Activity(), OnMapReadyCallback {
     @SuppressLint("InflateParams", "CutPasteId")
@@ -295,7 +291,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
             newview = layoutInflater.inflate(R.layout.preferitiview ,null)
             granderelativo.addView(newview)
 
-            global_parent = this.findViewById<LinearLayout>(R.id.parente_nascosto2)
+            global_parent = this.findViewById(R.id.parente_nascosto2)
             setPre2(this@MainActivity, global_parent)
         }
         linearLista.setOnClickListener{
@@ -747,14 +743,14 @@ class MainActivity : Activity(), OnMapReadyCallback {
             }
         }
     }
-    suspend fun eventilocaAll(): List<EventoLocale> {
+    private suspend fun eventilocaAll(): List<EventoLocale> {
         return databaseLoc.DAOEventoLocale().getAllEvent()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode==1){
-            if(resultCode==Activity.RESULT_OK){
+            if(resultCode==RESULT_OK){
                 setPre2(this@MainActivity, global_parent)
             }
         }
