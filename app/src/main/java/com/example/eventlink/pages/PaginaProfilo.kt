@@ -120,7 +120,15 @@ class PaginaProfilo : Activity(){
                                 builder.setTitle("Message")
                                 builder.setMessage("Sicuro di voler eliminare l'account?\nL'azione è irriversibile")
                                 builder.setPositiveButton("Si") { _, _ ->
+                                    //Eliminazione account
                                     db.collection("Utenti").document(utenti.id).delete()
+                                    runBlocking {
+                                        //Eliminazioni prenotazioni account eliminato
+                                        val prenotazioni = db.collection("Prenotazioni").whereEqualTo("ID_Utente", utenti.id).get().await()
+                                        for(pre in prenotazioni){
+                                            db.collection("Prenotazioni").document(pre.id).delete()
+                                        }
+                                    }
                                     val builder = AlertDialog.Builder(this@PaginaProfilo)
                                     builder.setTitle("Eliminazione Account")
                                     builder.setMessage("Account eliminato.")
@@ -303,7 +311,6 @@ class PaginaProfilo : Activity(){
                         eventplusone.update(
                             mapOf(
                                 "Max_Prenotazioni" to event.Max_Prenotazioni
-
                             )
                         )
                         finish()

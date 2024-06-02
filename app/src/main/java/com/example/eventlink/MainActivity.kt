@@ -20,9 +20,6 @@
                 - Cambio tema e lingua
                 - Aggiungere info
                 - Aggiungere FAQ
-        - PaginaProfilo
-            - Impostazioni
-                -PERCHè STA TUTTO A SINISRA=!=!??!??!??!???!?!?!?!??!?!"??"!£=!)"£")!=£ ZANNNAAAA!")£)!"£!?"£)
 */
 
 @file:Suppress("DEPRECATION")
