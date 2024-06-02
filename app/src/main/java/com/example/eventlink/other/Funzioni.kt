@@ -74,8 +74,7 @@ fun generateRandomPassword(): String {
 // Funzione sospesa per verificare se un documento esiste in una collezione Firestore
 suspend fun existsInDB(collectionName: String, documentId: String): Boolean {
     return withContext(Dispatchers.IO) {
-        val document= db.collection(collectionName).document(documentId).get().await()
-        document!=null && document.exists()// Restituisce true se il documento esiste
+        val document = db.collection(collectionName).document(documentId).get().await()
+        document != null && document.exists()// Restituisce true se il documento esiste
     }
 }
-

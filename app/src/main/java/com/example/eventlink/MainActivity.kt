@@ -1,22 +1,3 @@
-/*
-   Elenco dei tipi di eventi:
-   - concerto
-   - sport
-   - gastronomia
-   - convegno
-   - mostra
-   - spettacolo
-   - outdoor
-   - escursione
-   - networking
-   - educazione
-
-    TODO:
-        - Generale
-            - Pulire il codice
-            - Migliorare grafica
-*/
-
 @file:Suppress("DEPRECATION")
 
 package com.example.eventlink
@@ -98,13 +79,16 @@ class MainActivity : Activity(), OnMapReadyCallback {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        // Initialize the map fragment
+
+        // Inizializzazione della mappa
         val mapFragment: MapFragment? = fragmentManager.findFragmentById(R.id.map) as? MapFragment
         mapFragment?.getMapAsync(this)
 
+        // Inizializzazione del database locale e del servizio di localizzazione
         databaseLoc = DatabaseLocale.getInstance(applicationContext)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        // Check and request location permission
+
+        // Richiesta dei permessi di localizzazione se non sono stati concessi
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -112,34 +96,39 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 LOCATION_PERMISSION_REQUEST_CODE)
         }
 
+        // Gestione del risultato della richiesta di permessi di localizzazione
         fusedLocationClient.lastLocation.addOnSuccessListener {
             location ->
             if(location!=null) {
-                currentLatLng = LatLng(location.latitude, location.longitude)
+                // Se è disponibile la posizione corrente, aggiorna la variabile currentLatLng e mostra gli elementi UI
                 val caricamneto = findViewById<RelativeLayout>(R.id.caricamento)
-                caricamneto.visibility = View.GONE
                 val bordoview = findViewById<View>(R.id.bordoview)
-                bordoview.visibility = View.VISIBLE
                 val secondlinearlayout = findViewById<LinearLayout>(R.id.second_linear_layout)
-                secondlinearlayout.visibility = View.VISIBLE
                 val mappaview = findViewById<FrameLayout>(R.id.mappa_view)
+
+                currentLatLng = LatLng(location.latitude, location.longitude)
+
+                caricamneto.visibility = View.GONE
+                bordoview.visibility = View.VISIBLE
+                secondlinearlayout.visibility = View.VISIBLE
                 mappaview.visibility = View.VISIBLE
             }else{
-                currentLatLng = LatLng(42.0, 11.53)
+                // Se la posizione corrente non è disponibile, imposta una posizione predefinita e mostra gli elementi UI
                 val caricamneto = findViewById<RelativeLayout>(R.id.caricamento)
-                caricamneto.visibility = View.GONE
                 val bordoview = findViewById<View>(R.id.bordoview)
-                bordoview.visibility = View.VISIBLE
                 val secondlinearlayout = findViewById<LinearLayout>(R.id.second_linear_layout)
-                secondlinearlayout.visibility = View.VISIBLE
                 val mappaview = findViewById<FrameLayout>(R.id.mappa_view)
+
+                currentLatLng = LatLng(42.0, 11.53)
+
+                caricamneto.visibility = View.GONE
+                bordoview.visibility = View.VISIBLE
+                secondlinearlayout.visibility = View.VISIBLE
                 mappaview.visibility = View.VISIBLE
             }
         }
 
-
-
-        // Initialize UI elements
+        // Inizializzazione degli elementi UI
         val filterView = findViewById<LinearLayout>(R.id.filtrilayout)
         val zoomView = findViewById<LinearLayout>(R.id.zoomview)
         val buttonShowFilter = findViewById<Button>(R.id.filtri)
@@ -155,15 +144,20 @@ class MainActivity : Activity(), OnMapReadyCallback {
         val testomappa = findViewById<TextView>(R.id.testo_mappa)
         val testolista = findViewById<TextView>(R.id.testo_lista)
         val testoprofilo = findViewById<TextView>(R.id.testo_profilo)
-
         val geobtn = findViewById<ImageButton>(R.id.dovesonobtn)
+        val linearMenu = findViewById<LinearLayout>(R.id.linear_menu)
+        val linearPreferiti = findViewById<LinearLayout>(R.id.linear_preferiti)
+        val linearMappa = findViewById<LinearLayout>(R.id.linear_mappa)
+        val linearLista = findViewById<LinearLayout>(R.id.linear_lista)
+        val linearProfilo = findViewById<LinearLayout>(R.id.linear_profilo)
+        val granderelativo = findViewById<RelativeLayout>(R.id.granderelativo)
+        val mappaview = findViewById<FrameLayout>(R.id.mappa_view)
 
-        // Setup for filter view and its visibility
+        // Inizializzazione visibilità degli elementi
         filterView.visibility = View.GONE
 
-        // Setup for zoom view and buttons to show/hide filter
+        // Definizione degli eventi per mostrare/nascondere i filtri
         buttonShowFilter.setOnClickListener{
-            // Show filter view and adjust top margin of zoom view
             buttonShowFilter.visibility= View.GONE
             filterView.visibility = View.VISIBLE
             val layoutParams = zoomView.layoutParams as ViewGroup.MarginLayoutParams
@@ -180,7 +174,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
         }
         buttonHideFilter.setOnClickListener{
-            // Hide filter view and adjust top margin of zoom view
             filterView.visibility = View.GONE
             buttonShowFilter.visibility= View.VISIBLE
             val layoutParams = zoomView.layoutParams as ViewGroup.MarginLayoutParams
@@ -194,42 +187,34 @@ class MainActivity : Activity(), OnMapReadyCallback {
             geobtn.layoutParams = layoutParams2
         }
 
-        // Setup spinner for selecting dates
+        // Inizializzazione e definizione degli eventi per lo spinner della data
         val items = arrayOf("Oggi", "Domani", "Weekend", "Questa settimana", "Prossima settimana", "Questo mese")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerDate.adapter = adapter
 
+        // Inizializzazione dei colori di base per l'arancio e il grigio
         val baseColor = ContextCompat.getColor(this, R.color.arancio)
-        val alphaValue = 200 // Alpha di 0.925
+        val alphaValue = 200
         val colorWithAlpha = (alphaValue shl 24) or (baseColor and 0x00FFFFFF)
         val baseColorB = ContextCompat.getColor(this, R.color.grigio)
-        // Applica il filtro di colore con alpha al bottone ImageButton
         val colorFilter = PorterDuffColorFilter(colorWithAlpha, PorterDuff.Mode.SRC_IN)
-        // Applica il filtro di colore con alpha al bottone ImageButton B
         val colorFilterB = PorterDuffColorFilter(baseColorB, PorterDuff.Mode.SRC_IN)
 
+        // Applicazione dei filtri di colore e impostazione dei colori del testo per gli elementi UI
         bottonemappa.colorFilter = colorFilter
         buttonMenu.colorFilter = colorFilterB
         bottonepreferiti.colorFilter = colorFilterB
         bottonelista.colorFilter = colorFilterB
         bottoneprofilo.colorFilter = colorFilterB
 
-        // Imposta il colore del testo del TextView
         testomenu.setTextColor(baseColorB)
         testopreferiti.setTextColor(baseColorB)
         testomappa.setTextColor(colorWithAlpha)
         testolista.setTextColor(baseColorB)
         testoprofilo.setTextColor(baseColorB)
 
-        val linearMenu = findViewById<LinearLayout>(R.id.linear_menu)
-        val linearPreferiti = findViewById<LinearLayout>(R.id.linear_preferiti)
-        val linearMappa = findViewById<LinearLayout>(R.id.linear_mappa)
-        val linearLista = findViewById<LinearLayout>(R.id.linear_lista)
-        val linearProfilo = findViewById<LinearLayout>(R.id.linear_profilo)
-        val granderelativo = findViewById<RelativeLayout>(R.id.granderelativo)
-
-        // Click listener for account button to navigate to login page
+        // Impostazione del listener per il click sul layout del profilo utente.
         linearProfilo.setOnClickListener{
             if(global_email!="") {
                 val intent = Intent(this@MainActivity, PaginaProfilo::class.java)
@@ -241,8 +226,10 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 startActivity(intent)
             }
         }
-        val mappaview = findViewById<FrameLayout>(R.id.mappa_view)
+
         var newview  :  View = layoutInflater.inflate(R.layout.menuview, null)
+
+        // Impostazione del listener per il click sul layout del menu.
         linearMenu.setOnClickListener{
             mappaview.visibility = View.GONE
             granderelativo.removeView(newview)
@@ -252,7 +239,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
             bottonelista.colorFilter = colorFilterB
             bottoneprofilo.colorFilter = colorFilterB
 
-            // Imposta il colore del testo del TextView
             testomenu.setTextColor(colorWithAlpha)
             testopreferiti.setTextColor(baseColorB)
             testomappa.setTextColor(baseColorB)
@@ -261,6 +247,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
             newview = layoutInflater.inflate(R.layout.menuview, null)
             granderelativo.addView(newview)
         }
+        // Impostazione del listener per il click sul layout della pagina preferiti.
         linearPreferiti.setOnClickListener{
             mappaview.visibility = View.GONE
             granderelativo.removeView(newview)
@@ -271,7 +258,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
             bottonelista.colorFilter = colorFilterB
             bottoneprofilo.colorFilter = colorFilterB
 
-            // Imposta il colore del testo del TextView
             testomenu.setTextColor(baseColorB)
             testopreferiti.setTextColor(colorWithAlpha)
             testomappa.setTextColor(baseColorB)
@@ -293,6 +279,8 @@ class MainActivity : Activity(), OnMapReadyCallback {
             global_parent = this.findViewById(R.id.parente_nascosto2)
             setPre2(this@MainActivity, global_parent)
         }
+
+        // Impostazione del listener per il click sul layout della pagina lista.
         linearLista.setOnClickListener{
             mappaview.visibility = View.GONE
             granderelativo.removeView(newview)
@@ -303,7 +291,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
             bottonelista.colorFilter = colorFilter
             bottoneprofilo.colorFilter = colorFilterB
 
-            // Imposta il colore del testo del TextView
             testomenu.setTextColor(baseColorB)
             testopreferiti.setTextColor(baseColorB)
             testomappa.setTextColor(baseColorB)
@@ -326,6 +313,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
         }
 
+        // Impostazione del listener per il click sul layout della pagina Mappa.
         linearMappa.setOnClickListener{
             granderelativo.removeView(newview)
             mappaview.visibility = View.VISIBLE
@@ -337,7 +325,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
             bottonelista.colorFilter = colorFilterB
             bottoneprofilo.colorFilter = colorFilterB
 
-            // Imposta il colore del testo del TextView
             testomenu.setTextColor(baseColorB)
             testopreferiti.setTextColor(baseColorB)
             testomappa.setTextColor(colorWithAlpha)
@@ -350,15 +337,15 @@ class MainActivity : Activity(), OnMapReadyCallback {
     @SuppressLint("PotentialBehaviorOverride", "DiscouragedApi")
     override fun onMapReady(googleMap: GoogleMap) {
         with(googleMap) {
-            // Disable default map toolbar
+            // Disabilita la toolbar della mappa
             uiSettings.isMapToolbarEnabled = false
 
-            // Set initial camera position to Italy
+            // Imposta la posizione della mappa su Italia e lo zoom
             val italia = LatLng(42.0, 11.53)
             val zoomlvl = 6f
             moveCamera(CameraUpdateFactory.newLatLngZoom(italia,zoomlvl))
 
-            // Set click listeners for zoom buttons
+            // Gestione dei pulsanti per lo zoom
             val zoomInButton = findViewById<Button>(R.id.btp)
             val zoomOutButton = findViewById<Button>(R.id.btm)
             zoomInButton.setOnClickListener {
@@ -374,6 +361,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 googleMap.animateCamera(cameraUpdate)
             }
 
+            // Gestione del pulsante "Dove sono"
             val dovesonobtn = findViewById<ImageButton>(R.id.dovesonobtn)
             dovesonobtn.setOnClickListener{
                 if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -394,33 +382,30 @@ class MainActivity : Activity(), OnMapReadyCallback {
 
             }
 
-            // Load map markers asynchronously
+            // Carica gli eventi sulla mappa
             runBlocking {
                 loadMap(this@MainActivity,googleMap,resources,packageName)
             }
 
-            // Disable default marker click event
+            // Disabilita la gestione predefinita dei click sui marker
             googleMap.setOnMarkerClickListener(null)
 
-            // Set custom marker click listener
+            // Gestione del click sui cluster o singoli marker
             clusterManager.setOnClusterItemClickListener { item ->
-                // Get marker tag
                 val id = item.tag as? String
 
-                // Inflate custom info window layout
+                // Crea e mostra il dialog con le informazioni sull'evento
                 val view = layoutInflater.inflate(R.layout.indicatore_info_contents, null)
-
-                // Initialize views
                 val titleTextView = view.findViewById<TextView>(R.id.title)
                 val snippetTextView = view.findViewById<TextView>(R.id.description)
                 val buttonEvent = view.findViewById<Button>(R.id.button1)
                 val buttonNavigator = view.findViewById<Button>(R.id.button2)
                 val btnPreferitiIndicatore = view.findViewById<ImageButton>(R.id.preferitiindicatore)
 
-                // Set marker title and snippet to views
                 titleTextView.text = item.title
                 snippetTextView.text = item.snippet
-                // Click listener for navigation button
+
+                // Gestione del click sul pulsante per navigare
                 buttonNavigator.setOnClickListener {
                     val latitude = item.position.latitude
                     val longitude = item.position.longitude
@@ -428,16 +413,18 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
                     startActivity(intent)
                 }
-                var bho : Boolean
+
+                // Gestione del pulsante "Preferiti"
+                var ispreferito : Boolean
                 runBlocking {
-                    bho = id?.let { it1 -> databaseLoc.DAOEventoLocale().doesEventExist(it1) } == true
+                    ispreferito = id?.let { it1 -> databaseLoc.DAOEventoLocale().doesEventExist(it1) } == true
                 }
-                if (bho) btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_1002)
+                if (ispreferito) btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_1002)
                 btnPreferitiIndicatore.setOnClickListener{
                     runBlocking {
-                        bho = id?.let { it1 -> databaseLoc.DAOEventoLocale().doesEventExist(it1) } == true
+                        ispreferito = id?.let { it1 -> databaseLoc.DAOEventoLocale().doesEventExist(it1) } == true
                     }
-                    if (!bho) {
+                    if (!ispreferito) {
                         btnPreferitiIndicatore.setImageResource(R.drawable.icons8_preferiti_1002)
                         runBlocking {
                             id?.let { it1 -> EventoLocale(it1) }
@@ -452,7 +439,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     }
                 }
 
-                // Adjust camera position to show info window
+                // Centra la mappa sulla posizione dell'evento
                 val target = LatLng(item.position.latitude - 0.001, item.position.longitude)
                 val zoomLevel = 11f
                 val currentZoom = googleMap.cameraPosition.zoom
@@ -464,7 +451,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     googleMap.animateCamera(cameraUpdate, 1000, null)
                 }
 
-                // Customize and show AlertDialog with custom view
+                // Visualizza il dialog
                 val dialog = AlertDialog.Builder(this@MainActivity, R.style.AlertDialogCustom)
                     .setView(view)
                     .create()
@@ -481,7 +468,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 }
                 dialog.show()
 
-                // Click listener for event button
+                // Gestione del click sul pulsante "Dettagli evento"
                 buttonEvent.setOnClickListener {
                     val intent = Intent(this@MainActivity, PaginaEvento::class.java)
                     intent.putExtra("markerId", id)
@@ -491,6 +478,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 true
             }
 
+            // Gestione del pulsante "Applica filtri"
             val applicaFiltriBottone = findViewById<Button>(R.id.applicaFiltri)
             val resetFiltriBottone = findViewById<Button>(R.id.resetFiltri)
             applicaFiltriBottone.setOnClickListener {
@@ -508,6 +496,8 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 clusterManager.cluster()
                 filtriApplicati.clear()
             }
+
+            // Gestione del pulsante "Resetta filtri"
             resetFiltriBottone.setOnClickListener {
                 clusterManager.renderer = customClusterRenderer
                 googleMap.setOnCameraIdleListener(clusterManager)
@@ -530,24 +520,21 @@ class MainActivity : Activity(), OnMapReadyCallback {
             }
         }
     }
+
+    //Carica gli eventi sulla mappa.
     @SuppressLint("DiscouragedApi")
     suspend fun loadMap(context1: Context, googleMap: GoogleMap, resources :  android.content.res.Resources, packageName:String){
-        // Initialize ClusterManager and custom renderer
         clusterManager = ClusterManager<MyClusterItem>(context1, googleMap)
         customClusterRenderer = CustomClusterRenderer(context1, googleMap, clusterManager)
         clusterManager.renderer = customClusterRenderer
         googleMap.setOnCameraIdleListener(clusterManager)
 
-        // Initialize list for map markers
         val items = mutableListOf<MyClusterItem>()
-        // Fetch event data from Firestore
         val result = db.collection("Eventi")
             .get()
             .await()
 
-        // Process each event document
         for (document in result) {
-            // Extract data from document
             val ico = document.data.getValue("Tipo").toString()
             val resourceId = resources.getIdentifier(ico, "drawable", packageName)
             val bitmap = BitmapFactory.decodeResource(resources, resourceId)
@@ -563,7 +550,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
                         "Ora: " + document.data.getValue("Ora").toString() + "\n" +
                         "Prezzo: " + document.data.getValue("Prezzo").toString()
 
-            // Create BitmapDescriptor for marker icon
             val immagine = BitmapDescriptorFactory.fromBitmap(resizedBitmap)
             val tag = document.id
 
@@ -586,19 +572,18 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 position,
                 0.0F
             ))
-            // Create cluster item
             val clusterItem = MyClusterItem(position, title, description, immagine, tag)
             items.add(clusterItem)
         }
-        // Add markers to ClusterManager
         clusterManager.addItems(items)
         clusterManager.setAnimation(false)
         clusterManager.cluster()
     }
+
+    //Restituisce una lista di oggetti MyClusterItem in base alla data specificata e ai filtri applicati.
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("DiscouragedApi")
     fun droppaItem(data : String): MutableList<MyClusterItem> {
-        // Initialize list for map markers
         val items = mutableListOf<MyClusterItem>()
         if(data=="null"){
             for(eventi in lista){
@@ -642,33 +627,28 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 }
             }
         }
-        // Process each event document
         return items
     }
+
+    // Converte una stringa di data nel formato "d/M/yyyy" in un oggetto LocalDate.
     @RequiresApi(Build.VERSION_CODES.O)
     private fun convertiData(data: String): LocalDate {
         val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
-
         return LocalDate.parse(data, formatter)
     }
 
-
-
+    // Imposta la visualizzazione degli eventi nella lista.
     @SuppressLint("SetTextI18n", "InflateParams")
     fun setPre(context: Context, parent: LinearLayout){
-        // Iterate over each event document
         for(document in lista ){
-            // Retrieve event details from the database
             val image = document.Immagine
             val title = document.Titolo
             val time = document.Ora
             val date = document.Data
             val distance = BigDecimal(document.distanza.toDouble()).setScale(2,RoundingMode.HALF_EVEN)
-            // Inflate the base event layout
             val inflater = LayoutInflater.from(context)
             val duplicateView = inflater.inflate(R.layout.visionelista, null)
 
-            // Set the event details in the duplicate view
             val text = duplicateView.findViewById<TextView>(R.id.pUtente_DescrizioneEvento1)
             text.text = "$title\n$time $date\n $distance KM"
             val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento1)
@@ -681,12 +661,12 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 intent.putExtra("markerId", document.ID_Evento)
                 startActivity(intent)
             }
-            // Add the duplicate view to the parent layout
             parent.addView(duplicateView)
 
         }
     }
 
+    // Calcola la distanza in chilometri tra la posizione corrente e una posizione specificata.
     private fun calcolaLoc(position : LatLng): Float{
         val approx = Location("position").apply {
             latitude = position.latitude
@@ -699,6 +679,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
         return end.distanceTo(approx)/1000
     }
 
+    // Metodo per impostare la visualizzazione degli eventi locali nella lista.
     @SuppressLint("SetTextI18n", "InflateParams")
     fun setPre2(context: Context, parent: LinearLayout){
         parent.removeAllViews()
@@ -715,11 +696,9 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 val time = it.Ora
                 val date = it.Data
                 val distance = BigDecimal(it.distanza.toDouble()).setScale(2, RoundingMode.HALF_EVEN)
-                // Inflate the base event layout
                 val inflater = LayoutInflater.from(context)
                 val duplicateView = inflater.inflate(R.layout.visionelista, null)
 
-                // Set the event details in the duplicate view
                 val text = duplicateView.findViewById<TextView>(R.id.pUtente_DescrizioneEvento1)
                 text.text = "$title\n$time $date\n $distance KM"
                 val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento1)
@@ -733,15 +712,17 @@ class MainActivity : Activity(), OnMapReadyCallback {
                     intent.putExtra("markerId",idEventoBHOMISONOPERSOn)
                     startActivityForResult(intent, 1)
                 }
-                // Add the duplicate view to the parent layout
                 parent.addView(duplicateView)
             }
         }
     }
+
+    // Funzione sospensiva per ottenere tutti gli eventi locali dal database locale.
     private suspend fun eventilocaAll(): List<EventoLocale> {
         return databaseLoc.DAOEventoLocale().getAllEvent()
     }
 
+    // Metodo per gestire il risultato di un'attività avviata con startActivityForResult.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode==1){
@@ -751,4 +732,3 @@ class MainActivity : Activity(), OnMapReadyCallback {
         }
     }
 }
-
