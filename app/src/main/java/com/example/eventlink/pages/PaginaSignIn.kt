@@ -21,7 +21,7 @@ class PaginaSignIn : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.signup)
 
-        // Initializing UI elements
+        // Inizializzo gli elementi dell'interfaccia utente
         val spinnerDay = findViewById<Spinner>(R.id.Giorno)
         val spinnerMonth = findViewById<Spinner>(R.id.Mese)
         val spinnerYear = findViewById<Spinner>(R.id.Anno)
@@ -31,7 +31,7 @@ class PaginaSignIn : Activity() {
         val surnameField = findViewById<EditText>(R.id.editTextCognome)
         val phoneField = findViewById<EditText>(R.id.editTextTelefono)
 
-        // Creating lists for spinners
+        // Creo le liste per i valori dei spinner
         val itemsDay = ArrayList<String>()
         for (i in 1..31) itemsDay.add(String.format("%02d", i))
 
@@ -41,29 +41,32 @@ class PaginaSignIn : Activity() {
         val itemsYear = ArrayList<String>()
         for (i in 1900..2030) itemsYear.add(i.toString())
 
-        // Creating adapters for spinners
+        // Creo gli adapter per i spinner
         val adapterDay = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsDay)
         val adapterMonth = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsMonth)
         val adapterYear = ArrayAdapter(this, android.R.layout.simple_spinner_item, itemsYear)
 
-        // Setting dropdown view resource for adapters
+        // Imposto la visualizzazione degli item nel dropdown dei spinner
         adapterDay.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         adapterMonth.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         adapterYear.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-        // Setting adapters for spinners
+        // Assegno gli adapter ai spinner
         spinnerDay.adapter = adapterDay
         spinnerMonth.adapter = adapterMonth
         spinnerYear.adapter = adapterYear
 
+        // Imposto il listener per il pulsante di registrazione
         spinnerDay.setSelection(0)
         spinnerMonth.setSelection(0)
         spinnerYear.setSelection(100)
 
-        // Setting click listener for sign-up button
         reg.setOnClickListener {
+            // Aggiungo un'animazione al pulsante
             val animation = AnimationUtils.loadAnimation(this, R.anim.button_click_animation)
             reg.startAnimation(animation)
+
+            // Recupero i valori dagli input dell'utente
             val dateOfBirth = spinnerDay.getSelectedItem().toString() + "/" +
                     spinnerMonth.getSelectedItem().toString() + "/" +
                     spinnerYear.getSelectedItem().toString()
@@ -76,7 +79,7 @@ class PaginaSignIn : Activity() {
             var exist: Boolean
             exist = false
 
-            // Validating user input
+            // Validazione dell'input dell'utente
             if (name.isEmpty()) {
                 block = true
                 AlertDialog.Builder(this)
@@ -108,13 +111,14 @@ class PaginaSignIn : Activity() {
                     .show()
             }
 
-            // Proceeding with sign-up if input is valid
+            // Procedo con la registrazione se l'input è valido
             if(!block) {
                 runBlocking {
                     exist = existsInDB("Utenti", email)
                 }
                 if(exist)
                 {
+                    // Mostro un messaggio di errore se l'email è già registrata
                     val builder = AlertDialog.Builder(this)
                     builder.setTitle("Registrazione Fallita")
                     builder.setMessage("La tua registrazione non è avvenuta con successo, potrebbe esistere già un account con questa mail, in caso Accedi!")
@@ -123,7 +127,7 @@ class PaginaSignIn : Activity() {
                     dialog.show()
                 }
                 else{
-                    // Creating user document in Firestore
+                    // Creo un documento utente nel database Firestore
                     db.collection("Utenti").document(email).set(
                         mapOf
                             (
@@ -134,7 +138,7 @@ class PaginaSignIn : Activity() {
                             "DDN" to dateOfBirth
                         )
                     ).addOnSuccessListener {
-                        // Sending registration confirmation email
+                        // Invio un'email di conferma registrazione
                         rawJSON(email,"Registrazione EventLink", "" +
                                 "Gentile Cliente $name $surname, \n\n" +
                                 "Siamo lieti di darle il benvenuto alla nostra applicazione. La sua registrazione è stata completata con successo. \n\n" +
@@ -145,7 +149,7 @@ class PaginaSignIn : Activity() {
                                 "Cordiali saluti, \n\n" +
                                 "EventLink"
                         )
-                        // Showing success dialog
+                        // Mostro un messaggio di successo
                         val builder = AlertDialog.Builder(this)
                         builder.setTitle("Registrazione Avvenuta")
                         builder.setMessage("La tua registrazione è avvenuta con successo!\nControlla la mail per ottenere la password.")
@@ -155,7 +159,7 @@ class PaginaSignIn : Activity() {
                         val dialog = builder.create()
                         dialog.show()
                     }.addOnFailureListener{
-                        // Showing failure dialog
+                        // Mostro un messaggio di errore in caso di fallimento
                         val builder = AlertDialog.Builder(this)
                         builder.setTitle("Registrazione Fallita")
                         builder.setMessage("La tua registrazione non è avvenuta con successo, potresti avere già un account, in caso Accedi!")
