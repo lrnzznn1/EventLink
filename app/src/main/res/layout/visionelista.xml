@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="110dp"
-    android:background="@drawable/rounded_bottom_backgroundwhite">
+    android:background="@drawable/rounded_bottom_background_realwhite">
     <LinearLayout
         android:id="@+id/linearEventoLista"
         android:layout_width="match_parent"
@@ -24,8 +24,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:paddingStart="7dp">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
+            </View>
             <TextView
                 android:id="@+id/pUtente_DescrizioneEvento1"
                 android:layout_width="wrap_content"
@@ -33,6 +38,12 @@
                 android:text="@string/visita_guidata_colosseo_n_n5_maggio_14_00"
                 android:textSize="17sp">
             </TextView>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_weight="1">
+
+            </View>
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

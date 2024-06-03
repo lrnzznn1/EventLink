@@ -19,6 +19,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.eventlink.R
 import com.example.eventlink.db
 import com.example.eventlink.global_email
@@ -283,8 +284,15 @@ class PaginaProfilo : Activity(){
                 val text = duplicateView.findViewById<TextView>(R.id.pUtente_DescrizioneEvento)
                 text.text = "$title\n\n$date $time"
                 val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento)
-                Glide.with(context).load(image).into(img)
+                Glide.with(context).load(image).transform(RoundedCorners(16)).into(img)
                 img.contentDescription = "Image"
+
+                val layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                layoutParams.bottomMargin = resources.getDimensionPixelSize(R.dimen.margin_top_16dp) // Ad esempio, 16dp di margine inferiore
+                duplicateView.layoutParams = layoutParams
 
                 // Impostazione dei listener per la visualizzazione dettagli evento e per l'annullamento della prenotazione
                 val annulla = duplicateView.findViewById<Button>(R.id.BottoneAnnulla)

@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="10dp">
+    android:layout_height="100dp"
+    android:background="@drawable/rounded_bottom_background_realwhite">
     <LinearLayout
         android:id="@+id/FinestraEvento"
         android:layout_width="match_parent"
@@ -14,19 +14,23 @@
         tools:ignore="UselessParent">
         <ImageView
             android:id="@+id/immagine_Evento"
-            android:layout_width="130dp"
-            android:layout_height="110dp"
+            android:layout_width="170dp"
+            android:layout_height="140dp"
             android:src="@drawable/ic_launcher_background"
             android:contentDescription="@string/niente"
-            android:scaleType="fitCenter" >
+            android:scaleType="fitXY" >
         </ImageView>
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="10dp"
-            android:layout_marginStart="20dp">
+            android:padding="7dp">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_weight="1">
 
+            </View>
             <TextView
                 android:id="@+id/pUtente_DescrizioneEvento"
                 android:layout_width="wrap_content"
@@ -34,12 +38,25 @@
                 android:text="@string/visita_guidata_colosseo_n_n5_maggio_14_00"
                 android:textSize="17sp">
             </TextView>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_weight="1">
+
+            </View>
             <Button
+                android:background="@drawable/rounded_bottom_backgroundred"
                 android:id="@+id/BottoneAnnulla"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:text="@string/annulla">
             </Button>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_weight="1">
+
+            </View>
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>
