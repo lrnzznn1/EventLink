@@ -22,15 +22,18 @@
             android:layout_marginTop="20dp"
             android:layout_marginStart="67dp"
             android:textSize="20sp"
-            android:layout_width="wrap_content"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:text="@string/logoutaaa"
             android:textStyle="bold"/>
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="10dp"/>
 
         <Button
             android:layout_gravity="center_horizontal"
             android:id="@+id/LogOutBtn"
-            android:layout_width="250dp"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="@string/logout"
@@ -48,7 +51,7 @@
             android:textSize="20sp"
 
             android:textStyle="bold"
-            android:layout_width="wrap_content"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:text="@string/changePass" />
 
@@ -82,11 +85,13 @@
             android:hint="@string/nuovaPassword"
             android:inputType="textPassword"
             android:importantForAutofill="no"/>
-
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="10dp"/>
         <Button
             android:layout_gravity="center_horizontal"
             android:id="@+id/cambiaPassword"
-            android:layout_width="250dp"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:text="@string/changePass"
             android:layout_marginTop="10dp"
@@ -104,7 +109,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginStart="67dp"
             android:textSize="20sp"
-            android:layout_width="wrap_content"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:text="@string/delAccount"
             android:textStyle="bold"/>
@@ -117,17 +122,19 @@
             android:layout_gravity="center_horizontal"
             android:id="@+id/delAcc"
             android:layout_width="280dp"
-            android:layout_height="40dp"
+            android:layout_height="48dp"
             android:layout_marginTop="15dp"
             android:background="@drawable/rounded_edittext_background"
             android:hint="@string/eliminaAcc"
             android:inputType="textPassword"
             android:importantForAutofill="no" />
-
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="10dp"/>
         <Button
             android:layout_gravity="center_horizontal"
             android:id="@+id/EliminaAccountBtn"
-            android:layout_width="250dp"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="@string/delAccount"

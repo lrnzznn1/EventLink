@@ -24,7 +24,7 @@
         <ImageButton
             android:id="@+id/dovesonobtn"
             android:layout_width="50dp"
-            android:background="@drawable/rounded_bottom_background_realwhite"
+            android:background="@drawable/rounded_bottom_background_realwhitetondo"
             android:layout_height="50dp"
             android:scaleType="fitCenter"
             android:layout_gravity="right"
@@ -35,7 +35,7 @@
             tools:ignore="RtlHardcoded">
         </ImageButton>
         <LinearLayout
-            android:background="@drawable/rounded_bottom_background_realwhite"
+            android:background="@drawable/rounded_bottom_backgroundwhite2"
             android:id="@+id/zoomview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,7 +52,8 @@
                 android:text="@string/Piu"
                 android:textStyle="bold"
                 tools:ignore="ButtonStyle"
-                android:background="@color/white"/>
+                android:background="@drawable/rounded_bottom_background_realwhitetondopiuomeno"
+                />
             <Button
                 android:id="@+id/btm"
                 android:layout_width="55dp"
@@ -61,7 +62,8 @@
                 android:textStyle="bold"
                 android:text="@string/Minus"
                 tools:ignore="ButtonStyle"
-                android:background="@color/white"/>
+                android:background="@drawable/rounded_bottom_background_realwhitetondopiuomeno2"
+                />
         </LinearLayout>
         <Button
             android:layout_gravity="right"
@@ -114,9 +116,10 @@
                     android:textSize="16sp"
                     android:text="@string/x"
                     tools:ignore="ButtonStyle"
-                    android:background="@color/white"/>
+                    android:background="@drawable/rounded_bottom_backgroundred"/>
             </LinearLayout>
             <Spinner
+                android:background="@drawable/rounded_bottom_background_realwhite"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:id="@+id/date"
@@ -127,7 +130,7 @@
                 android:layout_height="220dp"
                 android:layout_marginBottom="15dp"
                 android:layout_marginTop="15dp"
-                android:background="@color/white">
+                android:background="@drawable/rounded_bottom_background_realwhite">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -220,23 +223,24 @@
                 android:padding="5dp">
                 <Button
                     android:id="@+id/resetFiltri"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:text="@string/reset_filtri"
                     android:background="@drawable/rounded_bottom_backgroundred"
                     tools:ignore="ButtonStyle">
 
                 </Button>
                 <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_width="5dp"
+                    android:layout_height="match_parent">
                 </View>
                 <Button
                     android:background="@drawable/rounded_bottom_background"
                     android:id="@+id/applicaFiltri"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:text="@string/applica_filtri"
                     tools:ignore="ButtonStyle">
                 </Button>
