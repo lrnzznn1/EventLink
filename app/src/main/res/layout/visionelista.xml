@@ -3,22 +3,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="10dp">
+    android:layout_height="110dp"
+    android:background="@drawable/rounded_bottom_backgroundwhite">
     <LinearLayout
         android:id="@+id/linearEventoLista"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="horizontal"
         android:layout_gravity="center"
         tools:ignore="UselessParent">
         <ImageView
             android:id="@+id/immagine_Evento1"
-            android:layout_width="130dp"
-            android:layout_height="110dp"
+            android:layout_width="140dp"
+            android:layout_height="80dp"
             android:src="@drawable/ic_launcher_background"
             android:contentDescription="@string/niente"
-            android:scaleType="fitCenter" >
+            android:scaleType="fitXY" >
         </ImageView>
         <LinearLayout
             android:layout_width="match_parent"

@@ -32,9 +32,11 @@ import android.widget.RelativeLayout
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.eventlink.other.CustomClusterRenderer
 import com.example.eventlink.other.DatabaseLocale
 import com.example.eventlink.other.Evento
@@ -650,10 +652,17 @@ class MainActivity : Activity(), OnMapReadyCallback {
             val duplicateView = inflater.inflate(R.layout.visionelista, null)
 
             val text = duplicateView.findViewById<TextView>(R.id.pUtente_DescrizioneEvento1)
-            text.text = "$title\n$time $date\n $distance KM"
+            text.text = "$title\n$time $date\n$distance KM"
             val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento1)
-            Glide.with(context).load(image).into(img)
+            Glide.with(context).load(image).transform(RoundedCorners(16)).into(img)
             img.contentDescription = "Image"
+
+            val layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            layoutParams.bottomMargin = resources.getDimensionPixelSize(R.dimen.margin_top_16dp) // Ad esempio, 16dp di margine inferiore
+            duplicateView.layoutParams = layoutParams
 
             val btnvisionelista = duplicateView.findViewById<LinearLayout>(R.id.linearEventoLista)
             btnvisionelista.setOnClickListener{
@@ -680,7 +689,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
     }
 
     // Metodo per impostare la visualizzazione degli eventi locali nella lista.
-    @SuppressLint("SetTextI18n", "InflateParams")
+    @SuppressLint("SetTextI18n", "InflateParams", "CheckResult")
     fun setPre2(context: Context, parent: LinearLayout){
         parent.removeAllViews()
         var eEventiLocali : List<EventoLocale>
@@ -700,10 +709,20 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 val duplicateView = inflater.inflate(R.layout.visionelista, null)
 
                 val text = duplicateView.findViewById<TextView>(R.id.pUtente_DescrizioneEvento1)
-                text.text = "$title\n$time $date\n $distance KM"
+                text.text = "$title\n$time $date\n$distance KM"
                 val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento1)
-                Glide.with(context).load(image).into(img)
+                Glide.with(context)
+                    .load(image)
+                    .transform(RoundedCorners(16))
+                    .into(img)
                 img.contentDescription = "Image"
+
+                val layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                layoutParams.bottomMargin = resources.getDimensionPixelSize(R.dimen.margin_top_16dp) // Ad esempio, 16dp di margine inferiore
+                duplicateView.layoutParams = layoutParams
 
                 val idEventoBHOMISONOPERSOn = it.ID_Evento
                 val btnvisionelista = duplicateView.findViewById<LinearLayout>(R.id.linearEventoLista)

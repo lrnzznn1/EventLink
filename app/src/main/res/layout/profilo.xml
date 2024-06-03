@@ -50,8 +50,8 @@
                 tools:ignore="UselessParent">
                 <ImageView
                     android:id="@+id/bottone_setting"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:background="@android:color/transparent"
                     android:src="@drawable/icons8_impostazioni_150"
                     android:scaleType="fitCenter"
@@ -59,6 +59,7 @@
                     android:layout_gravity="center_horizontal">
                 </ImageView>
                 <TextView
+                    android:textSize="12sp"
                     android:id="@+id/testo_setting"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -83,8 +84,8 @@
                 tools:ignore="UselessParent">
                 <ImageView
                     android:id="@+id/bottone_prenotazioni"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:scaleType="fitCenter"
                     android:background="@android:color/transparent"
                     android:src="@drawable/icons8_prenotazione_96"
@@ -92,6 +93,7 @@
                     android:layout_gravity="center_horizontal">
                 </ImageView>
                 <TextView
+                    android:textSize="12sp"
                     android:id="@+id/testo_prenotazioni"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
