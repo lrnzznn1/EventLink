@@ -724,11 +724,11 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 layoutParams.bottomMargin = resources.getDimensionPixelSize(R.dimen.margin_top_16dp) // Ad esempio, 16dp di margine inferiore
                 duplicateView.layoutParams = layoutParams
 
-                val idEventoBHOMISONOPERSOn = it.ID_Evento
+                val idEventoOn = it.ID_Evento
                 val btnvisionelista = duplicateView.findViewById<LinearLayout>(R.id.linearEventoLista)
                 btnvisionelista.setOnClickListener{
                     val intent = Intent(context, PaginaEvento::class.java)
-                    intent.putExtra("markerId",idEventoBHOMISONOPERSOn)
+                    intent.putExtra("markerId",idEventoOn)
                     startActivityForResult(intent, 1)
                 }
                 parent.addView(duplicateView)
