@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ScrollView
+        android:background="#f2f2f2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -37,7 +38,11 @@
 
                 </ImageButton>
             </FrameLayout>
-
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="20dp">
             <TextView
                 android:id="@+id/TitoloEvento"
                 android:layout_width="fill_parent"
@@ -47,8 +52,7 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"
-                android:paddingBottom="4dp"
-                android:padding="10dp"/>
+                android:paddingBottom="4dp" />
             <TextView
                 android:id="@+id/InfoEvento"
                 android:layout_width="fill_parent"
@@ -58,8 +62,7 @@
                 android:textSize="16sp"
                 android:textColor="@android:color/black"
                 android:lineSpacingExtra="8dp"
-                android:paddingBottom="10dp"
-                android:padding="10dp"/>
+                android:paddingBottom="10dp" />
             <TextView
                 android:id="@+id/TTTT"
                 android:layout_width="fill_parent"
@@ -69,8 +72,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"
-                android:paddingBottom="4dp"
-                android:padding="10dp"/>
+                android:paddingBottom="4dp" />
             <TextView
                 android:id="@+id/DescrizioneEvento"
                 android:layout_width="fill_parent"
@@ -78,16 +80,32 @@
                 android:text="Questo è un testo di esempio!"
                 tools:ignore="HardcodedText"
                 android:textSize="16sp"
-                android:textColor="@android:color/black"
-                android:padding="10dp"/>
+                android:textColor="@android:color/black"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
-    <Button
-        android:id="@+id/PrenotaEvento1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Prenota Ora"
-        tools:ignore="HardcodedText">
-    </Button>
+        <LinearLayout
+            android:id="@+id/linearPrenotaEvento1"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:gravity="center">
+        <View
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+        <Button
+            android:background="@drawable/rounded_bottom_background"
+            android:id="@+id/PrenotaEvento1"
+            android:layout_width="380dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Prenota Ora"
+            tools:ignore="HardcodedText">
+        </Button>
+        <View
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+        </LinearLayout>
 </LinearLayout>

@@ -115,7 +115,7 @@
             tools:ignore="RtlSymmetry" />
         <Button
             android:id="@+id/buttonSignup"
-            android:layout_width="250dp"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:text="@string/iscriviti"
             android:layout_marginTop="35dp"

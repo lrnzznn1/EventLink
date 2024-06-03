@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.example.eventlink.R
@@ -75,6 +76,7 @@ class PaginaEvento : Activity(){
         val infoView = findViewById<TextView>(R.id.InfoEvento)
         val descView = findViewById<TextView>(R.id.DescrizioneEvento)
         val btn = findViewById<Button>(R.id.PrenotaEvento1)
+        val linearbtn = findViewById<LinearLayout>(R.id.linearPrenotaEvento1)
         var posti = 0
 
         // Trovo l'evento nella lista
@@ -93,6 +95,7 @@ class PaginaEvento : Activity(){
             // Nascondo il pulsante di prenotazione se non è richiesto
             if(document.Prenotazione=="0") {
                 btn.visibility= View.GONE
+                linearbtn.visibility = View.GONE
             }
 
             // Imposto i dettagli dell'evento nella UI
@@ -119,11 +122,12 @@ class PaginaEvento : Activity(){
                             )
                         )
 
-                        if(evento!=null) evento.Max_Prenotazioni.toInt()-1
+                        if(evento!=null) evento.Max_Prenotazioni =(evento.Max_Prenotazioni.toInt()-1).toString()
+                        posti -= 1
                         val eventminusone = db.collection("Eventi").document(markerId.toString())
                         eventminusone.update(
                             mapOf(
-                                "Max_Prenotazioni" to (posti-1)
+                                "Max_Prenotazioni" to (posti).toString()
                             )
                         ).addOnSuccessListener {
                             if(evento!=null){
