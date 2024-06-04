@@ -2,21 +2,26 @@
 
 ![EventLink Logo](Logo.png)
 
-EventLink è un progetto sviluppato per l'esame di Mobile Programming. L'applicazione consente agli utenti di visualizzare eventi in varie città italiane su una mappa interattiva e di ottenere informazioni dettagliate sugli eventi.
+EventLink è un progetto sviluppato per l'esame di Programmazione Mobile. L'applicazione consente agli utenti di visualizzare eventi in varie città italiane su una mappa interattiva e di ottenere informazioni dettagliate sugli eventi.
 
 ## Funzionalità
 
 - Visualizzazione degli eventi su una mappa interattiva.
-- Informazioni dettagliate sugli eventi, inclusi titolo, descrizione e posizione.
-- Possibilità di aggiungere nuovi eventi tramite indirizzo.
-- Personalizzazione della finestra di informazioni del marker con titolo, descrizione e bottoni per azioni aggiuntive.
+- Informazioni dettagliate sugli eventi, inclusi titolo, descrizione posizione e distanza dalla localizzazione geografica.
+- Possibilità per le aziende di aggiungere nuovi eventi tramite indirizzo.
+- Possibilità di prenotare o disdire eventi oppure aggiungerli ai preferiti per essere continuamente aggiornati.
+- Supporto sempre attivo, grazie ai contatti disponibili nel menù dell'app.
 
 ## Tecnologie Utilizzate
 
 - Linguaggio di programmazione: Kotlin
+- IDE: Android Studio
 - Framework: Android SDK
 - Librerie aggiuntive: Google Maps Android API
+- Database: Firebase Firestore Database
+- Server: Firebase Functions
+- Storage: Firebase Storage
 
 ## Autori
 
-Questo progetto è stato creato da Lorenzo Zanini e Lorenzo Mase come parte del loro esame di Mobile Programming. Grazie per la visione.
+Questo progetto è stato creato da Lorenzo Zanini e Lorenzo Masè come parte del loro esame di Programmazione Mobile. Grazie per la visione.
