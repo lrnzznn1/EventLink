@@ -69,8 +69,6 @@ Contiene i file XML delle pagine, le animazioni, le immagini e le stringhe utili
 - **Utenti**: Dati degli utenti registrati.
 - **Prenotazioni**: Relazione Utente-Evento.
 
-![Database](Screenshots/db.png)
-
 ### Server Storage
 
 Gestione delle immagini degli eventi tramite Firebase Storage e la classe Glide.
