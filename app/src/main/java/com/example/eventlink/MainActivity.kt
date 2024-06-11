@@ -76,6 +76,7 @@ var currentLatLng : LatLng = LatLng(0.0, 0.0)
 lateinit var databaseLoc: DatabaseLocale
 @SuppressLint("StaticFieldLeak")
 lateinit var global_parent:LinearLayout
+var posizioneData = false
 class MainActivity : Activity(), OnMapReadyCallback {
     @SuppressLint("InflateParams", "CutPasteId")
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,6 +103,7 @@ class MainActivity : Activity(), OnMapReadyCallback {
         fusedLocationClient.lastLocation.addOnSuccessListener {
             location ->
             if(location!=null) {
+                posizioneData = true
                 // Se è disponibile la posizione corrente, aggiorna la variabile currentLatLng e mostra gli elementi UI
                 val caricamneto = findViewById<RelativeLayout>(R.id.caricamento)
                 val bordoview = findViewById<View>(R.id.bordoview)
@@ -652,7 +654,10 @@ class MainActivity : Activity(), OnMapReadyCallback {
             val duplicateView = inflater.inflate(R.layout.visionelista, null)
 
             val text = duplicateView.findViewById<TextView>(R.id.pUtente_DescrizioneEvento1)
+            if(posizioneData)
             text.text = "$title\n$time $date\n$distance KM"
+            else
+                text.text="$title\n$time $date"
             val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento1)
             Glide.with(context).load(image).transform(RoundedCorners(16)).into(img)
             img.contentDescription = "Image"
@@ -709,7 +714,10 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 val duplicateView = inflater.inflate(R.layout.visionelista, null)
 
                 val text = duplicateView.findViewById<TextView>(R.id.pUtente_DescrizioneEvento1)
+                if(posizioneData)
                 text.text = "$title\n$time $date\n$distance KM"
+                else
+                    text.text = "$title\n$time $date"
                 val img = duplicateView.findViewById<ImageView>(R.id.immagine_Evento1)
                 Glide.with(context)
                     .load(image)

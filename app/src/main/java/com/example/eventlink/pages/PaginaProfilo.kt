@@ -26,6 +26,7 @@ import com.example.eventlink.global_email
 import com.example.eventlink.lista
 import com.example.eventlink.other.hashString
 import com.example.eventlink.other.rawJSON
+import com.example.eventlink.posizioneData
 import com.google.firebase.firestore.FieldPath
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
@@ -307,7 +308,7 @@ class PaginaProfilo : Activity(){
                 annulla.setOnClickListener{
                     val builder = AlertDialog.Builder(this@PaginaProfilo)
                     builder.setTitle("Message")
-                    builder.setMessage("Sicuro di voler eliminare l'account?\nL'azione è irriversibile")
+                    builder.setMessage("Sicuro di voler annullare l'evento?\nL'azione è irriversibile")
                     builder.setPositiveButton("Si") { _, _ ->
                         runBlocking {
                             val documentz = db.collection("Prenotazioni")
@@ -328,10 +329,13 @@ class PaginaProfilo : Activity(){
                             intent.putExtra("email", global_email)
                             startActivity(intent)
                             overridePendingTransition(0, 0)
-
                         }
                     }
+                    builder.setNegativeButton("No"){_,_ ->
 
+                    }
+                    val dialog = builder.create()
+                    dialog.show()
                 }
                 // Aggiunta della vista dell'evento al layout principale
                 parent.addView(duplicateView)

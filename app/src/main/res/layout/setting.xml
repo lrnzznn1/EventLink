@@ -7,6 +7,7 @@
 
     <LinearLayout
         android:background="#f2f2f2"
+        android:layout_marginBottom="64dp"
         android:id="@+id/grandeidpazzo"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -41,7 +42,7 @@
             android:background="@drawable/rounded_bottom_background"/>
         <View
             android:layout_width="wrap_content"
-            android:layout_height="40dp"/>
+            android:layout_height="27dp"/>
 
         <!-- Cambia Password Section -->
         <TextView
@@ -100,7 +101,7 @@
 
         <View
             android:layout_width="wrap_content"
-            android:layout_height="40dp"/>
+            android:layout_height="27dp"/>
 
 
         <!-- Elimina Account Section -->
