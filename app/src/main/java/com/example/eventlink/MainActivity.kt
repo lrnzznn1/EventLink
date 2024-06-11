@@ -77,6 +77,7 @@ lateinit var databaseLoc: DatabaseLocale
 @SuppressLint("StaticFieldLeak")
 lateinit var global_parent:LinearLayout
 var posizioneData = false
+var caricamentoFinito = false
 class MainActivity : Activity(), OnMapReadyCallback {
     @SuppressLint("InflateParams", "CutPasteId")
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -116,20 +117,23 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 bordoview.visibility = View.VISIBLE
                 secondlinearlayout.visibility = View.VISIBLE
                 mappaview.visibility = View.VISIBLE
-            }else{
-                // Se la posizione corrente non è disponibile, imposta una posizione predefinita e mostra gli elementi UI
-                val caricamneto = findViewById<RelativeLayout>(R.id.caricamento)
-                val bordoview = findViewById<View>(R.id.bordoview)
-                val secondlinearlayout = findViewById<LinearLayout>(R.id.second_linear_layout)
-                val mappaview = findViewById<FrameLayout>(R.id.mappa_view)
-
-                currentLatLng = LatLng(42.0, 11.53)
-
-                caricamneto.visibility = View.GONE
-                bordoview.visibility = View.VISIBLE
-                secondlinearlayout.visibility = View.VISIBLE
-                mappaview.visibility = View.VISIBLE
+                caricamentoFinito = true
             }
+        }
+        fusedLocationClient.lastLocation.addOnFailureListener {
+            // Se la posizione corrente non è disponibile, imposta una posizione predefinita e mostra gli elementi UI
+            val caricamneto = findViewById<RelativeLayout>(R.id.caricamento)
+            val bordoview = findViewById<View>(R.id.bordoview)
+            val secondlinearlayout = findViewById<LinearLayout>(R.id.second_linear_layout)
+            val mappaview = findViewById<FrameLayout>(R.id.mappa_view)
+
+            currentLatLng = LatLng(42.0, 11.53)
+
+            caricamneto.visibility = View.GONE
+            bordoview.visibility = View.VISIBLE
+            secondlinearlayout.visibility = View.VISIBLE
+            mappaview.visibility = View.VISIBLE
+            caricamentoFinito = true
         }
 
         // Inizializzazione degli elementi UI
@@ -173,9 +177,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
             val newMarginTop2 = resources.getDimensionPixelSize(R.dimen.margin_top_45dp)
             layoutParams2.topMargin = newMarginTop2
             geobtn.layoutParams = layoutParams2
-
-
-
         }
         buttonHideFilter.setOnClickListener{
             filterView.visibility = View.GONE
