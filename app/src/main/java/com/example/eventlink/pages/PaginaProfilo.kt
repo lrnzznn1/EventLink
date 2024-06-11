@@ -305,25 +305,33 @@ class PaginaProfilo : Activity(){
                 }
 
                 annulla.setOnClickListener{
-                    runBlocking {
-                        val documentz = db.collection("Prenotazioni").whereEqualTo("ID_Utente", global_email).whereEqualTo("ID_Evento", event.ID_Evento).get().await()
-                        for(eventi in documentz){
-                            db.collection("Prenotazioni").document(eventi.id).delete()
-                        }
-                        event.Max_Prenotazioni = (event.Max_Prenotazioni.toInt() +1).toString()
-                        val eventplusone = db.collection("Eventi").document(event.ID_Evento)
-                        eventplusone.update(
-                            mapOf(
-                                "Max_Prenotazioni" to event.Max_Prenotazioni
+                    val builder = AlertDialog.Builder(this@PaginaProfilo)
+                    builder.setTitle("Message")
+                    builder.setMessage("Sicuro di voler eliminare l'account?\nL'azione è irriversibile")
+                    builder.setPositiveButton("Si") { _, _ ->
+                        runBlocking {
+                            val documentz = db.collection("Prenotazioni")
+                                .whereEqualTo("ID_Utente", global_email)
+                                .whereEqualTo("ID_Evento", event.ID_Evento).get().await()
+                            for (eventi in documentz) {
+                                db.collection("Prenotazioni").document(eventi.id).delete()
+                            }
+                            event.Max_Prenotazioni = (event.Max_Prenotazioni.toInt() + 1).toString()
+                            val eventplusone = db.collection("Eventi").document(event.ID_Evento)
+                            eventplusone.update(
+                                mapOf(
+                                    "Max_Prenotazioni" to event.Max_Prenotazioni
+                                )
                             )
-                        )
-                        finish()
-                        val intent = Intent(this@PaginaProfilo, PaginaProfilo::class.java)
-                        intent.putExtra("email", global_email)
-                        startActivity(intent)
-                        overridePendingTransition(0, 0)
+                            finish()
+                            val intent = Intent(this@PaginaProfilo, PaginaProfilo::class.java)
+                            intent.putExtra("email", global_email)
+                            startActivity(intent)
+                            overridePendingTransition(0, 0)
 
+                        }
                     }
+
                 }
                 // Aggiunta della vista dell'evento al layout principale
                 parent.addView(duplicateView)
