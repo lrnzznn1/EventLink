@@ -103,6 +103,7 @@ dependencies {
     // To use Kotlin annotation processing tool (kapt)
     kapt("androidx.room:room-compiler:$room_version")
 
+
 }
 configurations.all{
     resolutionStrategy{

@@ -62,6 +62,8 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import android.preference.PreferenceManager
+
 
 @SuppressLint("StaticFieldLeak")
 val db = Firebase.firestore
@@ -82,6 +84,21 @@ class MainActivity : Activity(), OnMapReadyCallback {
     @SuppressLint("InflateParams", "CutPasteId")
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Verifica e pulizia della cache all'avvio
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val isFirstRun = preferences.getBoolean("isFirstRun", true)
+
+        if (isFirstRun) {
+            // Pulisce la cache
+            clearCache()
+
+            // Aggiorna lo stato di prima esecuzione
+            preferences.edit().putBoolean("isFirstRun", false).apply()
+        }
+
+
+
         setContentView(R.layout.activity_main)
 
         // Inizializzazione della mappa
@@ -758,5 +775,21 @@ class MainActivity : Activity(), OnMapReadyCallback {
                 setPre2(this@MainActivity, global_parent)
             }
         }
+    }
+
+
+    private fun clearCache() {
+        try {
+            val cacheDir = cacheDir
+            if (cacheDir.isDirectory) {
+                cacheDir.deleteRecursively()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 }
