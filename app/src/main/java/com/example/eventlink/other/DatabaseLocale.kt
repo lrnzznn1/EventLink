@@ -29,9 +29,9 @@ abstract class DatabaseLocale : RoomDatabase(){
                     context.applicationContext,
                     DatabaseLocale::class.java,
                     "app_database")
-                    // Permette migrazioni distruttive (i dati esistenti verranno persi)
+                    // Permette migrazioni distruttive
                     .fallbackToDestructiveMigration()
-                    // Permette query nel thread principale (non raccomandato per grandi operazioni)
+                    // Permette query nel thread principale
                     .allowMainThreadQueries().build()
                 INSTANCE= instance
                 instance
