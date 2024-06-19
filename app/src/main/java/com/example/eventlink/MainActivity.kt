@@ -97,8 +97,6 @@ class MainActivity : Activity(), OnMapReadyCallback {
             preferences.edit().putBoolean("isFirstRun", false).apply()
         }
 
-
-
         setContentView(R.layout.activity_main)
 
         // Inizializzazione della mappa
